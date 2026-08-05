@@ -368,42 +368,108 @@
         </header>
 
         <div class="preview-canvas" id="preview-canvas">
-          <div class="preview-grid">
-            <article class="p-card" data-element="card">
-              <button type="button" class="regen-dot" data-regen="card" aria-label="Перегенерировать карточку">
-                <svg class="icon" aria-hidden="true"><use href="#tabler-plus"></use></svg>
-              </button>
-              <span class="p-card-eyebrow">Дизайн-система</span>
-              <h3 class="p-card-title">Сгенерировано по правилам</h3>
-              <p class="p-card-text">
-                Палитра — по цветовому кругу, типографика из Google Fonts, отступы и радиусы — из токенов.
-                Всё меняется прямо здесь, в живом предпросмотре.
-              </p>
-              <div class="p-card-actions">
-                <button type="button" class="p-btn" data-element="button">Подробнее</button>
-                <button type="button" class="p-btn p-btn-secondary" data-element="button">Документация</button>
-              </div>
-            </article>
+          <div class="p-site">
 
-            <form class="p-form" data-element="form" onsubmit="return false">
-              <button type="button" class="regen-dot" data-regen="input" aria-label="Перегенерировать инпут">
-                <svg class="icon" aria-hidden="true"><use href="#tabler-plus"></use></svg>
-              </button>
-              <label class="p-field-label" for="preview-input">Имя проекта</label>
-              <input type="text" id="preview-input" class="p-input" placeholder="Моя дизайн-система">
-              <div class="p-form-actions">
-                <button type="submit" class="p-btn p-btn-primary" data-element="button">Создать</button>
-              </div>
-            </form>
+            <header class="p-header">
+              <span class="p-brand">DSgen</span>
+              <nav class="p-nav" aria-label="Навигация превью">
+                <a class="p-nav-link" href="#">Палитра</a>
+                <a class="p-nav-link" href="#">Типографика</a>
+                <a class="p-nav-link" href="#">Компоненты</a>
+                <button type="button" class="p-btn p-btn-secondary p-nav-cta">Войти</button>
+              </nav>
+            </header>
 
-            <div class="p-icons" data-element="icons" aria-label="Набор иконок системы">
-              <span class="p-icon" title="Палитра"><svg class="icon" aria-hidden="true"><use href="#tabler-palette"></use></svg></span>
-              <span class="p-icon" title="Типографика"><svg class="icon" aria-hidden="true"><use href="#tabler-typography"></use></svg></span>
-              <span class="p-icon" title="Отступы"><svg class="icon" aria-hidden="true"><use href="#tabler-spacing-vertical"></use></svg></span>
-              <span class="p-icon" title="Радиусы"><svg class="icon" aria-hidden="true"><use href="#tabler-border-corners"></use></svg></span>
-              <span class="p-icon" title="Тени"><svg class="icon" aria-hidden="true"><use href="#tabler-shadow"></use></svg></span>
-              <span class="p-icon" title="Z-index"><svg class="icon" aria-hidden="true"><use href="#tabler-stack-2"></use></svg></span>
+            <div class="p-layout">
+              <aside class="p-aside" aria-label="Боковое меню">
+                <a class="p-aside-link is-active" href="#">Обзор</a>
+                <a class="p-aside-link" href="#">Цвета</a>
+                <a class="p-aside-link" href="#">Шрифты</a>
+                <a class="p-aside-link" href="#">Отступы</a>
+                <a class="p-aside-link" href="#">Экспорт</a>
+              </aside>
+
+              <main class="p-main">
+                <section class="p-hero">
+                  <span class="p-eyebrow">Дизайн-система</span>
+                  <h1 class="p-hero-title">Токены, которые читаются</h1>
+                  <p class="p-hero-subtitle">
+                    Палитра по цветовому кругу, типографика из Google Fonts, отступы и радиусы из токенов —
+                    всё это собирается в единый язык интерфейса.
+                  </p>
+                  <div class="p-hero-actions">
+                    <button type="button" class="p-btn p-btn-primary" data-element="button">Начать проект</button>
+                    <button type="button" class="p-btn p-btn-secondary" data-element="button">Смотреть токены</button>
+                  </div>
+                </section>
+
+                <div class="p-stats">
+                  <div class="p-stat"><span class="p-stat-value">8px</span><span class="p-stat-label">базовый шаг</span></div>
+                  <div class="p-stat"><span class="p-stat-value">6</span><span class="p-stat-label">семейств шрифтов</span></div>
+                  <div class="p-stat"><span class="p-stat-value">AA</span><span class="p-stat-label">контраст WCAG</span></div>
+                </div>
+
+                <blockquote class="p-quote">
+                  <p class="p-quote-text">«Хорошая дизайн-система — та, что задаёт правила, а не копирует детали.»</p>
+                  <cite class="p-quote-author">— из гайдлайна DSgen</cite>
+                </blockquote>
+
+                <div class="p-cards">
+                  <article class="p-card" data-element="card">
+                    <button type="button" class="regen-dot" data-regen="card" aria-label="Перегенерировать карточку">
+                      <svg class="icon" aria-hidden="true"><use href="#tabler-plus"></use></svg>
+                    </button>
+                    <h3 class="p-card-title">Цветовой круг</h3>
+                    <p class="p-card-text">
+                      Каждый оттенок формируется из базового цвета и гармонии — никаких случайных HEX.
+                    </p>
+                    <div class="p-card-actions">
+                      <button type="button" class="p-btn" data-element="button">Подробнее</button>
+                      <button type="button" class="p-btn p-btn-secondary" data-element="button">Документация</button>
+                    </div>
+                  </article>
+                  <article class="p-card">
+                    <h3 class="p-card-title">Типографика</h3>
+                    <p class="p-card-text">
+                      Шрифты подключаются из Google CDN и автоматически попадают в экспорт проекта.
+                    </p>
+                    <div class="p-card-actions">
+                      <button type="button" class="p-btn p-btn-secondary" data-element="button">Подробнее</button>
+                    </div>
+                  </article>
+                </div>
+
+                <ul class="p-list">
+                  <li class="p-list-item"><span class="p-list-marker">Палитра</span> — пять оттенков по цветовому кругу</li>
+                  <li class="p-list-item"><span class="p-list-marker">Типографика</span> — вес, кегль и масштаб из токенов</li>
+                  <li class="p-list-item"><span class="p-list-marker">Отступы</span> — единый шаг на базе 4·8 px</li>
+                </ul>
+
+                <form class="p-form" data-element="form" onsubmit="return false">
+                  <button type="button" class="regen-dot" data-regen="input" aria-label="Перегенерировать инпут">
+                    <svg class="icon" aria-hidden="true"><use href="#tabler-plus"></use></svg>
+                  </button>
+                  <label class="p-field-label" for="preview-input">Имя проекта</label>
+                  <input type="text" id="preview-input" class="p-input" placeholder="Моя дизайн-система">
+                  <div class="p-form-actions">
+                    <button type="submit" class="p-btn p-btn-primary" data-element="button">Создать проект</button>
+                  </div>
+                </form>
+              </main>
             </div>
+
+            <footer class="p-footer">
+              <div class="p-icons" data-element="icons" aria-label="Набор иконок системы">
+                <span class="p-icon" title="Палитра"><svg class="icon" aria-hidden="true"><use href="#tabler-palette"></use></svg></span>
+                <span class="p-icon" title="Типографика"><svg class="icon" aria-hidden="true"><use href="#tabler-typography"></use></svg></span>
+                <span class="p-icon" title="Отступы"><svg class="icon" aria-hidden="true"><use href="#tabler-spacing-vertical"></use></svg></span>
+                <span class="p-icon" title="Радиусы"><svg class="icon" aria-hidden="true"><use href="#tabler-border-corners"></use></svg></span>
+                <span class="p-icon" title="Тени"><svg class="icon" aria-hidden="true"><use href="#tabler-shadow"></use></svg></span>
+                <span class="p-icon" title="Z-index"><svg class="icon" aria-hidden="true"><use href="#tabler-stack-2"></use></svg></span>
+              </div>
+              <p class="p-footer-text">© DSgen · токены по правилам цветового круга и WCAG AA.</p>
+            </footer>
+
           </div>
         </div>
 
