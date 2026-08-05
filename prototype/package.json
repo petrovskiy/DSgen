@@ -1,0 +1,12 @@
+{
+  "name": "dsgen-prototype",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Интерактивный HTML-прототип DSgen",
+  "scripts": {
+    "icons": "node copy-icons.mjs"
+  },
+  "dependencies": {
+    "@tabler/icons": "^3.46.0"
+  }
+}
