@@ -100,19 +100,31 @@
           previewBg: '#F4F1DE', previewText: '#1C110A',
           bg: '#F4F1DE', surface: '#FFFFFF', text: '#1C110A', textMuted: '#6B5B45',
           base: '#E07A5F', accent: '#C05638', font: 'Archivo', fontPreview: 'Archivo',
-          radius: 2, shadow: 'none', harmony: 'complementary' },
+          radius: 2, shadow: 'brutal', harmony: 'complementary' },
         { name: 'Неоньюар',
           palette: ['#111111', '#FFFFFF', '#FF2B2B', '#2B2B2B', '#A0A0A0'],
           previewBg: '#161616', previewText: '#FFFFFF',
           bg: '#111111', surface: '#1A1A1A', text: '#FFFFFF', textMuted: '#999999',
           base: '#FF2B2B', accent: '#FF2B2B', font: 'Archivo', fontPreview: 'Archivo',
-          radius: 0, shadow: 'none', harmony: 'complementary' },
-        { name: 'Плакат',
-          palette: ['#FFDE00', '#0B0B0B', '#FF3E00', '#FFFFFF', '#5F5F5F'],
-          previewBg: '#FFDE00', previewText: '#0B0B0B',
-          bg: '#FFDE00', surface: '#FFFFFF', text: '#0B0B0B', textMuted: '#333333',
-          base: '#FF3E00', accent: '#FF3E00', font: 'Archivo', fontPreview: 'Archivo',
-          radius: 0, shadow: 'none', harmony: 'analogous' },
+          radius: 0, shadow: 'brutal', harmony: 'complementary' },
+        { name: 'Кислота',
+          palette: ['#F5F3DC', '#E1E810', '#141414', '#5F5F52', '#FFFFFF'],
+          previewBg: '#F5F3DC', previewText: '#141414',
+          bg: '#F5F3DC', surface: '#FFFFFF', text: '#141414', textMuted: '#5F5F52',
+          base: '#C4D600', accent: '#C4D600', font: 'Archivo', fontPreview: 'Archivo',
+          radius: 2, shadow: 'brutal', harmony: 'complementary' },
+        { name: 'Красный',
+          palette: ['#FDF6F3', '#FF3B30', '#2B0F0A', '#8A6A5F', '#FFFFFF'],
+          previewBg: '#FDF6F3', previewText: '#2B0F0A',
+          bg: '#FDF6F3', surface: '#FFFFFF', text: '#2B0F0A', textMuted: '#8A6A5F',
+          base: '#D93025', accent: '#E02B22', font: 'Archivo', fontPreview: 'Archivo',
+          radius: 0, shadow: 'brutal', harmony: 'complementary' },
+        { name: 'Почта',
+          palette: ['#FFDD33', '#111111', '#FFC700', '#6B5B00', '#FFF6D6'],
+          previewBg: '#FFDD33', previewText: '#111111',
+          bg: '#FFDD33', surface: '#FFF6D6', text: '#111111', textMuted: '#6B5B00',
+          base: '#FFC700', accent: '#1A1A1A', font: 'Archivo', fontPreview: 'Archivo',
+          radius: 4, shadow: 'brutal', harmony: 'analogous' },
       ],
     },
     glassmorphism: {
@@ -120,22 +132,34 @@
       variants: [
         { name: 'Индиго',
           palette: ['#EEF2FF', '#C7D2FE', '#818CF8', '#4F46E5', '#312E81'],
-          previewBg: 'rgba(238,242,255,0.5)', previewText: '#312E81',
+          previewBg: '#E7EBFF', previewText: '#312E81',
           bg: '#F7F8FF', surface: '#FFFFFF', text: '#1E1B4B', textMuted: '#6B7280',
           base: '#4441D8', accent: '#4F46E5', font: 'Inter', fontPreview: 'Inter',
-          radius: 12, shadow: 'soft', harmony: 'analogous' },
+          radius: 16, shadow: 'soft', harmony: 'analogous' },
         { name: 'Медовый',
           palette: ['#FFF7ED', '#FED7AA', '#FB923C', '#EA580C', '#7C2D12'],
-          previewBg: 'rgba(255,237,213,0.6)', previewText: '#7C2D12',
+          previewBg: '#FFEFD8', previewText: '#7C2D12',
           bg: '#FFF9F2', surface: '#FFFFFF', text: '#431407', textMuted: '#9A6B4F',
-          base: '#EA580C', accent: '#EA580C', font: 'Inter', fontPreview: 'Inter',
-          radius: 14, shadow: 'soft', harmony: 'analogous' },
+          base: '#EA580C', accent: '#EA580C', font: 'Plus Jakarta Sans', fontPreview: 'Plus Jakarta Sans',
+          radius: 18, shadow: 'soft', harmony: 'analogous' },
         { name: 'Мята',
           palette: ['#ECFDF5', '#BBF7D0', '#34D399', '#059669', '#064E3B'],
-          previewBg: 'rgba(236,253,245,0.6)', previewText: '#064E3B',
+          previewBg: '#E3FBF0', previewText: '#064E3B',
           bg: '#F1FAF5', surface: '#FFFFFF', text: '#022C22', textMuted: '#5B7A6B',
           base: '#059669', accent: '#059669', font: 'Inter', fontPreview: 'Inter',
-          radius: 12, shadow: 'soft', harmony: 'analogous' },
+          radius: 16, shadow: 'soft', harmony: 'analogous' },
+        { name: 'Роза',
+          palette: ['#FFF0F5', '#F9A8D4', '#EC4899', '#DB2777', '#831843'],
+          previewBg: '#FFE8F1', previewText: '#831843',
+          bg: '#FDF3F7', surface: '#FFFFFF', text: '#500724', textMuted: '#9F6B86',
+          base: '#DB2777', accent: '#DB2777', font: 'Nunito', fontPreview: 'Nunito',
+          radius: 18, shadow: 'soft', harmony: 'analogous' },
+        { name: 'Лаванда',
+          palette: ['#F1ECFF', '#C4B5FD', '#8B5CF6', '#6D28D9', '#4C1D95'],
+          previewBg: '#EBE4FF', previewText: '#4C1D95',
+          bg: '#F6F3FF', surface: '#FFFFFF', text: '#3B0764', textMuted: '#8B78A8',
+          base: '#6D28D9', accent: '#8B5CF6', font: 'Nunito', fontPreview: 'Nunito',
+          radius: 16, shadow: 'soft', harmony: 'analogous' },
       ],
     },
     cyberpunk: {
@@ -145,20 +169,32 @@
           palette: ['#0F0E17', '#FFFFFE', '#FF8906', '#7A5AF0', '#E53170'],
           previewBg: '#16141E', previewText: '#FFFFFE',
           bg: '#0F0E17', surface: '#1A1A26', text: '#FFFFFE', textMuted: '#A6A6B4',
-          base: '#E53170', accent: '#FF8906', font: 'Space Grotesk', fontPreview: 'Space Grotesk',
-          radius: 8, shadow: 'none', harmony: 'triadic' },
+          base: '#E53170', accent: '#FF8906', font: 'Chakra Petch', fontPreview: 'Chakra Petch',
+          radius: 8, shadow: 'glow', harmony: 'triadic' },
         { name: 'Матрица',
           palette: ['#010B07', '#E8FFE8', '#00FF7F', '#39FF14', '#0A2E1A'],
           previewBg: '#02110B', previewText: '#E8FFE8',
           bg: '#010B07', surface: '#04120A', text: '#E8FFE8', textMuted: '#5EA98A',
-          base: '#39FF14', accent: '#00C853', font: 'Space Grotesk', fontPreview: 'Space Grotesk',
-          radius: 6, shadow: 'none', harmony: 'analogous' },
+          base: '#39FF14', accent: '#00C853', font: 'Share Tech Mono', fontPreview: 'Share Tech Mono',
+          radius: 4, shadow: 'none', harmony: 'analogous' },
         { name: 'Фиолет',
           palette: ['#0B0518', '#F5F0FF', '#7F3FF2', '#F875AA', '#2B0F66'],
           previewBg: '#150B2E', previewText: '#F5F0FF',
           bg: '#0B0518', surface: '#150B2E', text: '#F5F0FF', textMuted: '#8F7FB3',
-          base: '#7F3FF2', accent: '#7F3FF2', font: 'Space Grotesk', fontPreview: 'Space Grotesk',
-          radius: 10, shadow: 'none', harmony: 'analogous' },
+          base: '#7F3FF2', accent: '#7F3FF2', font: 'Orbitron', fontPreview: 'Orbitron',
+          radius: 10, shadow: 'glow', harmony: 'analogous' },
+        { name: 'Амбер',
+          palette: ['#1A0B08', '#FFE8C7', '#FF9F1C', '#FF4D6D', '#2B1A1A'],
+          previewBg: '#25110B', previewText: '#FFE8C7',
+          bg: '#1A0B08', surface: '#25110B', text: '#FFE8C7', textMuted: '#A97A5F',
+          base: '#FF4D6D', accent: '#FF9F1C', font: 'Rajdhani', fontPreview: 'Rajdhani',
+          radius: 6, shadow: 'glow', harmony: 'analogous' },
+        { name: 'Циан',
+          palette: ['#060C14', '#E6F7FB', '#22D3EE', '#3B82F6', '#0E2433'],
+          previewBg: '#0A1420', previewText: '#E6F7FB',
+          bg: '#060C14', surface: '#0A1420', text: '#E6F7FB', textMuted: '#7E93A8',
+          base: '#3B82F6', accent: '#22D3EE', font: 'Orbitron', fontPreview: 'Orbitron',
+          radius: 8, shadow: 'glow', harmony: 'analogous' },
       ],
     },
     minimalism: {
@@ -181,7 +217,19 @@
           previewBg: '#F5F0E8', previewText: '#2B2B27',
           bg: '#FDFBF7', surface: '#F5F0E8', text: '#2B2B27', textMuted: '#8A8178',
           base: '#A16207', accent: '#8B5E34', font: 'Manrope', fontPreview: 'Manrope',
-          radius: 8, shadow: 'subtle', harmony: 'monochromatic' },
+          radius: 8, shadow: 'soft', harmony: 'monochromatic' },
+        { name: 'Графит',
+          palette: ['#16181D', '#F5F5F4', '#8A8F98', '#1E2128', '#E5E7EB'],
+          previewBg: '#1A1C21', previewText: '#F5F5F4',
+          bg: '#16181D', surface: '#1E2128', text: '#F5F5F4', textMuted: '#8A8F98',
+          base: '#A1A1AA', accent: '#E5E7EB', font: 'Inter', fontPreview: 'Inter',
+          radius: 12, shadow: 'medium', harmony: 'monochromatic' },
+        { name: 'Литературный',
+          palette: ['#FBF9F4', '#F4F0E6', '#7A715F', '#1F1B16', '#9A3412'],
+          previewBg: '#F4F0E6', previewText: '#1F1B16',
+          bg: '#FBF9F4', surface: '#F4F0E6', text: '#1F1B16', textMuted: '#7A715F',
+          base: '#9A3412', accent: '#9A3412', font: 'Lora', fontPreview: 'Lora',
+          radius: 10, shadow: 'soft', harmony: 'monochromatic' },
       ],
     },
     neomorphism: {
@@ -192,19 +240,31 @@
           previewBg: '#E0E5EC', previewText: '#4B5666',
           bg: '#E0E5EC', surface: '#E0E5EC', text: '#4B5666', textMuted: '#8A94A6',
           base: '#5B7A9D', accent: '#5B7A9D', font: 'Inter', fontPreview: 'Inter',
-          radius: 16, shadow: 'neomorph', harmony: 'analogous' },
+          radius: 20, shadow: 'neomorph', harmony: 'analogous' },
         { name: 'Лепесток',
           palette: ['#F3E7F0', '#FFFFFF', '#D9B8D1', '#A56FA0', '#6B4766'],
           previewBg: '#F3E7F0', previewText: '#4A2E47',
           bg: '#F3E7F0', surface: '#F3E7F0', text: '#4A2E47', textMuted: '#9B7E96',
-          base: '#A56FA0', accent: '#A56FA0', font: 'Inter', fontPreview: 'Inter',
-          radius: 16, shadow: 'neomorph', harmony: 'analogous' },
+          base: '#A56FA0', accent: '#A56FA0', font: 'Nunito', fontPreview: 'Nunito',
+          radius: 20, shadow: 'neomorph', harmony: 'analogous' },
         { name: 'Охра',
           palette: ['#EDE7DA', '#FFFFFF', '#C9BCA5', '#8A7650', '#5C4E33'],
           previewBg: '#EDE7DA', previewText: '#4A4030',
           bg: '#EDE7DA', surface: '#EDE7DA', text: '#4A4030', textMuted: '#93836A',
-          base: '#8A7650', accent: '#8A7650', font: 'Inter', fontPreview: 'Inter',
-          radius: 14, shadow: 'neomorph', harmony: 'analogous' },
+          base: '#8A7650', accent: '#8A7650', font: 'Poppins', fontPreview: 'Poppins',
+          radius: 18, shadow: 'neomorph', harmony: 'analogous' },
+        { name: 'Мокко',
+          palette: ['#E7E1D8', '#FFFFFF', '#C0B5A6', '#8D7A5F', '#4A4038'],
+          previewBg: '#E7E1D8', previewText: '#4A4038',
+          bg: '#E7E1D8', surface: '#E7E1D8', text: '#4A4038', textMuted: '#97897A',
+          base: '#8D7A5F', accent: '#8D7A5F', font: 'Poppins', fontPreview: 'Poppins',
+          radius: 22, shadow: 'neomorph', harmony: 'analogous' },
+        { name: 'Тёмный',
+          palette: ['#23262E', '#2E323C', '#8A8F99', '#E8EAEE', '#5B7A9D'],
+          previewBg: '#23262E', previewText: '#E8EAEE',
+          bg: '#23262E', surface: '#23262E', text: '#E8EAEE', textMuted: '#8A8F99',
+          base: '#5B7A9D', accent: '#5B7A9D', font: 'Nunito', fontPreview: 'Nunito',
+          radius: 18, shadow: 'neomorph', harmony: 'analogous' },
       ],
     },
     flat: {
@@ -228,6 +288,18 @@
           bg: '#FFFCF9', surface: '#FFF1E6', text: '#431407', textMuted: '#B07D63',
           base: '#EA580C', accent: '#EA580C', font: 'Inter', fontPreview: 'Inter',
           radius: 6, shadow: 'none', harmony: 'complementary' },
+        { name: 'Фиолетовый',
+          palette: ['#FBF9FF', '#F6F2FF', '#7C3AED', '#3B0764', '#A78BFA'],
+          previewBg: '#F6F2FF', previewText: '#3B0764',
+          bg: '#FBFAFF', surface: '#F6F2FF', text: '#2E1065', textMuted: '#8B7BAE',
+          base: '#7C3AED', accent: '#7C3AED', font: 'Poppins', fontPreview: 'Poppins',
+          radius: 10, shadow: 'none', harmony: 'analogous' },
+        { name: 'Кобальт-янтарь',
+          palette: ['#0B1F3A', '#F2F7FF', '#FFB020', '#4C7DF0', '#123258'],
+          previewBg: '#0B1F3A', previewText: '#F2F7FF',
+          bg: '#0B1F3A', surface: '#123258', text: '#F2F7FF', textMuted: '#8FA3C0',
+          base: '#4C7DF0', accent: '#FFB020', font: 'Archivo', fontPreview: 'Archivo',
+          radius: 8, shadow: 'none', harmony: 'complementary' },
       ],
     },
   };
@@ -265,6 +337,16 @@
       focus: '0 0 0 4px rgba(161,98,7,.30)',
     },
     none: { subtle: 'none', medium: 'none', focus: '0 0 0 3px rgba(161,98,7,.25)' },
+    brutal: {
+      subtle: '4px 4px 0 rgba(20,20,20,1)',
+      medium: '5px 5px 0 rgba(20,20,20,1), 9px 9px 0 rgba(20,20,20,.18)',
+      focus: '0 0 0 3px rgba(20,20,20,.3)',
+    },
+    glow: {
+      subtle: '0 0 12px rgba(255,137,6,.35)',
+      medium: '0 0 22px rgba(255,137,6,.5), 0 4px 14px rgba(0,0,0,.5)',
+      focus: '0 0 0 3px rgba(255,137,6,.4)',
+    },
     neomorph: {
       subtle: '6px 6px 12px rgba(163,178,198,.7), -6px -6px 12px rgba(255,255,255,.95)',
       medium: '8px 8px 16px rgba(163,178,198,.75), -8px -8px 16px rgba(255,255,255,.95), 10px 10px 20px rgba(163,178,198,.4)',
@@ -288,6 +370,14 @@
     { family: 'JetBrains Mono', css: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500' },
     { family: 'Archivo', css: 'https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700' },
     { family: 'Roboto', css: 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700' },
+    { family: 'Nunito', css: 'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700' },
+    { family: 'Plus Jakarta Sans', css: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700' },
+    { family: 'Poppins', css: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600' },
+    { family: 'Orbitron', css: 'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700' },
+    { family: 'Rajdhani', css: 'https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700' },
+    { family: 'Chakra Petch', css: 'https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700' },
+    { family: 'Share Tech Mono', css: 'https://fonts.googleapis.com/css2?family=Share+Tech+Mono' },
+    { family: 'Lora', css: 'https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700' },
   ];
   const loadedFonts = new Set();
 
@@ -547,6 +637,16 @@
     document.head.appendChild(link);
     loadedFonts.add(font.css);
   }
+  function buildFontSelect() {
+    const sel = $('#font-family');
+    sel.innerHTML = '';
+    FONTS.forEach((f) => {
+      const opt = document.createElement('option');
+      opt.value = f.family;
+      opt.textContent = f.family;
+      sel.appendChild(opt);
+    });
+  }
   function buildFontList(filter) {
     const list = $('#fonts-list');
     list.innerHTML = '';
@@ -583,6 +683,57 @@
   function closeFontsPanel() {
     $('#fonts-panel').hidden = true;
     $('#fonts-btn').setAttribute('aria-expanded', 'false');
+  }
+
+  /* ---------- Панель готовых пресетов ---------- */
+  function buildPresetPicker() {
+    const list = $('#presets-list');
+    list.innerHTML = '';
+    Object.keys(STYLES).forEach((styleKey) => {
+      const style = STYLES[styleKey];
+      const group = document.createElement('div');
+      group.className = 'presets-group';
+      const title = document.createElement('h4');
+      title.className = 'presets-group-title';
+      title.textContent = style.name;
+      group.appendChild(title);
+      const row = document.createElement('div');
+      row.className = 'presets-group-row';
+      style.variants.forEach((v, i) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'preset-chip' + (state.styleKey === styleKey && state.variantIndex === i ? ' is-active' : '');
+        chip.dataset.style = styleKey;
+        chip.dataset.variant = String(i);
+        chip.innerHTML =
+          '<span class="preset-chip-dots">' + v.palette.map((c) => '<span style="background:' + c + '"></span>').join('') + '</span>' +
+          '<span class="preset-chip-name"></span>';
+        chip.querySelector('.preset-chip-name').textContent = v.name;
+        chip.addEventListener('click', () => applyPreset(styleKey, i));
+        row.appendChild(chip);
+      });
+      group.appendChild(row);
+      list.appendChild(group);
+    });
+  }
+  function togglePresetsPanel() {
+    const panel = $('#presets-panel');
+    const open = panel.hidden;
+    panel.hidden = !open;
+    $('#presets-btn').setAttribute('aria-expanded', String(open));
+    if (open) buildPresetPicker();
+  }
+  function closePresetsPanel() {
+    $('#presets-panel').hidden = true;
+    $('#presets-btn').setAttribute('aria-expanded', 'false');
+  }
+  function applyPreset(styleKey, index) {
+    configFromVariant(styleKey, index, false);
+    syncFields();
+    renderAnything();
+    resetDirtyState();
+    closePresetsPanel();
+    toast('Пресет: ' + STYLES[styleKey].name + ' · ' + variantName(styleKey, index));
   }
 
   /* ---------- Изменено ---------- */
@@ -844,8 +995,13 @@
     $('#reset-btn').addEventListener('click', resetToPreset);
     $('#reset-to-preset').addEventListener('click', resetToPreset);
 
-    $('#heading-weight').addEventListener('change', (e) => { state.tokens.headingWeight = Number(e.target.value); applyPreview(); markChanged(); });
-    $('#body-weight').addEventListener('change', (e) => { state.tokens.bodyWeight = Number(e.target.value); applyPreview(); markChanged(); });
+    $('#font-family').addEventListener('change', (e) => {
+      state.tokens.fontFamily = e.target.value;
+      loadFont(e.target.value);
+      applyPreview();
+      markChanged();
+    });
+    $('#heading-weight').addEventListener('change', (e) => { state.tokens.headingWeight = Number(e.target.value); applyPreview(); markChanged(); });    $('#body-weight').addEventListener('change', (e) => { state.tokens.bodyWeight = Number(e.target.value); applyPreview(); markChanged(); });
     $('#type-scale').addEventListener('change', (e) => { state.tokens.typeScale = e.target.value; applyPreview(); markChanged(); });
     $('#space-step').addEventListener('change', (e) => { state.tokens.spaceStep = Number(e.target.value) || 4; renderSpacingChips(); applyPreview(); markChanged(); });
     $('#radius-sm').addEventListener('change', (e) => { state.tokens.radiusSm = Number(e.target.value) || 0; applyPreview(); markChanged(); });
@@ -863,8 +1019,11 @@
 
     $('#fonts-btn').addEventListener('click', (e) => { e.stopPropagation(); toggleFontsPanel(); });
     $('#fonts-search').addEventListener('input', (e) => buildFontList(e.target.value));
+    $('#presets-btn').addEventListener('click', (e) => { e.stopPropagation(); togglePresetsPanel(); });
+    $('#presets-close-btn').addEventListener('click', (e) => { e.stopPropagation(); closePresetsPanel(); });
     document.addEventListener('click', (e) => {
       if (!document.getElementById('fonts-dropdown').contains(e.target)) closeFontsPanel();
+      if (!document.getElementById('presets-dropdown').contains(e.target)) closePresetsPanel();
     });
 
     $('#regen-btn').addEventListener('click', () => regenElement($('#regen-element').value));
@@ -874,6 +1033,7 @@
       if (e.key === 'Escape') {
         closeExportModal();
         closeFontsPanel();
+        closePresetsPanel();
       }
     });
   }
@@ -886,6 +1046,7 @@
   function init() {
     goto('screen-start');
     buildPresetCards();
+    buildFontSelect();
     bindAccordions();
     bindEvents();
     readStore();

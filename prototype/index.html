@@ -82,6 +82,22 @@
           Генер. всё
         </button>
         <button type="button" class="btn btn-ghost" id="reset-btn">Сброс</button>
+        <div class="dropdown" id="presets-dropdown">
+          <button type="button" class="btn btn-secondary btn-sm" id="presets-btn" aria-haspopup="dialog" aria-expanded="false">
+            <svg class="icon" aria-hidden="true"><use href="#tabler-template"></use></svg>
+            Пресеты
+            <svg class="icon" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
+          </button>
+          <div class="dropdown-panel dropdown-panel-wide" id="presets-panel" role="dialog" aria-label="Выбор готового пресета" hidden>
+            <div class="presets-panel-head">
+              <span class="presets-panel-title">Готовые пресеты</span>
+              <button type="button" class="icon-btn" id="presets-close-btn" aria-label="Закрыть">
+                <svg class="icon" aria-hidden="true"><use href="#tabler-x"></use></svg>
+              </button>
+            </div>
+            <div class="presets-list" id="presets-list"></div>
+          </div>
+        </div>
         <div class="dropdown" id="fonts-dropdown">
           <button type="button" class="btn btn-secondary btn-sm" id="fonts-btn" aria-haspopup="listbox" aria-expanded="false">
             Google Fonts
@@ -269,9 +285,12 @@
               <label class="field-label" for="shadow-level">Интенсивность</label>
               <div class="select-wrap">
                 <select id="shadow-level" class="select">
-                  <option value="subtle" selected>Мягкая</option>
+                  <option value="soft" selected>Мягкая</option>
                   <option value="medium">Средняя</option>
                   <option value="strong">Выраженная</option>
+                  <option value="brutal">Брутальная</option>
+                  <option value="glow">Неоновая</option>
+                  <option value="neomorph">Неоморфная</option>
                   <option value="none">Без теней</option>
                 </select>
               </div>

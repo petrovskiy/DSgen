@@ -432,7 +432,7 @@ textarea:focus-visible {
 
 .preset-variants {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
   gap: var(--space-2);
 }
 
@@ -1302,6 +1302,97 @@ input[type='color'] {
   padding: var(--space-2) var(--space-3);
   border-top: 1px solid var(--border);
   margin: 0;
+}
+
+/* ---------- 9.1 Панель готовых пресетов ---------- */
+.dropdown-panel-wide {
+  width: 360px;
+}
+
+.presets-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.presets-panel-title {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.presets-list {
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.presets-group {
+  margin-bottom: var(--space-2);
+}
+
+.presets-group-title {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: var(--space-2) var(--space-1) var(--space-2);
+}
+
+.presets-group-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-1);
+}
+
+.preset-chip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: stretch;
+  padding: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.preset-chip:hover {
+  background: var(--surface-2);
+}
+
+.preset-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.preset-chip.is-active {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.preset-chip-dots {
+  display: flex;
+  gap: 2px;
+  height: 16px;
+}
+
+.preset-chip-dots span {
+  flex: 1;
+  border-radius: 3px;
+}
+
+.preset-chip-name {
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ---------- 10. Нижняя панель редактора ---------- */
