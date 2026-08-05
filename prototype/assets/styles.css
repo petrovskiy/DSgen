@@ -412,29 +412,20 @@ textarea:focus-visible {
   margin-top: var(--space-4);
 }
 
-.preset-card {
-  position: relative;
-  padding: var(--space-5);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-subtle);
+.preset-section {
   text-align: left;
-  transition: box-shadow 180ms ease, border-color 180ms ease;
 }
 
-.preset-card:hover {
-  box-shadow: var(--shadow-medium);
-}
-
-.preset-card-name {
-  font-size: var(--text-subheading);
+.preset-section-title {
+  font-size: var(--text-title);
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--text);
+  margin: 0;
 }
 
-.preset-card-note {
-  margin-top: 2px;
+.preset-section-note {
+  margin: var(--space-1) 0 0;
   font-size: var(--text-caption);
   color: var(--text-muted);
 }
@@ -442,7 +433,7 @@ textarea:focus-visible {
 .preset-variants {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin-top: var(--space-4);
 }
 
@@ -450,10 +441,11 @@ textarea:focus-visible {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: 0;
-  background: transparent;
-  border: 1px solid transparent;
+  padding: var(--space-3);
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-subtle);
   cursor: pointer;
   text-align: left;
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
@@ -481,7 +473,6 @@ textarea:focus-visible {
   color: var(--pv-text);
   font-family: var(--pv-font);
   border-radius: var(--pv-radius);
-  box-shadow: var(--shadow-subtle);
   overflow: hidden;
 }
 

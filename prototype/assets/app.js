@@ -563,20 +563,20 @@
     applyPreview();
   }
 
-  /* ---------- Карточки пресетов ---------- */
+  /* ---------- Секции пресетов ---------- */
   function buildPresetCards() {
     const grid = $('#preset-grid');
     grid.innerHTML = '';
     Object.keys(STYLES).forEach((styleKey) => {
       const style = STYLES[styleKey];
-      const card = document.createElement('div');
-      card.className = 'preset-card';
-      card.dataset.style = styleKey;
-      card.innerHTML =
-        '<span class="preset-card-name">' + style.name + '</span>' +
-        '<span class="preset-card-note">' + style.note + '</span>' +
-        '<span class="preset-variants"></span>';
-      const vars = card.querySelector('.preset-variants');
+      const section = document.createElement('section');
+      section.className = 'preset-section';
+      section.dataset.style = styleKey;
+      section.innerHTML =
+        '<h2 class="preset-section-title">' + style.name + '</h2>' +
+        '<p class="preset-section-note">' + style.note + '</p>' +
+        '<div class="preset-variants"></div>';
+      const vars = section.querySelector('.preset-variants');
       style.variants.forEach((v, i) => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -624,7 +624,7 @@
         btn.addEventListener('click', () => openEditor(styleKey, i, false));
         vars.appendChild(btn);
       });
-      grid.appendChild(card);
+      grid.appendChild(section);
     });
   }
 
