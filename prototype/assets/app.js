@@ -1194,10 +1194,14 @@ function ensureContrast(color, bg, minRatio) {
     const sc = concept.styleConfig || {};
     const shadow = buildShadow(concept.shadow, accent);
     const date = new Date().toISOString().slice(0, 10);
-    const secText = cs.textSecondary;
+    const secText = cs.textSecondary === cs.accent
+      ? mix(cs.textSecondary, cs.background, 0.35)
+      : cs.textSecondary;
     const borderCol = cs.border;
-    const sText = isD ? mix(text, '#ffffff', 0.2) : mix(text, '#ffffff', 0.4);
-    const bgSubtle = isD ? mix(bg, '#ffffff', 0.04) : mix(bg, '#000000', 0.02);
+    const textDisabled = isD ? mix(text, bg, 0.45) : mix(text, bg, 0.55);
+    const bgDisabled = isD ? mix(surface, '#000000', 0.15) : mix(surface, '#000000', 0.04);
+    const sText = textDisabled;
+    const bgSubtle = bgDisabled;
     const surfaceElevated = cs.surfaceElevated;
     const surfaceHover = isD ? mix(surface, '#ffffff', 0.08) : mix(surface, '#000000', 0.03);
     const borderSubtle = cs.borderSubtle;
@@ -1210,10 +1214,10 @@ function ensureContrast(color, bg, minRatio) {
     const effectsLines = [];
     if (sc.effects) {
       const e = sc.effects;
-      effectsLines.push(`Blur: ${e.blur && e.blur.enabled ? '✅ ' + (e.blur.strength || '8px') : '❌'}`);
-      effectsLines.push(`Glassmorphism: ${e.glassmorphism ? '✅' : '❌'}`);
-      effectsLines.push(`Noise/Grain: ${e.noise && e.noise.enabled ? '✅ ' + (e.noise.opacity || '5%') : '❌'}`);
-      effectsLines.push(`Glow: ${e.glow && e.glow.enabled ? '✅ ' + (e.glow.intensity || '10px') : '❌'}`);
+      if (e.blur && e.blur.enabled) effectsLines.push(`Blur: \`backdrop-filter: blur(${e.blur.strength || '8px'})\` — применять на .card--glass, .navbar--glass, .modal`);
+      if (e.glassmorphism) effectsLines.push(`Glassmorphism: \`background: rgba(c.surface, 0.15); border: 1px solid rgba(c.border, 0.5)\` — на .card--glass`);
+      if (e.noise && e.noise.enabled) effectsLines.push(`Noise/Grain: SVG-фильтр с opacity ${e.noise.opacity || '5%'} — псевдоэлемент ::before на .card`);
+      if (e.glow && e.glow.enabled) effectsLines.push(`Glow: \`box-shadow: 0 0 ${e.glow.intensity || '20px'} var(--accent)\` — на .card, .btn-primary:focus`);
     }
 
     const anim = sc.animation || {};
@@ -1299,10 +1303,10 @@ Secondary Hover: ${surfaceHover}
 ## Фон
 
 \`\`\`text
-Background:        ${bg}
-Background Subtle: ${bgSubtle}
-Surface:            ${surface}
-Surface Elevated:   ${surfaceElevated}
+Background:          ${bg}
+Background Disabled: ${bgDisabled}
+Surface:             ${surface}
+Surface Elevated:     ${surfaceElevated}
 Surface Hover:       ${surfaceHover}
 \`\`\`
 
@@ -1312,7 +1316,7 @@ Surface Hover:       ${surfaceHover}
 Text Primary:   ${text}
 Text Secondary: ${secText}
 Text Muted:     ${textMuted}
-Text Disabled:  ${sText}
+Text Disabled:  ${textDisabled}
 Text Inverse:   ${isD ? '#1C1917' : '#FFFFFF'}
 \`\`\`
 
@@ -1418,6 +1422,8 @@ Caption:
 
 # 5. СИСТЕМА ОТСТУПОВ
 
+## Вертикальные отступы (секции, блоки)
+
 \`\`\`text
 Базовая единица: ${spaceBase}px
 
@@ -1433,12 +1439,18 @@ xl:  ${spaceBase * 8}px
 4xl: ${spaceBase * 24}px
 \`\`\`
 
+## Отступы для layout (паддинги контейнера, gap сетки)
+
+\`\`\`text
+container-padding: ${clamp(spaceBase, 16, 32)}px
+grid-gap:          ${Math.round(clamp(Math.round(spaceBase * 0.8), 12, 24) / 4) * 4}px
+\`\`\`
+
 ## Правила
 
+* Для вертикальных отступов между секциями используй большую шкалу (md–4xl)
+* Для горизонтальных паддингов и gap используй layout-шкалу (16–32px)
 * Отдавай предпочтение токенам отступов, а не произвольным значениям
-* Поддерживай последовательный вертикальный ритм
-* Связанные элементы — меньший отступ
-* Разделы — больший отступ
 
 ---
 
@@ -1448,14 +1460,14 @@ xl:  ${spaceBase * 8}px
 
 \`\`\`text
 Максимальная ширина: ${layout.maxWidth || '1200px'}
-Горизонтальный паддинг: ${spaceBase * 6}px
+Горизонтальный паддинг: ${clamp(spaceBase, 16, 32)}px
 \`\`\`
 
 ## Сетка
 
 \`\`\`text
 Колонки: 12
-Промежуток (gap): ${spaceBase * 4}px
+Промежуток (gap): ${clamp(Math.round(spaceBase * 0.8), 12, 24)}px
 \`\`\`
 
 ## Точки перелома (Breakpoints)
@@ -1480,11 +1492,9 @@ Wide:    1280px
 
 \`\`\`text
 None: 0
-XS:   ${radii[0]}px
-SM:   ${radii[1]}px
-MD:   ${radii[2]}px
-LG:   ${radii[2] * 1.5}px
-XL:   ${radii[2] * 2}px
+SM:   ${radii[0]}px
+MD:   ${radii[1]}px
+LG:   ${radii[2]}px
 Full: 9999px
 \`\`\`
 
@@ -1495,7 +1505,7 @@ Full: 9999px
 Кнопки:    ${radii[1]}px
 Инпуты:    ${radii[0]}px
 Карточки:  ${radii[2]}px
-Диалоги:   ${radii[2] * 1.5}px
+Диалоги:   ${radii[2]}px
 Бейджи:    9999px
 \`\`\`
 
@@ -1565,7 +1575,7 @@ Default:  ${accent}
 Hover:    ${cs.accentHover}
 Active:   ${mix(accent, isD ? '#ffffff' : '#000000', 0.3)}
 Focus:    ${shadow.focus}
-Disabled: ${sText} bg, ${borderCol} text
+Disabled: ${bgDisabled} bg, ${textDisabled} text
 Loading:  spinner + ${cs.accentSoft}
 \`\`\`
 
@@ -1676,7 +1686,7 @@ Info:    #3B82F6 bg, white text
 \`\`\`text
 Библиотека иконок: Lucide / Tabler
 Размер по умолчанию: 20px
-Толщина линии (stroke width): ${icons.strokeWidth || 1.5}
+Толщина линии (stroke width): ${Math.max(1.5, icons.strokeWidth || 1.5)}
 \`\`\`
 
 Правила:
@@ -1754,19 +1764,19 @@ ${images.illustrationStyle || 'Минималистичные'}
 ## Mobile
 
 \`\`\`text
-Одноколоночный layout, навигация — гамбургер, отступы ${spaceBase * 3}px
+Одноколоночный layout, навигация — гамбургер, паддинги ${clamp(spaceBase - 4, 12, 24)}px
 \`\`\`
 
 ## Tablet
 
 \`\`\`text
-Двухколоночный layout, навигация — topbar, отступы ${spaceBase * 4}px
+Двухколоночный layout, навигация — topbar, паддинги ${clamp(spaceBase, 16, 32)}px
 \`\`\`
 
 ## Desktop
 
 \`\`\`text
-Многоколоночный layout, полная навигация, максимум ${layout.maxWidth || '1200px'}
+Многоколоночный layout, полная навигация, паддинги ${clamp(spaceBase, 16, 32)}px, максимум ${layout.maxWidth || '1200px'}
 \`\`\`
 
 ## Правила
@@ -1795,6 +1805,7 @@ Border Subtle: ${csLight.borderSubtle}
 Text Primary:   ${csLight.textPrimary}
 Text Secondary: ${csLight.textSecondary}
 Text Muted:     ${csLight.textMuted}
+Text Disabled:  ${mix(csLight.textPrimary, csLight.background, 0.55)}
 \`\`\`
 
 \`\`\`text
@@ -1825,6 +1836,7 @@ Border Subtle: ${csDark.borderSubtle}
 Text Primary:   ${csDark.textPrimary}
 Text Secondary: ${csDark.textSecondary}
 Text Muted:     ${csDark.textMuted}
+Text Disabled:  ${mix(csDark.textPrimary, csDark.background, 0.45)}
 \`\`\`
 
 \`\`\`text
@@ -2167,6 +2179,8 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     const colorToken = (c) => ({
       background: c.background, surface: c.surface, 'surface-elevated': c.surfaceElevated,
       'text-primary': c.textPrimary, 'text-secondary': c.textSecondary, 'text-muted': c.textMuted,
+      'text-disabled': c.mode === 'dark' ? mix(c.textPrimary, c.background, 0.45) : mix(c.textPrimary, c.background, 0.55),
+      'bg-disabled': c.mode === 'dark' ? mix(c.surface, '#000000', 0.15) : mix(c.surface, '#000000', 0.04),
       'text-inverse': c.mode === 'dark' ? '#1C1917' : '#FFFFFF',
       accent: c.accent, 'accent-hover': c.accentHover,
       'accent-active': mix(c.accent, c.mode === 'dark' ? '#ffffff' : '#000000', 0.3),
@@ -2190,7 +2204,7 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
         'letter-spacing-heading': (sc.letterSpacing && sc.letterSpacing.heading) || '0',
         scale: { display: scale.title + 8, h1: scale.title, h2: Math.round(scale.title * 0.8), h3: Math.round(scale.title * 0.65), body: scale.body, small: scale.body - 2, caption: scale.body - 3 },
       },
-      spacing: { unit: spaceBase, '3xs': Math.round(spaceBase / 4), '2xs': Math.round(spaceBase / 2), xs: spaceBase, sm: spaceBase * 2, md: spaceBase * 4, lg: spaceBase * 6, xl: spaceBase * 8, '2xl': spaceBase * 12, '3xl': spaceBase * 16, '4xl': spaceBase * 24 },
+      spacing: { unit: spaceBase, '3xs': Math.round(spaceBase / 4), '2xs': Math.round(spaceBase / 2), xs: spaceBase, sm: spaceBase * 2, md: spaceBase * 4, lg: spaceBase * 6, xl: spaceBase * 8, '2xl': spaceBase * 12, '3xl': spaceBase * 16, '4xl': spaceBase * 24, 'container-padding': clamp(spaceBase, 16, 32), 'grid-gap': clamp(Math.round(spaceBase * 0.8), 12, 24) },
       radius: { none: 0, sm: radii[0], md: radii[1], lg: radii[2], full: 9999 },
       shadow: { style: concept.shadow },
       effects: sc.effects || {},
@@ -2232,9 +2246,8 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   outline: none;
 }
 .btn-primary:disabled {
-  background: ${c.textSecondary};
-  color: ${c.mode === 'dark' ? c.background : '#FFFFFF'};
-  opacity: 0.5;
+  background: ${c.mode === 'dark' ? mix(c.surface, '#000000', 0.15) : mix(c.surface, '#000000', 0.04)};
+  color: ${c.mode === 'dark' ? mix(c.textPrimary, c.background, 0.45) : mix(c.textPrimary, c.background, 0.55)};
   cursor: not-allowed;
 }
 
@@ -2306,23 +2319,55 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   outline: none;
 }
 .input:disabled {
-  background: ${c.borderSubtle};
-  color: ${c.textSecondary};
+  background: ${c.mode === 'dark' ? mix(c.surface, '#000000', 0.15) : mix(c.surface, '#000000', 0.04)};
+  color: ${c.mode === 'dark' ? mix(c.textPrimary, c.background, 0.45) : mix(c.textPrimary, c.background, 0.55)};
   cursor: not-allowed;
 }
-.input--error { border-color: #EF4444; }`;
+.input--error { border-color: #EF4444; }
+.input--success { border-color: #22C55E; }
 
-    const cardCSS = (c) =>
-`.card {
-  background: ${c.surface};
-  border-radius: ${radii[2]}px;
+.form-helper {
+  display: block;
+  font-size: 13px;
+  margin-top: 4px;
+}
+.form-helper--error { color: #DC2626; }
+.form-helper--success { color: #16A34A; }`;
+
+    const cardCSS = (c) => {
+      const eff = sc.effects || {};
+      const glassLine = eff.glassmorphism ? `  backdrop-filter: blur(${eff.blur?.strength || eff.blur?.enabled ? (eff.blur?.strength || '8px') : '8px'});
+  background: ${mix(c.surface, 'transparent', 0.15)};
+  border: 1px solid ${mix(c.border, 'transparent', 0.5)};
+  position: relative;
+  overflow: hidden;
+` : '';
+      const glowLine = eff.glow?.enabled ? `  box-shadow: 0 0 ${eff.glow?.intensity || '20px'} ${c.accent}44;
+` : `  box-shadow: ${buildShadow(concept.shadow, c.accent).subtle};
+`;
+      const noiseLine = eff.noise?.enabled ? `.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='${eff.noise?.opacity || '5%'}'/%3E%3C/svg%3E");
+  opacity: ${parseInt(eff.noise?.opacity || '5') / 100};
+  pointer-events: none;
+  z-index: 0;
+}
+.card > * { position: relative; z-index: 1; }
+` : '';
+      const glowHover = eff.glow?.enabled ? `  box-shadow: 0 0 ${parseInt(eff.glow?.intensity || '20') * 1.5}px ${c.accent}66;
+` : `  box-shadow: ${buildShadow(concept.shadow, c.accent).medium};
+`;
+      return `.card {
+${glassLine}  border-radius: ${radii[2]}px;
   padding: 20px;
-  box-shadow: ${buildShadow(concept.shadow, c.accent).subtle};
-  transition: box-shadow 0.3s;
+${glowLine}  transition: box-shadow 0.3s;
 }
 .card:hover {
-  box-shadow: ${buildShadow(concept.shadow, c.accent).medium};
-}`;
+${glowHover}}
+${noiseLine}`;
+    };
 
     const badgeCSS = (c) =>
 `.badge {
@@ -2339,13 +2384,18 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
 .badge--error   { background: #EF4444; color: #FFFFFF; }
 .badge--info    { background: #3B82F6; color: #FFFFFF; }`;
 
-    const navCSS = (c) =>
-`.navbar {
+    const navCSS = (c) => {
+      const eff = sc.effects || {};
+      const glassNav = eff.glassmorphism ? `  backdrop-filter: blur(${eff.blur?.strength || '8px'});
+  background: ${mix(c.background, 'transparent', 0.15)};
+  border-bottom: 1px solid ${mix(c.border, 'transparent', 0.5)};
+` : `  background: ${c.background};
+`;
+      return `.navbar {
   display: flex;
   align-items: center;
   height: ${comp.navigation ? comp.navigation.height : '56px'};
-  background: ${c.background};
-  gap: 24px;
+${glassNav}  gap: 24px;
   padding: 0 ${concept.space * 6}px;
 }
 .navbar-link {
@@ -2361,22 +2411,31 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   color: ${c.accent};
   border-bottom-color: ${c.accent};
 }`;
+    };
 
-    const modalCSS = (c) =>
-`.modal-overlay {
+    const modalCSS = (c) => {
+      const eff = sc.effects || {};
+      const glassModal = eff.glassmorphism ? `  backdrop-filter: blur(${eff.blur?.strength || '12px'});
+  background: ${mix(c.surface, 'transparent', 0.2)};
+  border: 1px solid ${mix(c.border, 'transparent', 0.5)};
+` : `  background: ${c.surface};
+`;
+      const glowModal = eff.glow?.enabled ? `  box-shadow: 0 0 ${eff.glow?.intensity || '20px'} ${c.accent}44;
+` : `  box-shadow: ${buildShadow(concept.shadow, c.accent).medium};
+`;
+      return `.modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: ${eff.glassmorphism ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.4)'};
   display: flex; align-items: center; justify-content: center;
   z-index: 300;
 }
 .modal {
-  background: ${c.surface};
-  border-radius: ${radii[2]}px;
+${glassModal}  border-radius: ${radii[2]}px;
   width: ${comp.modal ? comp.modal.width : '480px'};
   max-width: 90vw; max-height: 85vh;
   overflow-y: auto;
   padding: 24px;
-}
+${glowModal}}
 .modal-header {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 16px;
@@ -2385,6 +2444,7 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   display: flex; justify-content: flex-end; gap: 8px;
   margin-top: 24px;
 }`;
+    };
 
     return `# Components
 
@@ -2404,6 +2464,9 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
 \`\`\`html
 <input type="text" class="input" placeholder="Placeholder">
 <input type="text" class="input input--error" placeholder="Error">
+<input type="text" class="input input--success" placeholder="Success">
+<span class="form-helper form-helper--error">Это поле обязательно</span>
+<span class="form-helper form-helper--success">Проверка пройдена</span>
 \`\`\`
 
 ### Card
@@ -2453,6 +2516,16 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
 </div>
 \`\`\`
 
+${sc.effects && (sc.effects.glassmorphism || sc.effects.glow?.enabled) ? `
+### Glass Card (при включённых эффектах)
+
+\`\`\`html
+<div class="card card--glass">
+  <h3>Glass Surface</h3>
+  <p>Полупрозрачная карточка с blur-фоном</p>
+</div>
+\`\`\`
+` : ''}
 ---
 
 ## CSS — Светлая тема
