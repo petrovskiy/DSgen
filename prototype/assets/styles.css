@@ -407,17 +407,14 @@ textarea:focus-visible {
 
 .preset-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
   margin-top: var(--space-4);
 }
 
 .preset-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
+  padding: var(--space-5);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -430,75 +427,230 @@ textarea:focus-visible {
   box-shadow: var(--shadow-medium);
 }
 
+.preset-card-name {
+  font-size: var(--text-subheading);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.preset-card-note {
+  margin-top: 2px;
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+}
+
 .preset-variants {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 .preset-variant-btn {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-2);
+  padding: 0;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   cursor: pointer;
   text-align: left;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .preset-variant-btn:hover,
 .preset-variant-btn:focus-visible {
   border-color: var(--border);
-  box-shadow: var(--shadow-subtle);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
 }
 
 .preset-variant-btn:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
-.preset-variant-preview {
+/* ---------- Мини-сайт внутри обложки пресета (токены --pv-*) ---------- */
+.preset-cover {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-2);
-  border-radius: var(--radius-sm);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 10px;
+  background: var(--pv-bg);
+  color: var(--pv-text);
+  font-family: var(--pv-font);
+  border-radius: var(--pv-radius);
+  box-shadow: var(--shadow-subtle);
+  overflow: hidden;
+}
+
+.preset-ms-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.preset-ms-brand {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--pv-accent);
+  white-space: nowrap;
+}
+
+.preset-ms-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.preset-ms-nav-link {
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--pv-text) 38%, transparent);
+}
+
+.preset-ms-nav-cta {
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: var(--pv-accent);
+  color: #fff;
+  font-size: 7px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.preset-ms-body {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 10px;
+  min-height: 0;
+}
+
+.preset-ms-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.preset-ms-title {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--pv-text);
+}
+
+.preset-ms-text {
+  font-size: 8px;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--pv-text) 58%, transparent);
+}
+
+.preset-ms-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.preset-ms-btn {
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: var(--pv-accent);
+  color: #fff;
+  font-size: 7px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.preset-ms-btn-ghost {
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--pv-text) 30%, transparent);
+  color: color-mix(in srgb, var(--pv-text) 78%, transparent);
+  font-size: 7px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.preset-ms-phone {
+  width: 36%;
+  max-width: 76px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 5px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--pv-text) 10%, var(--pv-bg));
+  border: 1px solid color-mix(in srgb, var(--pv-text) 18%, transparent);
+}
+
+.preset-ms-phone-status {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pv-accent);
+}
+
+.preset-ms-phone-title {
+  font-size: 7px;
+  font-weight: 700;
+  color: var(--pv-text);
+}
+
+.preset-ms-phone-line {
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--pv-text) 30%, transparent);
+}
+
+.preset-ms-phone-line.short {
+  width: 62%;
+}
+
+.preset-ms-phone-btn {
+  margin-top: auto;
+  padding: 3px 4px;
+  border-radius: 3px;
+  background: var(--pv-accent);
+  color: #fff;
+  font-size: 6px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.preset-variant-meta {
+  padding: 0 var(--space-1);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text);
 }
 
 .preset-palette {
   display: flex;
   gap: var(--space-1);
-  height: 24px;
+  height: 12px;
+  padding: 0 var(--space-1);
 }
 
 .preset-palette span {
   flex: 1;
-  border-radius: 4px;
-}
-
-.preset-font {
-  font-size: var(--text-title);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-}
-
-.preset-variant-name {
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--text);
-}
-
-.preset-card-name {
-  font-size: var(--text-small);
-  font-weight: 600;
-  color: var(--text);
-}
-
-.preset-card-note {
-  font-size: var(--text-caption);
-  color: var(--text-muted);
+  border-radius: 3px;
 }
 
 .start-cta {
@@ -1954,7 +2106,11 @@ input[type='radio'] {
 /* ---------- 13. Адаптивность ---------- */
 @media (max-width: 900px) {
   .preset-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  .preset-variants {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   }
 
   .editor-body {

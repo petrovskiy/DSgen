@@ -584,12 +584,43 @@
         btn.dataset.style = styleKey;
         btn.dataset.variant = String(i);
         btn.setAttribute('aria-pressed', 'false');
+        const radius = Math.max(2, Math.round(v.radius / 2));
+        btn.style.setProperty('--pv-bg', v.previewBg);
+        btn.style.setProperty('--pv-text', v.previewText);
+        btn.style.setProperty('--pv-accent', v.accent);
+        btn.style.setProperty('--pv-font', "'" + v.fontPreview + "', sans-serif");
+        btn.style.setProperty('--pv-radius', radius + 'px');
         btn.innerHTML =
-          '<span class="preset-variant-preview" style="background:' + v.previewBg + '">' +
-          '<span class="preset-palette">' + v.palette.map((c) => '<span style="background:' + c + '"></span>').join('') + '</span>' +
-          '<span class="preset-font" style="color:' + v.previewText + ';font-family:\'' + v.fontPreview + '\',sans-serif">Аа Bb</span>' +
+          '<span class="preset-cover">' +
+          '<span class="preset-ms-header">' +
+          '<span class="preset-ms-brand">DSgen</span>' +
+          '<span class="preset-ms-nav">' +
+          '<span class="preset-ms-nav-link"></span>' +
+          '<span class="preset-ms-nav-link"></span>' +
+          '<span class="preset-ms-nav-cta">Войти</span>' +
           '</span>' +
-          '<span class="preset-variant-name">' + v.name + '</span>';
+          '</span>' +
+          '<span class="preset-ms-body">' +
+          '<span class="preset-ms-col">' +
+          '<span class="preset-ms-title">Токены, которые читаются</span>' +
+          '<span class="preset-ms-text">Палитра, шрифты и отступы — из токенов</span>' +
+          '<span class="preset-ms-actions">' +
+          '<span class="preset-ms-btn">Начать</span>' +
+          '<span class="preset-ms-btn-ghost">Детали</span>' +
+          '</span>' +
+          '</span>' +
+          '<span class="preset-ms-phone">' +
+          '<span class="preset-ms-phone-status"></span>' +
+          '<span class="preset-ms-phone-title">Главная</span>' +
+          '<span class="preset-ms-phone-line"></span>' +
+          '<span class="preset-ms-phone-line short"></span>' +
+          '<span class="preset-ms-phone-btn">Купить</span>' +
+          '</span>' +
+          '</span>' +
+          '</span>' +
+          '<span class="preset-variant-meta"></span>' +
+          '<span class="preset-palette">' + v.palette.map((c) => '<span style="background:' + c + '"></span>').join('') + '</span>';
+        btn.querySelector('.preset-variant-meta').textContent = v.name;
         btn.addEventListener('click', () => openEditor(styleKey, i, false));
         vars.appendChild(btn);
       });
