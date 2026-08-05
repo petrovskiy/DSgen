@@ -2803,10 +2803,21 @@ input[type='radio'] {
 }
 
 .concept-desc {
-  padding: var(--space-3) var(--space-4) var(--space-4);
+  padding: var(--space-3) var(--space-4) var(--space-3);
   font-size: var(--text-small);
   color: var(--text-muted);
   line-height: 1.4;
+}
+
+.concept-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 0 var(--space-4) var(--space-4);
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  opacity: 0.75;
 }
 
 /* ---------- 16. Шаг 4 — предпросмотр ---------- */
@@ -2858,16 +2869,92 @@ input[type='radio'] {
   box-shadow: var(--shadow-medium);
 }
 
-/* ---------- 17. Edit panel (шаг 4) ---------- */
-.edit-panel {
-  margin-bottom: var(--space-4);
-  padding: var(--space-6);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+/* ---------- 17. Floating FAB (шаг 4) ---------- */
+.fab-edit {
+  position: fixed;
+  right: 24px;
+  bottom: 80px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.fab-edit:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+.fab-edit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.fab-edit .icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* ---------- 18. Drawer (выезжает справа, шаг 4) ---------- */
+.edit-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100vh;
   background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+  z-index: 300;
+  overflow-y: auto;
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-8);
+  animation: drawerSlideIn 0.25s ease-out;
+}
+@keyframes drawerSlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.edit-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+.edit-drawer-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+.edit-drawer-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.edit-drawer-close:hover {
+  background: var(--border);
+}
+.edit-drawer-close .icon {
+  width: 18px;
+  height: 18px;
 }
 
 .edit-section {
@@ -2875,7 +2962,6 @@ input[type='radio'] {
   flex-direction: column;
   gap: var(--space-3);
 }
-
 .edit-label {
   font-size: 13px;
   font-weight: 600;
@@ -2884,18 +2970,68 @@ input[type='radio'] {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-
+.edit-label-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: color 0.15s;
+}
+.edit-label-btn:hover {
+  color: var(--text);
+}
+.edit-chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+.edit-label-btn[aria-expanded="false"] .edit-chevron {
+  transform: rotate(-90deg);
+}
+.collapsible .edit-palettes[hidden] {
+  display: none;
+}
+.edit-palettes:not([hidden]) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.edit-paste-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.edit-paste-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 .edit-fonts {
   display: flex;
+  flex-direction: column;
   gap: var(--space-3);
-  flex-wrap: wrap;
 }
-
 .edit-field {
   flex: 1;
-  min-width: 160px;
+  min-width: 140px;
 }
-
 .edit-field-label {
   display: block;
   font-size: 12px;
@@ -2903,13 +3039,11 @@ input[type='radio'] {
   color: var(--text-muted);
   margin-bottom: 4px;
 }
-
 .edit-palettes {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
-
 .edit-palette-btn {
   display: flex;
   gap: 2px;
@@ -2920,11 +3054,9 @@ input[type='radio'] {
   background: var(--bg);
   transition: border-color 120ms ease, box-shadow 120ms ease;
 }
-
 .edit-palette-btn:hover {
   border-color: var(--accent);
 }
-
 .edit-palette-btn.is-active {
   border-color: var(--accent);
   box-shadow: var(--shadow-focus);

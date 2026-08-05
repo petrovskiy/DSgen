@@ -81,10 +81,6 @@
       <div class="preview-info" id="preview-info">
         <div class="preview-info-badge" id="preview-info-badge"></div>
         <div class="preview-actions">
-          <button type="button" class="btn btn-secondary" id="edit-toggle-btn">
-            <svg class="icon" aria-hidden="true"><use href="#tabler-edit"></use></svg>
-            Редактировать
-          </button>
           <button type="button" class="btn btn-primary" id="download-zip-btn">
             <svg class="icon" aria-hidden="true"><use href="#tabler-file-zip"></use></svg>
             Скачать архив
@@ -92,7 +88,15 @@
         </div>
       </div>
 
-      <div class="edit-panel" id="edit-panel" hidden>
+      <!-- Drawer (выезжает справа) -->
+      <div class="edit-drawer" id="edit-panel" hidden>
+        <div class="edit-drawer-header">
+          <span class="edit-drawer-title">Настройки</span>
+          <button type="button" class="edit-drawer-close" id="edit-drawer-close" aria-label="Закрыть">
+            <svg class="icon" aria-hidden="true"><use href="#tabler-x"></use></svg>
+          </button>
+        </div>
+
         <div class="edit-section">
           <p class="edit-label">Шрифты</p>
           <div class="edit-fonts">
@@ -110,13 +114,30 @@
             </div>
           </div>
         </div>
+        <div class="edit-section collapsible">
+          <button type="button" class="edit-label-btn" id="edit-palette-toggle" aria-expanded="false">
+            <svg class="icon edit-chevron" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
+            Палитра
+          </button>
+          <div class="edit-palettes" id="edit-palettes" hidden></div>
+          <button type="button" class="edit-paste-btn" id="edit-paste-colors">
+            <svg class="icon" aria-hidden="true" style="width:14px;height:14px"><use href="#tabler-clipboard"></use></svg>
+            Вставить из Colors CO
+          </button>
+        </div>
         <div class="edit-section">
-          <p class="edit-label">Палитра</p>
-          <div class="edit-palettes" id="edit-palettes"></div>
+          <p class="edit-label">Концепция</p>
+          <div class="select-wrap">
+            <select id="edit-concept-select" class="select"></select>
+          </div>
         </div>
       </div>
 
       <div class="final-preview" id="final-preview"></div>
+
+      <button type="button" class="fab-edit" id="edit-toggle-btn" aria-label="Редактировать">
+        <svg class="icon" aria-hidden="true"><use href="#tabler-edit"></use></svg>
+      </button>
     </section>
 
   </main>
