@@ -7,7 +7,7 @@
   <title>DSgen — генератор дизайн-систем</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Tenor+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -15,15 +15,21 @@
 <div class="screen is-active" id="screen-wizard" aria-label="Генератор дизайн-систем">
   <header class="wizard-header">
     <span class="brand">
-      <svg class="icon" aria-hidden="true"><use href="#tabler-palette"></use></svg>
-      <span class="brand-name">DSgen</span>
+      <span class="brand-mark">MD</span>
+      <span class="brand-name">Design Kit</span>
     </span>
-<ol class="wizard-steps" aria-label="Прогресс шагов">
+    <ol class="wizard-steps" aria-label="Прогресс шагов">
       <li class="wizard-step is-active" data-step="1">Концепция</li>
       <li class="wizard-step" data-step="2">Палитра</li>
       <li class="wizard-step" data-step="3">Шрифты</li>
       <li class="wizard-step" data-step="4">Превью</li>
     </ol>
+    <label class="shell-theme-slider" id="shell-theme-toggle">
+      <svg class="icon shell-theme-icon" aria-hidden="true"><use href="#tabler-sun"></use></svg>
+      <input type="checkbox" id="shell-theme-slider" class="shell-theme-input">
+      <span class="shell-theme-knob"></span>
+      <svg class="icon shell-theme-icon" aria-hidden="true"><use href="#tabler-moon"></use></svg>
+    </label>
   </header>
 
   <main class="wizard-body">
@@ -133,9 +139,17 @@
         </div>
       </div>
 
-      <div class="preview-tabs" id="preview-tabs">
-        <button type="button" class="preview-tab is-active" data-tab="web">Сайт</button>
-        <button type="button" class="preview-tab" data-tab="mobile">Мобильное приложение</button>
+      <div class="preview-tabs-row" id="preview-tabs-row">
+        <div class="preview-tabs" id="preview-tabs">
+          <button type="button" class="preview-tab is-active" data-tab="web">Сайт</button>
+          <button type="button" class="preview-tab" data-tab="mobile">Мобильное приложение</button>
+        </div>
+        <label class="theme-slider" id="theme-toggle-area" hidden>
+          <svg class="icon theme-slider-icon" aria-hidden="true"><use href="#tabler-sun"></use></svg>
+          <input type="checkbox" id="theme-toggle-slider" class="theme-slider-input">
+          <span class="theme-slider-knob"></span>
+          <svg class="icon theme-slider-icon" aria-hidden="true"><use href="#tabler-moon"></use></svg>
+        </label>
       </div>
       <div class="final-preview" id="final-preview"></div>
       <div class="mobile-preview" id="mobile-preview" hidden></div>

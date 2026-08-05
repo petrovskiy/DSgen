@@ -219,8 +219,83 @@ function ensureContrast(color, bg, minRatio) {
     };
   }
 
-  function getSemanticColors(palette) {
-    if (!palette.colorSystem) palette.colorSystem = analyzePalette(palette.colors);
+  function generateAltTheme(cs) {
+    // Генерирует противоположную тему из colorSystem
+    const isLight = cs.mode === 'light';
+    let bg, surface, surfaceElevated, border, borderSubtle;
+    let textPrimary, textSecondary, textMuted;
+    let accent, accentHover, accentSoft;
+    const sem = {};
+
+    if (isLight) {
+      // Light → Dark
+      const bgRgb = hexToRgb(cs.background);
+      const dr = bgRgb.r < 250 ? -1 : 0, dg = bgRgb.g < 250 ? -1 : 0, db = bgRgb.b < 250 ? -1 : 0;
+      const bias = { r: bgRgb.r + dr * 4, g: bgRgb.g + dg * 4, b: bgRgb.b + db * 4 };
+      bg = rgbToHex({ r: clamp(bias.r - 236, 6, 16), g: clamp(bias.g - 236, 6, 16), b: clamp(bias.b - 236, 8, 20) });
+      surface = rgbToHex({ r: clamp(bias.r - 220, 12, 24), g: clamp(bias.g - 220, 12, 24), b: clamp(bias.b - 220, 14, 28) });
+      surfaceElevated = rgbToHex({ r: clamp(bias.r - 202, 18, 34), g: clamp(bias.g - 202, 18, 34), b: clamp(bias.b - 202, 20, 36) });
+      border = mix(bg, '#ffffff', 0.1);
+      borderSubtle = mix(bg, '#ffffff', 0.05);
+      textPrimary = mix(cs.textPrimary, '#ffffff', 0.92);
+      textSecondary = mix(textPrimary, bg, 0.35);
+      textMuted = mix(textPrimary, bg, 0.58);
+      const accH = rgbToHsl(hexToRgb(cs.accent));
+      accent = hslToHex(accH.h, Math.min(100, accH.s + 5), Math.max(38, Math.min(72, accH.l + 15)));
+      accentHover = hslToHex(accH.h, Math.min(100, accH.s + 8), Math.min(88, accH.l + 25));
+      accentSoft = mix(accent, bg, 0.82);
+      sem.success = mix('#4ADE80', bg, 0.28); sem.warning = mix('#FBBF24', bg, 0.28);
+      sem.error = mix('#F87171', bg, 0.28); sem.info = mix('#60A5FA', bg, 0.28);
+    } else {
+      // Dark → Light
+      const bgRgb = hexToRgb(cs.background);
+      const dr = bgRgb.r + 240, dg = bgRgb.g + 240, db = bgRgb.b + 240;
+      bg = rgbToHex({ r: clamp(dr, 248, 255), g: clamp(dg, 248, 255), b: clamp(db, 248, 255) });
+      surface = rgbToHex({ r: clamp(dr - 8, 240, 250), g: clamp(dg - 8, 240, 250), b: clamp(db - 8, 240, 250) });
+      surfaceElevated = '#ffffff';
+      const bgL = lum(bg);
+      border = mix(bg, '#000000', 0.1);
+      borderSubtle = mix(bg, border, 0.4);
+      textPrimary = mix(cs.textPrimary, '#000000', 0.88);
+      const tpL = lum(textPrimary);
+      if (tpL > 0.12) textPrimary = mix(textPrimary, '#000000', 0.7);
+      textSecondary = mix(textPrimary, bg, 0.38);
+      textMuted = mix(textPrimary, bg, 0.58);
+      const accH = rgbToHsl(hexToRgb(cs.accent));
+      accent = hslToHex(accH.h, Math.min(100, accH.s + 5), Math.max(22, Math.min(55, accH.l - 8)));
+      accentHover = hslToHex(accH.h, Math.min(100, accH.s + 5), Math.max(14, Math.min(45, accH.l - 16)));
+      accentSoft = mix(accent, bg, 0.88);
+      sem.success = '#3F6212'; sem.warning = '#92400E';
+      sem.error = '#9A3412'; sem.info = '#1E40AF';
+    }
+
+    // Contrast adjustment
+    textPrimary = ensureContrast(textPrimary, isLight ? bg : bg, 4.5);
+    textSecondary = ensureContrast(textSecondary, isLight ? bg : bg, 3.0);
+    textMuted = ensureContrast(textMuted, isLight ? bg : bg, 3.0);
+
+    return {
+      mode: isLight ? 'dark' : 'light',
+      background: bg, surface, surfaceElevated, border, borderSubtle,
+      textPrimary, textSecondary, textMuted, accent, accentHover, accentSoft,
+      semantic: sem
+    };
+  }
+
+  function getSemanticColors(palette, useAlt) {
+    if (useAlt && palette.colorSystemAlt) return palette.colorSystemAlt;
+    if (useAlt && palette.colorSystem) {
+      if (!palette._colorSystemAlt) palette._colorSystemAlt = generateAltTheme(palette.colorSystem);
+      return palette._colorSystemAlt;
+    }
+    if (!palette.colorSystem) {
+      palette.colorSystem = analyzePalette(palette.colors);
+      palette.primaryMode = palette.colorSystem.mode;
+    }
+    if (useAlt) {
+      if (!palette._colorSystemAlt) palette._colorSystemAlt = generateAltTheme(palette.colorSystem);
+      return palette._colorSystemAlt;
+    }
     return palette.colorSystem;
   }
 
@@ -615,6 +690,7 @@ function ensureContrast(color, bg, minRatio) {
     headingFont: '',
     bodyFont: '',
     conceptId: null,
+    themeMode: null, // 'light' | 'dark' — переопределение темы пользователем
   };
 
   function fontCss(family) {
@@ -670,11 +746,17 @@ function ensureContrast(color, bg, minRatio) {
     if (step === 2) renderPalettes();
     if (step === 3) renderFontPairs();
 
-    // Показывать FAB только на шаге 4
+    // Показывать FAB и слайдер темы только на шаге 4
     const fab = $('#edit-toggle-btn');
     if (fab) fab.hidden = step !== 4;
+    const themeArea = $('#theme-toggle-area');
+    if (themeArea) themeArea.hidden = step !== 4;
 
-    if (step === 4) { renderStep4(); renderEditPanel(); }
+    if (step === 4) {
+      const p = getPalette();
+      if (!wizard.themeMode) wizard.themeMode = p.primaryMode || p.colorSystem?.mode || 'light';
+      renderStep4(); renderEditPanel();
+    }
     // Закрыть drawer при переходе на другой шаг
     if (step !== 4) {
       const panel = $('#edit-panel');
@@ -743,7 +825,11 @@ function ensureContrast(color, bg, minRatio) {
   }
 
   function buildPaletteCard(grid, p, recommended) {
-    const cs = getSemanticColors(p);
+    const shellDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (!p.primaryMode) getSemanticColors(p); // вычисляет primaryMode
+    const pPrimary = p.primaryMode || 'light';
+    const useAlt = shellDark !== (pPrimary === 'dark');
+    const cs = getSemanticColors(p, useAlt);
     const card = document.createElement('button');
     card.type = 'button';
     card.className = 'palette-card' + (wizard.paletteId === p.id ? ' is-active' : '');
@@ -761,6 +847,7 @@ function ensureContrast(color, bg, minRatio) {
       '<span class="palette-name">' + p.name + '</span>';
     card.addEventListener('click', () => {
       wizard.paletteId = p.id;
+      wizard.themeMode = null;
       $$('.palette-card').forEach((c) => c.classList.toggle('is-active', c.dataset.id === p.id));
       renderFooterSelection();
     });
@@ -830,28 +917,59 @@ function ensureContrast(color, bg, minRatio) {
   function renderConcepts() {
     const grid = $('#concept-grid');
     grid.innerHTML = '';
+    const shellDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
     DESIGN_CONCEPTS.forEach((c) => {
-      /* Get first recommended palette and font for styling */
+      /* Первая рекомендуемая палитра и шрифт */
       const firstPalId = (c.paletteIds || [])[0] || PALETTES[0].id;
       const palette = PALETTES.find(p => p.id === firstPalId) || PALETTES[0];
-      const cs = getSemanticColors(palette);
       const firstFontId = (c.fontPairIds || [])[0] || FONT_PAIRS[0].id;
       const fontPair = FONT_PAIRS.find(f => f.id === firstFontId) || FONT_PAIRS[0];
+      loadFont(fontPair.heading);
+      loadFont(fontPair.body);
+
+      /* Определяем тему карточки по теме оболочки */
+      if (!palette.primaryMode) getSemanticColors(palette); // вычисляет primaryMode
+      const pPrimary = palette.primaryMode || 'light';
+      const useAlt = shellDark !== (pPrimary === 'dark');
+      const cs = getSemanticColors(palette, useAlt);
+
       const isD = cs.mode === 'dark';
       const descColor = isD ? cs.textMuted : cs.textSecondary;
+      const radii = c.radius || [8, 12, 16];
+
+      /* Дополнительные стили по концепции */
+      const sc = c.styleConfig || {};
+      const glow = sc.effects?.glow;
+      const glass = sc.effects?.glassmorphism;
+      let cardShadow = 'var(--shadow-subtle)';
+      if (glow && glow.enabled && isD) {
+        cardShadow = '0 0 ' + (glow.intensity || '20px') + ' ' + cs.accent + '33';
+      } else if (c.shadow === 'medium') {
+        cardShadow = 'var(--shadow-medium)';
+      } else if (c.shadow === 'none') {
+        cardShadow = 'none';
+      }
+
+      let cardBg = cs.background;
+      if (glass && isD) {
+        cardBg = cs.surface;
+      }
 
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'concept-card' + (wizard.conceptId === c.id ? ' is-active' : '');
       card.dataset.id = c.id;
       card.style.cssText =
-        '--cc-bg:' + cs.background + ';--cc-text:' + cs.textPrimary + ';--cc-desc:' + descColor +
-        ';--cc-font:\'' + fontPair.heading + '\',sans-serif;--cc-body-font:\'' + fontPair.body + '\',sans-serif' +
-        ';--cc-weight:' + fontPair.hw + ';--cc-border:' + cs.border + ';--cc-accent:' + cs.accent +
-        ';background:var(--cc-bg);color:var(--cc-text);font-family:var(--cc-body-font);border-color:var(--cc-border)';
+        'background:' + cardBg +
+        ';color:' + cs.textPrimary +
+        ';font-family:\'' + fontPair.body + '\',sans-serif' +
+        ';border-color:' + cs.border +
+        ';border-radius:' + radii[1] + 'px' +
+        ';box-shadow:' + cardShadow;
       card.innerHTML =
-        '<span class="concept-name" style="font-family:var(--cc-font);font-weight:var(--cc-weight)">' + c.name + '</span>' +
-        '<span class="concept-desc" style="color:var(--cc-desc)">' + c.desc + '</span>';
+        '<span class="concept-name" style="background:' + cs.accent + ';color:#fff;font-family:\'' + fontPair.heading + '\',sans-serif;font-weight:' + fontPair.hw + '">' + c.name + '</span>' +
+        '<span class="concept-desc" style="color:' + descColor + '">' + c.desc + '</span>';
       card.addEventListener('click', () => {
         wizard.conceptId = c.id;
         const recPalettes = c.paletteIds || [];
@@ -880,16 +998,22 @@ function ensureContrast(color, bg, minRatio) {
   function getFontPair() { return FONT_PAIRS.find((p) => p.id === wizard.fontPairId) || FONT_PAIRS[0]; }
   function getConcept() { return DESIGN_CONCEPTS.find((c) => c.id === wizard.conceptId) || DESIGN_CONCEPTS[0]; }
 
-  function getSafeColors(palette) { return getSemanticColors(palette); }
+  function getSafeColors(palette) {
+    const pMode = palette.primaryMode || palette.colorSystem?.mode;
+    const useAlt = wizard.themeMode && pMode && wizard.themeMode !== pMode;
+    return getSemanticColors(palette, useAlt);
+  }
 
   function renderStep4() {
     const palette = getPalette();
     const pair = getFontPair();
     const concept = getConcept();
-    const cs = getSemanticColors(palette);
+    const cs = getSafeColors(palette);
     const bg = cs.background, surface = cs.surface, text = cs.textPrimary;
     const textMuted = cs.textMuted, accent = cs.accent;
     const isD = cs.mode === 'dark';
+    const primaryMode = palette.primaryMode || palette.colorSystem?.mode || analyzePalette(palette.colors).mode;
+    const isAltTheme = wizard.themeMode && wizard.themeMode !== primaryMode;
     const scale = TYPE_SCALES[concept.scale] || TYPE_SCALES.standard;
     const radii = concept.radius;
     const shadow = buildShadow(concept.shadow, accent);
@@ -904,6 +1028,14 @@ function ensureContrast(color, bg, minRatio) {
       '<span class="badge-item">' + hf + ' + ' + bf + '</span>' +
       '<span class="badge-sep"></span>' +
       '<span class="badge-item">' + concept.name + '</span>';
+
+    // Theme slider
+    const themeArea = $('#theme-toggle-area');
+    const themeSlider = $('#theme-toggle-slider');
+    if (themeArea && themeSlider) {
+      themeArea.hidden = false;
+      themeSlider.checked = cs.mode === 'dark';
+    }
 
     const wrap = $('#final-preview');
     wrap.style.cssText = '--fp-bg:' + bg + ';--fp-surface:' + surface + ';--fp-text:' + text + ';--fp-text-muted:' + textMuted + ';--fp-accent:' + accent + ';--fp-font:\'' + hf + '\',system-ui,sans-serif;--fp-body-font:\'' + bf + '\',system-ui,sans-serif;--fp-heading-weight:600;--fp-body-weight:400;--fp-title-size:' + scale.title + 'px;--fp-body-size:' + scale.body + 'px;--fp-radius-sm:' + radii[0] + 'px;--fp-radius-md:' + radii[1] + 'px;--fp-radius-lg:' + radii[2] + 'px;--fp-shadow-subtle:' + shadow.subtle + ';--fp-shadow-medium:' + shadow.medium + ';background:var(--fp-bg);color:var(--fp-text);font-family:var(--fp-body-font)';
@@ -1048,7 +1180,11 @@ function ensureContrast(color, bg, minRatio) {
     const palette = getPalette();
     const pair = getFontPair();
     const concept = getConcept();
-    const cs = getSemanticColors(palette);
+    const cs = getSafeColors(palette);
+    const primaryCs = getSemanticColors(palette);
+    const altCs = getSemanticColors(palette, true);
+    const csLight = primaryCs.mode === 'light' ? primaryCs : altCs;
+    const csDark = primaryCs.mode === 'dark' ? primaryCs : altCs;
     const bg = cs.background, surface = cs.surface, text = cs.textPrimary;
     const textMuted = cs.textMuted, accent = cs.accent;
     const isD = cs.mode === 'dark';
@@ -1644,29 +1780,64 @@ ${images.illustrationStyle || 'Минималистичные'}
 
 # 15. ТЁМНАЯ / СВЕТЛАЯ ТЕМА
 
+## Светлая тема
+
 \`\`\`text
-Режимы: ${isD ? 'Тёмная' : 'Светлая'}
-По умолчанию: ${isD ? 'Тёмная' : 'Светлая'}
+Режим:        Светлая
+Background:   ${csLight.background}
+Surface:      ${csLight.surface}
+Surface Elevated: ${csLight.surfaceElevated}
+Border:       ${csLight.border}
+Border Subtle: ${csLight.borderSubtle}
 \`\`\`
 
-## ${isD ? 'Тёмная (текущая)' : 'Светлая (текущая)'}
-
 \`\`\`text
-Background: ${bg}
-Surface: ${surface}
-Text: ${text}
-Border: ${borderCol}
-Primary: ${accent}
+Text Primary:   ${csLight.textPrimary}
+Text Secondary: ${csLight.textSecondary}
+Text Muted:     ${csLight.textMuted}
 \`\`\`
 
-## ${isD ? 'Светлая (альтернативная)' : 'Тёмная (альтернативная)'}
+\`\`\`text
+Primary:       ${csLight.accent}
+Primary Hover: ${csLight.accentHover}
+Primary Soft:  ${csLight.accentSoft}
+\`\`\`
 
 \`\`\`text
-Background: ${isD ? '#FFFFFF' : '#0F0E17'}
-Surface: ${isD ? '#FAFAF9' : '#1A1A2E'}
-Text: ${isD ? '#1C1917' : '#E8EAED'}
-Border: ${isD ? '#E7E5E4' : '#2D2D3F'}
-Primary: ${accent}
+Success: ${csLight.semantic.success}
+Warning: ${csLight.semantic.warning}
+Error:   ${csLight.semantic.error}
+Info:    ${csLight.semantic.info}
+\`\`\`
+
+## Тёмная тема
+
+\`\`\`text
+Режим:        Тёмная
+Background:   ${csDark.background}
+Surface:      ${csDark.surface}
+Surface Elevated: ${csDark.surfaceElevated}
+Border:       ${csDark.border}
+Border Subtle: ${csDark.borderSubtle}
+\`\`\`
+
+\`\`\`text
+Text Primary:   ${csDark.textPrimary}
+Text Secondary: ${csDark.textSecondary}
+Text Muted:     ${csDark.textMuted}
+\`\`\`
+
+\`\`\`text
+Primary:       ${csDark.accent}
+Primary Hover: ${csDark.accentHover}
+Primary Soft:  ${csDark.accentSoft}
+\`\`\`
+
+\`\`\`text
+Success: ${csDark.semantic.success}
+Warning: ${csDark.semantic.warning}
+Error:   ${csDark.semantic.error}
+Info:    ${csDark.semantic.info}
 \`\`\`
 
 Правила:
@@ -1674,6 +1845,8 @@ Primary: ${accent}
 * Не просто инвертируй цвета
 * Поддерживай иерархию и контраст в обоих режимах
 * Семантические цвета должны оставаться узнаваемыми в обеих темах
+* Светлая тема подходит для дневного использования
+* Тёмная тема снижает нагрузку на глаза в условиях низкой освещённости
 
 ---
 
@@ -1978,7 +2151,11 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     const palette = getPalette();
     const pair = getFontPair();
     const concept = getConcept();
-    const cs = getSemanticColors(palette);
+    const cs = getSafeColors(palette);
+    const primaryCs = getSemanticColors(palette);
+    const altCs = getSemanticColors(palette, true);
+    const csLight = primaryCs.mode === 'light' ? primaryCs : altCs;
+    const csDark = primaryCs.mode === 'dark' ? primaryCs : altCs;
     const bg = cs.background, surface = cs.surface, text = cs.textPrimary;
     const textMuted = cs.textMuted, accent = cs.accent;
     const radii = concept.radius;
@@ -1987,24 +2164,23 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     const isD = cs.mode === 'dark';
     const sc = concept.styleConfig || {};
 
+    const colorToken = (c) => ({
+      background: c.background, surface: c.surface, 'surface-elevated': c.surfaceElevated,
+      'text-primary': c.textPrimary, 'text-secondary': c.textSecondary, 'text-muted': c.textMuted,
+      'text-inverse': c.mode === 'dark' ? '#1C1917' : '#FFFFFF',
+      accent: c.accent, 'accent-hover': c.accentHover,
+      'accent-active': mix(c.accent, c.mode === 'dark' ? '#ffffff' : '#000000', 0.3),
+      'accent-soft': c.accentSoft, border: c.border, 'border-subtle': c.borderSubtle,
+      success: c.semantic.success, warning: c.semantic.warning, error: c.semantic.error, info: c.semantic.info,
+    });
+
     return JSON.stringify({
-      meta: { name: 'DSgen Project', palette: palette.name, fonts: pair.name, concept: concept.name },
+      meta: { name: 'Design Kit Project', palette: palette.name, fonts: pair.name, concept: concept.name, date: new Date().toISOString().slice(0, 10) },
       color: {
-        background: bg,
-        surface: surface,
-        'surface-elevated': cs.surfaceElevated,
-        'text-primary': text,
-        'text-secondary': cs.textSecondary,
-        'text-muted': textMuted,
-        'text-inverse': isD ? '#1C1917' : '#FFFFFF',
-        accent: accent,
-        'accent-hover': cs.accentHover,
-        'accent-active': mix(accent, isD ? '#ffffff' : '#000000', 0.3),
-        'accent-soft': cs.accentSoft,
-        'border': cs.border,
-        'border-subtle': cs.borderSubtle,
+        active: colorToken(cs),
+        light: colorToken(csLight),
+        dark: colorToken(csDark),
         'palette-original': palette.colors,
-        success: cs.semantic.success, warning: cs.semantic.warning, error: cs.semantic.error, info: cs.semantic.info,
       },
       typography: {
         'font-heading': pair.heading,
@@ -2030,29 +2206,19 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     const palette = getPalette();
     const pair = getFontPair();
     const concept = getConcept();
-    const cs = getSemanticColors(palette);
-    const bg = cs.background, surface = cs.surface, text = cs.textPrimary;
-    const textMuted = cs.textMuted, accent = cs.accent;
-    const isD = cs.mode === 'dark';
+    const cs = getSafeColors(palette);
+    const primaryCs = getSemanticColors(palette);
+    const altCs = getSemanticColors(palette, true);
+    const csL = primaryCs.mode === 'light' ? primaryCs : altCs;
+    const csD = primaryCs.mode === 'dark' ? primaryCs : altCs;
     const radii = concept.radius;
     const sc = concept.styleConfig || {};
     const comp = sc.components || {};
-    const borderCol = cs.border;
-    const secText = cs.textSecondary;
 
-    return `# Components
-
-## Button
-
-### Primary
-\`\`\`html
-<button class="btn btn-primary">Action</button>
-\`\`\`
-
-\`\`\`css
-.btn-primary {
-  background: ${accent};
-  color: ${isD ? bg : '#FFFFFF'};
+    const btnCSS = (c) =>
+`.btn-primary {
+  background: ${c.accent};
+  color: ${c.mode === 'dark' ? c.background : '#FFFFFF'};
   border-radius: ${radii[1]}px;
   padding: 10px 22px;
   font-weight: 600;
@@ -2060,31 +2226,22 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
 }
-.btn-primary:hover {
-  background: ${cs.accentHover};
-}
+.btn-primary:hover { background: ${c.accentHover}; }
 .btn-primary:focus-visible {
-  box-shadow: 0 0 0 3px ${cs.accentSoft};
+  box-shadow: 0 0 0 3px ${c.accentSoft};
   outline: none;
 }
 .btn-primary:disabled {
-  background: ${secText};
-  color: ${isD ? bg : '#FFFFFF'};
+  background: ${c.textSecondary};
+  color: ${c.mode === 'dark' ? c.background : '#FFFFFF'};
   opacity: 0.5;
   cursor: not-allowed;
 }
-\`\`\`
 
-### Secondary
-\`\`\`html
-<button class="btn btn-secondary">Action</button>
-\`\`\`
-
-\`\`\`css
 .btn-secondary {
-  background: ${surface};
-  color: ${text};
-  border: 1px solid ${borderCol};
+  background: ${c.surface};
+  color: ${c.textPrimary};
+  border: 1px solid ${c.border};
   border-radius: ${radii[1]}px;
   padding: 10px 22px;
   font-weight: 500;
@@ -2092,23 +2249,16 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   transition: background 0.2s, box-shadow 0.2s;
 }
 .btn-secondary:hover {
-  background: ${mix(surface, isD ? '#ffffff' : '#000000', isD ? 0.05 : 0.03)};
+  background: ${mix(c.surface, c.mode === 'dark' ? '#ffffff' : '#000000', c.mode === 'dark' ? 0.05 : 0.03)};
 }
 .btn-secondary:focus-visible {
-box-shadow: 0 0 0 3px ${cs.accentSoft};
+  box-shadow: 0 0 0 3px ${c.accentSoft};
   outline: none;
 }
-\`\`\`
 
-### Ghost
-\`\`\`html
-<button class="btn btn-ghost">Action</button>
-\`\`\`
-
-\`\`\`css
 .btn-ghost {
   background: transparent;
-  color: ${accent};
+  color: ${c.accent};
   border: none;
   border-radius: ${radii[1]}px;
   padding: 10px 22px;
@@ -2116,21 +2266,12 @@ box-shadow: 0 0 0 3px ${cs.accentSoft};
   cursor: pointer;
   transition: background 0.2s;
 }
-.btn-ghost:hover {
-  background: ${cs.accentSoft};
-}
+.btn-ghost:hover { background: ${c.accentSoft}; }
 .btn-ghost:focus-visible {
-  box-shadow: 0 0 0 3px ${cs.accentSoft};
+  box-shadow: 0 0 0 3px ${c.accentSoft};
   outline: none;
 }
-\`\`\`
 
-### Destructive
-\`\`\`html
-<button class="btn btn-destructive">Delete</button>
-\`\`\`
-
-\`\`\`css
 .btn-destructive {
   background: #EF4444;
   color: #FFFFFF;
@@ -2141,51 +2282,131 @@ box-shadow: 0 0 0 3px ${cs.accentSoft};
   cursor: pointer;
   transition: background 0.2s;
 }
-.btn-destructive:hover {
-  background: #DC2626;
-}
+.btn-destructive:hover { background: #DC2626; }
 .btn-destructive:focus-visible {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.4);
   outline: none;
-}
-\`\`\`
+}`;
 
-## Input
-
-\`\`\`html
-<input type="text" class="input" placeholder="Placeholder">
-\`\`\`
-
-\`\`\`css
-.input {
+    const inputCSS = (c) =>
+`.input {
   height: 44px;
   border-radius: ${radii[0]}px;
-  border: 1px solid ${borderCol};
-  background: ${bg};
-  color: ${text};
+  border: 1px solid ${c.border};
+  background: ${c.background};
+  color: ${c.textPrimary};
   padding: 0 14px;
   font-family: '${pair.body}', sans-serif;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.input:hover {
-  border-color: ${textMuted};
-}
+.input:hover { border-color: ${c.textMuted}; }
 .input:focus {
-  border-color: ${accent};
-  box-shadow: 0 0 0 3px ${cs.accentSoft};
+  border-color: ${c.accent};
+  box-shadow: 0 0 0 3px ${c.accentSoft};
   outline: none;
 }
 .input:disabled {
-  background: ${cs.borderSubtle};
-  color: ${secText};
+  background: ${c.borderSubtle};
+  color: ${c.textSecondary};
   cursor: not-allowed;
 }
-.input--error {
-  border-color: #EF4444;
+.input--error { border-color: #EF4444; }`;
+
+    const cardCSS = (c) =>
+`.card {
+  background: ${c.surface};
+  border-radius: ${radii[2]}px;
+  padding: 20px;
+  box-shadow: ${buildShadow(concept.shadow, c.accent).subtle};
+  transition: box-shadow 0.3s;
 }
+.card:hover {
+  box-shadow: ${buildShadow(concept.shadow, c.accent).medium};
+}`;
+
+    const badgeCSS = (c) =>
+`.badge {
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.badge--default { background: ${c.surface}; color: ${c.textPrimary}; }
+.badge--success { background: #22C55E; color: #FFFFFF; }
+.badge--warning { background: #F59E0B; color: #FFFFFF; }
+.badge--error   { background: #EF4444; color: #FFFFFF; }
+.badge--info    { background: #3B82F6; color: #FFFFFF; }`;
+
+    const navCSS = (c) =>
+`.navbar {
+  display: flex;
+  align-items: center;
+  height: ${comp.navigation ? comp.navigation.height : '56px'};
+  background: ${c.background};
+  gap: 24px;
+  padding: 0 ${concept.space * 6}px;
+}
+.navbar-link {
+  color: ${c.textMuted};
+  text-decoration: none;
+  font-size: 15px;
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.navbar-link:hover { color: ${c.textPrimary}; }
+.navbar-link.is-active {
+  color: ${c.accent};
+  border-bottom-color: ${c.accent};
+}`;
+
+    const modalCSS = (c) =>
+`.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 300;
+}
+.modal {
+  background: ${c.surface};
+  border-radius: ${radii[2]}px;
+  width: ${comp.modal ? comp.modal.width : '480px'};
+  max-width: 90vw; max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 8px;
+  margin-top: 24px;
+}`;
+
+    return `# Components
+
+## HTML (общий для обеих тем)
+
+### Button
+
+\`\`\`html
+<button class="btn btn-primary">Action</button>
+<button class="btn btn-secondary">Action</button>
+<button class="btn btn-ghost">Action</button>
+<button class="btn btn-destructive">Delete</button>
 \`\`\`
 
-## Card
+### Input
+
+\`\`\`html
+<input type="text" class="input" placeholder="Placeholder">
+<input type="text" class="input input--error" placeholder="Error">
+\`\`\`
+
+### Card
 
 \`\`\`html
 <div class="card">
@@ -2194,20 +2415,7 @@ box-shadow: 0 0 0 3px ${cs.accentSoft};
 </div>
 \`\`\`
 
-\`\`\`css
-.card {
-  background: ${surface};
-  border-radius: ${radii[2]}px;
-  padding: 20px;
-  box-shadow: ${buildShadow(concept.shadow, accent).subtle};
-  transition: box-shadow 0.3s;
-}
-.card:hover {
-  box-shadow: ${buildShadow(concept.shadow, accent).medium};
-}
-\`\`\`
-
-## Badge
+### Badge
 
 \`\`\`html
 <span class="badge badge--default">Label</span>
@@ -2217,38 +2425,7 @@ box-shadow: 0 0 0 3px ${cs.accentSoft};
 <span class="badge badge--info">Info</span>
 \`\`\`
 
-\`\`\`css
-.badge {
-  border-radius: 9999px;
-  padding: 2px 10px;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.badge--default {
-  background: ${surface};
-  color: ${text};
-}
-.badge--success {
-  background: #22C55E;
-  color: #FFFFFF;
-}
-.badge--warning {
-  background: #F59E0B;
-  color: #FFFFFF;
-}
-.badge--error {
-  background: #EF4444;
-  color: #FFFFFF;
-}
-.badge--info {
-  background: #3B82F6;
-  color: #FFFFFF;
-}
-\`\`\`
-
-## Navigation
+### Navigation
 
 \`\`\`html
 <nav class="navbar">
@@ -2258,33 +2435,7 @@ box-shadow: 0 0 0 3px ${cs.accentSoft};
 </nav>
 \`\`\`
 
-\`\`\`css
-.navbar {
-  display: flex;
-  align-items: center;
-  height: ${comp.navigation ? comp.navigation.height : '56px'};
-  background: ${bg};
-  gap: 24px;
-  padding: 0 ${concept.space * 6}px;
-}
-.navbar-link {
-  color: ${textMuted};
-  text-decoration: none;
-  font-size: 15px;
-  padding: 8px 0;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
-}
-.navbar-link:hover {
-  color: ${text};
-}
-.navbar-link.is-active {
-  color: ${accent};
-  border-bottom-color: ${accent};
-}
-\`\`\`
-
-## Modal
+### Modal
 
 \`\`\`html
 <div class="modal-overlay">
@@ -2302,42 +2453,79 @@ box-shadow: 0 0 0 3px ${cs.accentSoft};
 </div>
 \`\`\`
 
+---
+
+## CSS — Светлая тема
+
 \`\`\`css
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 300;
+/* Светлая тема */
+:root {
+  --bg: ${csL.background};
+  --surface: ${csL.surface};
+  --text: ${csL.textPrimary};
+  --text-secondary: ${csL.textSecondary};
+  --text-muted: ${csL.textMuted};
+  --border: ${csL.border};
+  --accent: ${csL.accent};
+  --accent-hover: ${csL.accentHover};
+  --accent-soft: ${csL.accentSoft};
+  --radius-sm: ${radii[0]}px;
+  --radius-md: ${radii[1]}px;
+  --radius-lg: ${radii[2]}px;
+  --font: '${pair.body}', sans-serif;
+  --font-heading: '${pair.heading}', sans-serif;
 }
-.modal {
-  background: ${surface};
-  border-radius: ${radii[2]}px;
-  width: ${comp.modal ? comp.modal.width : '480px'};
-  max-width: 90vw;
-  max-height: 85vh;
-  overflow-y: auto;
-  padding: 24px;
-}
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 24px;
-}
+
+${btnCSS(csL)}
+
+${inputCSS(csL)}
+
+${cardCSS(csL)}
+
+${badgeCSS(csL)}
+
+${navCSS(csL)}
+
+${modalCSS(csL)}
 \`\`\`
 
 ---
 
-Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
+## CSS — Тёмная тема
+
+\`\`\`css
+/* Тёмная тема */
+:root[data-theme="dark"] {
+  --bg: ${csD.background};
+  --surface: ${csD.surface};
+  --text: ${csD.textPrimary};
+  --text-secondary: ${csD.textSecondary};
+  --text-muted: ${csD.textMuted};
+  --border: ${csD.border};
+  --accent: ${csD.accent};
+  --accent-hover: ${csD.accentHover};
+  --accent-soft: ${csD.accentSoft};
+  --radius-sm: ${radii[0]}px;
+  --radius-md: ${radii[1]}px;
+  --radius-lg: ${radii[2]}px;
+}
+
+${btnCSS(csD)}
+
+${inputCSS(csD)}
+
+${cardCSS(csD)}
+
+${badgeCSS(csD)}
+
+${navCSS(csD)}
+
+${modalCSS(csD)}
+\`\`\`
+
+---
+
+Generated by Design Kit — ${palette.name} · ${pair.name} · ${concept.name}
 `;
   }
 
@@ -2400,6 +2588,7 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
         btn.title = p.name;
         btn.addEventListener('click', () => {
           wizard.paletteId = p.id;
+          wizard.themeMode = null;
           $$('.edit-palette-btn').forEach((x) => x.classList.toggle('is-active', x.dataset.id === p.id));
           renderStep4();
         });
@@ -2458,6 +2647,7 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
       const pasted = { id, name, colors };
       PALETTES.unshift(pasted);
       wizard.paletteId = id;
+      wizard.themeMode = null;
       renderEditPanel();
       renderStep4();
       toast('Вставлено ' + colors.length + ' цветов');
@@ -2485,6 +2675,14 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     loadFont('Manrope');
     loadFont('Inter');
     loadFont('Lora');
+
+    /* Загрузить тему оболочки ДО отрисовки карточек */
+    const savedTheme = localStorage.getItem('dsgen-shell-theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const sl = $('#shell-theme-slider');
+      if (sl) sl.checked = true;
+    }
 
     wizard.paletteId = PALETTES[0].id;
     wizard.headingFont = FONT_PAIRS[0].heading;
@@ -2526,6 +2724,29 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     // Вставка цветов из буфера
     const pasteBtn = $('#edit-paste-colors');
     if (pasteBtn) pasteBtn.addEventListener('click', pasteFromClipboard);
+
+    // Переключение темы на шаге 4 — слайдер
+    const themeSlider = $('#theme-toggle-slider');
+    if (themeSlider) {
+      themeSlider.addEventListener('change', () => {
+        wizard.themeMode = themeSlider.checked ? 'dark' : 'light';
+        renderStep4();
+      });
+    }
+
+    // Переключение темы оболочки — слайдер в хедере
+    const shellSlider = $('#shell-theme-slider');
+    if (shellSlider) {
+      shellSlider.addEventListener('change', () => {
+        const dark = shellSlider.checked;
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        localStorage.setItem('dsgen-shell-theme', dark ? 'dark' : 'light');
+        /* Перерисовать карточки концепций и палитр под новую тему */
+        renderConcepts();
+        renderPalettes();
+        if (wizard.step === 4) renderStep4();
+      });
+    }
 
     initStickyShadow();
   }

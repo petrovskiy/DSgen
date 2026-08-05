@@ -52,6 +52,7 @@ const OUTLINE = [
   'line-height',
   'link',
   'minus',
+  'moon',
   'palette',
   'pencil',
   'plus',
