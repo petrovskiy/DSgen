@@ -63,109 +63,255 @@
     const A = hexToRgb(a), B = hexToRgb(b);
     return rgbToHex({ r: A.r + (B.r - A.r) * t, g: A.g + (B.g - A.g) * t, b: A.b + (B.b - A.b) * t });
   }
-  function ensureContrast(color, bg, minRatio) {
+function ensureContrast(color, bg, minRatio) {
     if (contrast(color, bg) >= minRatio) return color;
-    const dark = isDark(bg);
+    const dk = isDark(bg);
     const hsl = hexToHsl(color);
     const h = hsl.h, s = hsl.s;
     let l = hsl.l;
-    const step = dark ? 2 : -2;
+    const step = dk ? 2 : -2;
     for (let i = 0; i < 60; i++) {
       l = clamp(l + step, 0, 100);
       const c = hslToHex(h, s, l);
       if (contrast(c, bg) >= minRatio) return c;
     }
-    return dark ? '#ffffff' : '#000000';
+    return dk ? '#ffffff' : '#000000';
+  }
+
+  /* --- Semantic color analyzer --- */
+  function chromaScore({ r, g, b }) {
+    return Math.abs(r - g) + Math.abs(g - b) + Math.abs(b - r);
+  }
+
+  function analyzePalette(colors) {
+    const analyzed = colors.map((hex, i) => {
+      const hsl = hexToHsl(hex);
+      const rgb = hexToRgb(hex);
+      const l = lum(hex);
+      const cs = chromaScore(rgb);
+      return {
+        hex, hsl, luminance: l, hue: hsl.h,
+        chroma: cs, rgb, isNeutral: cs < 60, index: i
+      };
+    });
+
+    const veryLight = analyzed.filter(c => c.luminance > 0.8).length;
+    const veryDark = analyzed.filter(c => c.luminance < 0.08).length;
+    const avgLum = analyzed.reduce((s, c) => s + c.luminance, 0) / analyzed.length;
+
+    let mode;
+    if (veryDark >= 3) mode = 'dark';
+    else if (veryLight >= 3) mode = 'light';
+    else if (isDark(colors[0]) && veryDark >= 2 && veryLight <= 1) mode = 'dark';
+    else if (!isDark(colors[0]) && veryLight >= 2 && veryDark <= 1) mode = 'light';
+    else if (avgLum < 0.3) mode = 'dark';
+    else if (avgLum > 0.5) mode = 'light';
+    else mode = isDark(colors[0]) ? 'dark' : 'light';
+
+    const neutrals = analyzed.filter(c => c.isNeutral).sort((a, b) => b.luminance - a.luminance);
+    const chromatics = analyzed.filter(c => !c.isNeutral).sort((a, b) => b.chroma - a.chroma);
+    const allAsc = [...analyzed].sort((a, b) => a.luminance - b.luminance);
+    const allDesc = [...analyzed].sort((a, b) => b.luminance - a.luminance);
+
+    let bg, surface, surfaceElevated, border, borderSubtle;
+    let textPrimary, textSecondary, textMuted;
+    let accent, accentHover, accentSoft;
+
+    if (mode === 'dark') {
+      bg = allAsc[0].hex;
+      const darkCands = allAsc.filter(c => c.hex !== bg && c.luminance < 0.35);
+      surface = darkCands[0]?.hex || mix(bg, '#ffffff', 0.08);
+      surfaceElevated = darkCands[1]?.hex || mix(surface, '#ffffff', 0.08);
+
+      const brightSorted = allDesc.filter(c => c.luminance > 0.25);
+      const brightNeutrals = brightSorted.filter(c => c.isNeutral);
+      if (brightNeutrals.length >= 1) {
+        textPrimary = ensureContrast(brightNeutrals[0].hex, bg, 4.5);
+        textSecondary = brightNeutrals[1]?.hex || ensureContrast(mix(textPrimary, bg, 0.35), bg, 3);
+        textMuted = brightNeutrals[2]?.hex || ensureContrast(mix(textSecondary, bg, 0.4), bg, 3);
+      } else if (brightSorted.length >= 1) {
+        textPrimary = ensureContrast(brightSorted[0].hex, bg, 4.5);
+        textSecondary = brightSorted[1]?.hex || ensureContrast(mix(textPrimary, bg, 0.35), bg, 3);
+        textMuted = brightSorted[2]?.hex || ensureContrast(mix(textSecondary, bg, 0.4), bg, 3);
+      } else {
+        textPrimary = ensureContrast(allDesc[0].hex, bg, 4.5);
+        textSecondary = ensureContrast(mix(textPrimary, bg, 0.35), bg, 3);
+        textMuted = ensureContrast(mix(textSecondary, bg, 0.4), bg, 3);
+      }
+
+      border = mix(bg, textPrimary, 0.2);
+      borderSubtle = mix(bg, textPrimary, 0.1);
+
+      if (chromatics.length > 0) {
+        const brightChroma = chromatics.filter(c => c.luminance > 0.25);
+        accent = brightChroma[0]?.hex || chromatics[0].hex;
+        accent = ensureContrast(accent, bg, 3);
+        const ah = hexToHsl(accent);
+        accentHover = hslToHex(ah.h, Math.min(100, ah.s + 10), Math.min(100, ah.l + 12));
+        accentSoft = mix(accent, bg, 0.75);
+      } else {
+        const len = allAsc.length;
+        const midIdx = Math.floor(len / 2);
+        accent = allAsc[midIdx]?.hex !== bg ? allAsc[midIdx]?.hex : (allAsc[midIdx + 1]?.hex || mix(bg, textPrimary, 0.35));
+        accent = ensureContrast(accent, bg, 3);
+        const ah = hexToHsl(accent);
+        accentHover = hslToHex(ah.h, Math.min(100, ah.s + 5), Math.min(100, ah.l + 10));
+        accentSoft = mix(accent, bg, 0.65);
+      }
+    } else {
+      const lightNeutrals = neutrals.filter(c => c.luminance > 0.5);
+      bg = lightNeutrals[0]?.hex || allDesc[0].hex;
+      surface = lightNeutrals[1]?.hex || allDesc.find(c => c.hex !== bg && c.luminance > 0.5)?.hex || allDesc[1]?.hex || mix(bg, '#000', 0.03);
+      surfaceElevated = lightNeutrals[2]?.hex || mix(surface, '#ffffff', 0.5);
+
+      const darkCands = allAsc.filter(c => c.hex !== bg && c.luminance < 0.5);
+      const darkNeutrals = darkCands.filter(c => c.isNeutral).sort((a, b) => a.luminance - b.luminance);
+      const darkAll = darkCands.filter(c => c.luminance < 0.3).sort((a, b) => a.luminance - b.luminance);
+
+      if (darkNeutrals.length >= 1) {
+        textPrimary = ensureContrast(darkNeutrals[0].hex, bg, 4.5);
+        textSecondary = darkNeutrals[1]?.hex || ensureContrast(mix(textPrimary, bg, 0.4), bg, 3);
+        textMuted = darkNeutrals[2]?.hex || ensureContrast(mix(textSecondary, bg, 0.5), bg, 3);
+      } else if (darkAll.length >= 1) {
+        textPrimary = ensureContrast(darkAll[0].hex, bg, 4.5);
+        textSecondary = darkAll[1]?.hex || ensureContrast(mix(textPrimary, bg, 0.4), bg, 3);
+        textMuted = darkAll[2]?.hex || ensureContrast(mix(textSecondary, bg, 0.5), bg, 3);
+      } else {
+        textPrimary = ensureContrast(allAsc[allAsc.length - 1].hex, bg, 4.5);
+        textSecondary = ensureContrast(mix(textPrimary, bg, 0.4), bg, 3);
+        textMuted = ensureContrast(mix(textSecondary, bg, 0.5), bg, 3);
+      }
+
+      border = mix(bg, textPrimary, 0.12);
+      borderSubtle = mix(bg, textPrimary, 0.06);
+
+      if (chromatics.length > 0) {
+        const vividChroma = [...chromatics].sort((a, b) => b.chroma - a.chroma);
+        accent = vividChroma[0].hex;
+        if (lum(accent) > 0.6) {
+          const ah = hexToHsl(accent);
+          accent = hslToHex(ah.h, Math.min(100, ah.s + 10), Math.max(10, ah.l - 25));
+        }
+        accent = ensureContrast(accent, bg, 3);
+        const ah = hexToHsl(accent);
+        accentHover = hslToHex(ah.h, Math.min(100, ah.s + 5), Math.max(5, ah.l - 10));
+        accentSoft = mix(accent, bg, 0.85);
+      } else {
+        const len = allAsc.length;
+        const midIdx = Math.floor(len / 2);
+        accent = allAsc[midIdx]?.hex !== bg ? allAsc[midIdx]?.hex : (allAsc[midIdx + 1]?.hex || mix(bg, textPrimary, 0.3));
+        accent = ensureContrast(accent, bg, 3);
+        const ah = hexToHsl(accent);
+        accentHover = hslToHex(ah.h, Math.min(100, ah.s + 5), Math.max(5, ah.l - 8));
+        accentSoft = mix(accent, bg, 0.6);
+      }
+    }
+
+    return {
+      mode, background: bg, surface, surfaceElevated, border, borderSubtle,
+      textPrimary, textSecondary, textMuted, accent, accentHover, accentSoft,
+      semantic: {
+        success: mode === 'dark' ? mix('#4ADE80', '#000000', 0.3) : '#3F6212',
+        warning: mode === 'dark' ? mix('#FBBF24', '#000000', 0.3) : '#92400E',
+        error: mode === 'dark' ? mix('#F87171', '#000000', 0.3) : '#9A3412',
+        info: mode === 'dark' ? mix('#60A5FA', '#000000', 0.3) : '#1E40AF'
+      }
+    };
+  }
+
+  function getSemanticColors(palette) {
+    if (!palette.colorSystem) palette.colorSystem = analyzePalette(palette.colors);
+    return palette.colorSystem;
   }
 
   /* --- Data — inline fallback + загрузка из JSON (если сервер) --- */
   /* Полные данные хранятся в assets/data/*.json. При загрузке через
      file:// fetch заблокирован CORS — используем inline-копию ниже. */
   let PALETTES = [
-    { "id": "warm-minimal", "name": "Тёплый минимализм", "colors": ["#FDFBF7","#F5F0E8","#D4A574","#8B5E34","#2B2B27"] },
-    { "id": "ocean", "name": "Морской бриз", "colors": ["#F0F9FF","#BAE6FD","#38BDF8","#0284C7","#0F172A"] },
-    { "id": "sunset", "name": "Закат", "colors": ["#FFF7ED","#FED7AA","#FB923C","#EA580C","#7C2D12"] },
-    { "id": "forest", "name": "Лес", "colors": ["#ECFDF5","#BBF7D0","#34D399","#059669","#064E3B"] },
-    { "id": "lavender", "name": "Лаванда", "colors": ["#F3E8FF","#D8B4FE","#A855F7","#7E22CE","#581C87"] },
-    { "id": "rose", "name": "Роза", "colors": ["#FFF1F2","#FECDD3","#FB7185","#E11D48","#9F1239"] },
-    { "id": "indigo", "name": "Индиго", "colors": ["#E0E7FF","#A5B4FC","#6366F1","#4338CA","#312E81"] },
-    { "id": "neon", "name": "Неон", "colors": ["#0F0E17","#23203A","#FF8906","#E53170","#7A5AF0"] },
-    { "id": "sand", "name": "Песок", "colors": ["#FEF9EF","#FDE68A","#F59E0B","#B45309","#78350F"] },
-    { "id": "snow", "name": "Снег", "colors": ["#FFFFFF","#F8FAFC","#E2E8F0","#64748B","#0F172A"] },
-    { "id": "wine", "name": "Вино", "colors": ["#FDF2F8","#FBCFE8","#EC4899","#BE185D","#701A4E"] },
-    { "id": "hacker", "name": "Матрица", "colors": ["#010B07","#0A2E1A","#00FF7F","#39FF14","#E8FFE8"] },
-    { "id": "gold", "name": "Золото", "colors": ["#FFFBE6","#FDE68A","#D97706","#92400E","#451A03"] },
-    { "id": "arctic", "name": "Арктика", "colors": ["#ECFEFF","#A5F3FC","#22D3EE","#0891B2","#164E63"] },
-    { "id": "coffee", "name": "Кофе", "colors": ["#FBF7F0","#E8DCCC","#A0846C","#5C4033","#2D1810"] },
-    { "id": "cyberpunk", "name": "Киберпанк", "colors": ["#0B0518","#2B0F66","#7F3FF2","#F875AA","#F5F0FF"] },
-    { "id": "olive", "name": "Оливковый", "colors": ["#F7FEE7","#ECFCCB","#84CC16","#4D7C0F","#365314"] },
-    { "id": "fuchsia", "name": "Фуксия", "colors": ["#FDF4FF","#F5D0FE","#D946EF","#A21CAF","#701A75"] },
-    { "id": "graphite", "name": "Графит", "colors": ["#16181D","#1E2128","#3D424C","#8A8F98","#E8EAED"] },
-    { "id": "mango", "name": "Манго", "colors": ["#FFF9ED","#FFE5A3","#FFB347","#FF8C00","#CC7000"] },
-    { "id": "lilac-mist", "name": "Сиреневый туман", "colors": ["#F5F3FF","#DDD6FE","#A78BFA","#7C3AED","#5B21B6"] },
-    { "id": "tiffany", "name": "Тиффани", "colors": ["#F0FDFA","#CCFBF1","#2DD4BF","#0D9488","#115E59"] },
-    { "id": "scarlet", "name": "Алый", "colors": ["#FEF2F2","#FECACA","#EF4444","#B91C1C","#7F1D1D"] },
-    { "id": "rainy", "name": "Дождливый", "colors": ["#F8FAFC","#E2E8F0","#94A3B8","#475569","#1E293B"] },
-    { "id": "amber", "name": "Янтарь", "colors": ["#FFFBEB","#FDE68A","#F59E0B","#D97706","#92400E"] },
-    { "id": "emerald", "name": "Изумруд", "colors": ["#ECFDF5","#A7F3D0","#10B981","#047857","#064E3B"] },
-    { "id": "sakura", "name": "Сакура", "colors": ["#FFF0F5","#F9A8D4","#F472B6","#DB2777","#9D174D"] },
-    { "id": "stormy", "name": "Грозовой", "colors": ["#0F172A","#1E293B","#334155","#475569","#CBD5E1"] },
-    { "id": "sun", "name": "Солнце", "colors": ["#FFFBE6","#FEF08A","#EAB308","#A16207","#713F12"] },
-    { "id": "deep-ocean", "name": "Глубокий океан", "colors": ["#F0F9FF","#E0F2FE","#7DD3FC","#38BDF8","#0369A1"] },
-    { "id": "chocolate", "name": "Шоколад", "colors": ["#FBF7F0","#D4A574","#A0724A","#6B4423","#3E2723"] },
-    { "id": "burgundy", "name": "Бургунди", "colors": ["#FDF2F8","#FCE7F3","#F472B6","#BE123C","#6B0F2A"] },
-    { "id": "sky", "name": "Небо", "colors": ["#F0F9FF","#E0F2FE","#93C5FD","#60A5FA","#1D4ED8"] },
-    { "id": "mint", "name": "Мятный", "colors": ["#F3FAF7","#D1FAE5","#6EE7B7","#059669","#065F46"] },
-    { "id": "terracotta", "name": "Терракота", "colors": ["#FEF7F3","#FED7AA","#D97A4A","#9C4221","#5C2211"] },
-    { "id": "midnight", "name": "Полночь", "colors": ["#0B0E14","#1A1F2E","#2D3654","#4A5880","#8EA0C8"] },
-    { "id": "spring", "name": "Весна", "colors": ["#F0FDF4","#BBF7D0","#4ADE80","#22C55E","#166534"] },
-    { "id": "honey", "name": "Медовый", "colors": ["#FFF7ED","#FFEDD5","#FDBA74","#EA580C","#9A3412"] },
-    { "id": "sapphire", "name": "Сапфир", "colors": ["#EFF6FF","#BFDBFE","#3B82F6","#2563EB","#1E40AF"] },
-    { "id": "bamboo", "name": "Бамбук", "colors": ["#F7FEE7","#D9F99D","#65A30D","#4D7C0F","#3F6212"] },
-    { "id": "lilac", "name": "Лиловый", "colors": ["#FAF5FF","#E9D5FF","#C084FC","#9333EA","#6B21A8"] },
-    { "id": "mocha", "name": "Мокко", "colors": ["#FAF7F2","#E8DDD0","#C4AD93","#8B7355","#4A3F32"] },
-    { "id": "ruby", "name": "Рубин", "colors": ["#FFF1F2","#FFA3A3","#F43F5E","#BE123C","#881337"] },
-    { "id": "foggy", "name": "Туманный", "colors": ["#F9FAFB","#F3F4F6","#D1D5DB","#6B7280","#374151"] },
-    { "id": "agate", "name": "Агат", "colors": ["#FDF4FF","#FAE8FF","#E879F9","#C026D3","#86198F"] },
-    { "id": "cinnamon", "name": "Корица", "colors": ["#FFF9ED","#FDE68A","#D97706","#B45309","#92400E"] },
-    { "id": "turquoise", "name": "Бирюза", "colors": ["#F0FDFA","#CCFBF1","#5EEAD4","#14B8A6","#0F766E"] },
-    { "id": "pomegranate", "name": "Гранат", "colors": ["#FFF1F2","#FFC4C4","#E5484D","#C1121F","#780A16"] },
-    { "id": "silver", "name": "Серебро", "colors": ["#F8F9FA","#E9ECEF","#CED4DA","#6C757D","#343A40"] },
-    { "id": "aurora", "name": "Аврора", "colors": ["#F0F9FF","#E0F2FE","#93C5FD","#60A5FA","#1D4ED8"] }
-  ];
+    {"id":"graphite-order","name":"Графитовый порядок","colors":["#F7F8FA","#FFFFFF","#343A40","#6C757D","#16181D"]},
+    {"id":"cold-slate","name":"Холодный сланец","colors":["#F5F7F9","#FFFFFF","#334155","#64748B","#172033"]},
+    {"id":"steel-grid","name":"Стальная сетка","colors":["#F4F6F8","#FBFCFD","#3F4A56","#7B8794","#20262D"]},
+    {"id":"ink","name":"Чернила","colors":["#FAFAF9","#FFFFFF","#27272A","#71717A","#18181B"]},
+    {"id":"white-paper","name":"Белая бумага","colors":["#FCFCFB","#F7F7F5","#404040","#737373","#171717"]},
+    {"id":"electric-uv","name":"Электрический ультрафиолет","colors":["#090812","#151127","#9B5CFF","#FF3CAC","#F7F2FF"]},
+    {"id":"acid-lime","name":"Кислотный лайм","colors":["#060A08","#101A14","#B7FF00","#00F5A0","#EEFFF4"]},
+    {"id":"cyan-pulse","name":"Циановый импульс","colors":["#070B12","#111A27","#22D3EE","#6366F1","#ECFEFF"]},
+    {"id":"midnight-magenta","name":"Магента после полуночи","colors":["#100711","#211022","#F43F9E","#A855F7","#FFF1FA"]},
+    {"id":"signal-red","name":"Сигнальный красный","colors":["#0D090A","#1C1113","#FF3158","#FFB000","#FFF5F6"]},
+    {"id":"sapphire-glass","name":"Сапфировое стекло","colors":["#F3F8FF","#FFFFFF","#2563EB","#60A5FA","#172554"]},
+    {"id":"ice-fog","name":"Ледяной туман","colors":["#F5FAFC","#FFFFFF","#0E7490","#67E8F9","#164E63"]},
+    {"id":"aquamarine","name":"Аквамарин","colors":["#F2FCFB","#FFFFFF","#0F766E","#5EEAD4","#134E4A"]},
+    {"id":"lavender-glass","name":"Лавандовое стекло","colors":["#F8F6FF","#FFFFFF","#6D5BD0","#B8A8FF","#312E5A"]},
+    {"id":"sky-haze","name":"Небесная дымка","colors":["#F2F8FF","#FFFFFF","#3478C5","#8EC5FF","#183B61"]},
+    {"id":"scarlet-concrete","name":"Алый бетон","colors":["#F8F4F2","#FFFFFF","#C91C2B","#262626","#111111"]},
+    {"id":"black-poster","name":"Чёрный плакат","colors":["#F2F2F0","#FFFFFF","#111111","#E03A2F","#090909"]},
+    {"id":"cobalt-strike","name":"Кобальтовый удар","colors":["#F4F6FA","#FFFFFF","#1646D8","#111827","#0A0F1A"]},
+    {"id":"orange-print","name":"Оранжевый принт","colors":["#FFF8F0","#FFFFFF","#EA580C","#1F2937","#171717"]},
+    {"id":"burgundy-poster","name":"Бордовый постер","colors":["#FAF5F6","#FFFFFF","#8F1D35","#26202A","#171014"]},
+    {"id":"milky-minimal","name":"Молочный минимализм","colors":["#FCFCFA","#FFFFFF","#30343B","#9AA0A8","#17191C"]},
+    {"id":"stone-minimal","name":"Каменный минимализм","colors":["#F6F5F2","#FFFFFF","#57534E","#A8A29E","#292524"]},
+    {"id":"quiet-olive","name":"Тихая олива","colors":["#F8FAF3","#FFFFFF","#657A3A","#A3B18A","#26301B"]},
+    {"id":"quiet-blue","name":"Тихий синий","colors":["#F7F9FC","#FFFFFF","#4B6B8A","#9CB4CA","#1F3040"]},
+    {"id":"warm-clay","name":"Тёплая глина","colors":["#FBF8F4","#FFFFFF","#A66A45","#D7B39A","#34251D"]},
+    {"id":"dark-gold","name":"Тёмное золото","colors":["#17130E","#231C12","#D6A84F","#8D6A2F","#F7EFD9"]},
+    {"id":"champagne","name":"Шампанское","colors":["#F7F2E8","#FFFCF5","#B8893D","#D8C29A","#29231A"]},
+    {"id":"wine-brass","name":"Вино и латунь","colors":["#1A1014","#29171D","#C59A55","#8E3048","#F4E8DC"]},
+    {"id":"espresso","name":"Эспрессо","colors":["#211813","#30231B","#C59A72","#79553C","#F4E8D8"]},
+    {"id":"ivory","name":"Слоновая кость","colors":["#FAF7EF","#FFFDF8","#9B7139","#C8A66A","#29251E"]},
+    {"id":"peach-warmth","name":"Персиковое тепло","colors":["#FFF8F4","#FFFFFF","#E97858","#F5B39E","#3A2722"]},
+    {"id":"berry-cream","name":"Ягодный крем","colors":["#FFF7FA","#FFFFFF","#C94B78","#F2A7BF","#3B202B"]},
+    {"id":"soft-mint","name":"Мягкая мята","colors":["#F5FBF8","#FFFFFF","#3F9B7A","#A9DEC9","#20382F"]},
+    {"id":"powder-lavender","name":"Пудровая лаванда","colors":["#FAF8FF","#FFFFFF","#8068C8","#C9BDF0","#30294A"]},
+    {"id":"lemon-cream","name":"Лимонный крем","colors":["#FFFCF0","#FFFFFF","#C79A18","#F1D878","#3A3117"]},
+    {"id":"data-cobalt","name":"Кобальт данных","colors":["#F4F7FB","#FFFFFF","#2457C5","#7B9DE8","#14213D"]},
+    {"id":"engineer-navy","name":"Инженерный navy","colors":["#F2F5F8","#FFFFFF","#183B5B","#4E86B8","#0D1B2A"]},
+    {"id":"cold-cyan","name":"Холодный циан","colors":["#F3F9FB","#FFFFFF","#087F8C","#55C7D1","#12343B"]},
+    {"id":"indigo-scheme","name":"Индиго-схема","colors":["#F5F6FC","#FFFFFF","#4F46A5","#8B91D9","#20204A"]},
+    {"id":"steel-interface","name":"Стальной интерфейс","colors":["#F5F7F9","#FFFFFF","#52606D","#9AA6B2","#202A33"]},
+    {"id":"film-70s","name":"Плёнка 70-х","colors":["#F4EBDD","#FBF5E9","#A85B32","#D0A15C","#493329"]},
+    {"id":"olive-film","name":"Оливковая плёнка","colors":["#EFEBDD","#F8F4E8","#6C7042","#B59A5A","#36352A"]},
+    {"id":"rusty-postcard","name":"Ржавая открытка","colors":["#F7E9DD","#FFF5EA","#A64B2A","#D08B52","#45291E"]},
+    {"id":"old-coffee","name":"Старая кофейня","colors":["#F1E6D7","#FAF1E4","#76513B","#B68A62","#38271F"]},
+    {"id":"mustard-poster","name":"Горчичный плакат","colors":["#F7EFD4","#FFF8E4","#9B751C","#C8A449","#40351B"]},
+    {"id":"deep-forest","name":"Глубокий лес","colors":["#F2F7F1","#FFFFFF","#216E4A","#6FA77D","#173426"]},
+    {"id":"moss","name":"Мох","colors":["#F6F7EE","#FFFFFF","#667A36","#A5B56A","#303A1D"]},
+    {"id":"sage","name":"Шалфей","colors":["#F3F7F3","#FFFFFF","#557A68","#9DB9A8","#25352E"]},
+    {"id":"clay-grass","name":"Глина и трава","colors":["#F8F3EA","#FFFDF8","#8C5A3C","#78965B","#35291F"]},
+    {"id":"pine-shadow","name":"Сосновая тень","colors":["#EEF4F0","#F9FCFA","#285943","#86A58E","#183126"]}
+  ]
   let FONT_PAIRS = [
-    { "id": "pair1", "name": "Yeseva One + Comfortaa", "heading": "Yeseva One", "body": "Comfortaa", "hw": 500, "bw": 400, "note": "Изящный заголовок, мягкий текст" },
+    { "id": "pair1", "name": "Yeseva One + Manrope", "heading": "Yeseva One", "body": "Manrope", "hw": 500, "bw": 400, "note": "Изящный заголовок, современный текст" },
     { "id": "pair2", "name": "Merriweather + Open Sans", "heading": "Merriweather", "body": "Open Sans", "hw": 500, "bw": 400, "note": "Классическая редакционная пара" },
     { "id": "pair3", "name": "IBM Plex Serif + IBM Plex Sans", "heading": "IBM Plex Serif", "body": "IBM Plex Sans", "hw": 500, "bw": 400, "note": "Единая система, антиква + гротеск" },
     { "id": "pair4", "name": "Raleway + Raleway", "heading": "Raleway", "body": "Raleway", "hw": 600, "bw": 400, "note": "Один шрифт, разный вес" },
     { "id": "pair5", "name": "Bitter + Open Sans", "heading": "Bitter", "body": "Open Sans", "hw": 500, "bw": 400, "note": "Контрастная, современная классика" },
     { "id": "pair6", "name": "Cormorant + Open Sans", "heading": "Cormorant", "body": "Open Sans", "hw": 500, "bw": 400, "note": "Премиальная, журнальная" },
-    { "id": "pair7", "name": "Andika + Roboto", "heading": "Andika", "body": "Roboto", "hw": 500, "bw": 400, "note": "Дружелюбная, детская, читаемая" },
-    { "id": "pair8", "name": "Viaoda Libre + Inter", "heading": "Viaoda Libre", "body": "Inter", "hw": 500, "bw": 400, "note": "Каллиграфический заголовок" },
+    { "id": "pair7", "name": "Nunito + Roboto", "heading": "Nunito", "body": "Roboto", "hw": 600, "bw": 400, "note": "Дружелюбная, современная" },
+    { "id": "pair8", "name": "Viaoda Libre + Manrope", "heading": "Viaoda Libre", "body": "Manrope", "hw": 500, "bw": 400, "note": "Каллиграфический заголовок, современный текст" },
     { "id": "pair9", "name": "Noto Serif + Roboto", "heading": "Noto Serif", "body": "Roboto", "hw": 500, "bw": 400, "note": "Строгая, универсальная" },
     { "id": "pair10", "name": "Yeseva One + Roboto", "heading": "Yeseva One", "body": "Roboto", "hw": 500, "bw": 400, "note": "Элегантный заголовок, нейтральный текст" },
-    { "id": "pair11", "name": "Ubuntu + Open Sans", "heading": "Ubuntu", "body": "Open Sans", "hw": 500, "bw": 400, "note": "Современная, технологичная" },
+    { "id": "pair11", "name": "Space Grotesk + Inter", "heading": "Space Grotesk", "body": "Inter", "hw": 500, "bw": 400, "note": "Технологичная, современная" },
     { "id": "pair12", "name": "Playfair Display + Lato", "heading": "Playfair Display", "body": "Lato", "hw": 500, "bw": 400, "note": "Элегантная, премиальная" },
     { "id": "pair13", "name": "Playfair Display + Source Sans Pro", "heading": "Playfair Display", "body": "Source Sans Pro", "hw": 500, "bw": 400, "note": "Акцидентная, журнальная" },
     { "id": "pair14", "name": "Nunito + PT Sans", "heading": "Nunito", "body": "PT Sans", "hw": 600, "bw": 400, "note": "Мягкая, дружелюбная" },
     { "id": "pair15", "name": "Jost + Roboto", "heading": "Jost", "body": "Roboto", "hw": 500, "bw": 400, "note": "Геометричная, современная" },
     { "id": "pair16", "name": "Manrope + Manrope", "heading": "Manrope", "body": "Manrope", "hw": 600, "bw": 400, "note": "Моно-стиль, универсальная" },
-    { "id": "pair17", "name": "Marmelad + Roboto", "heading": "Marmelad", "body": "Roboto", "hw": 500, "bw": 400, "note": "Игривый заголовок, строгий текст" },
-    { "id": "pair18", "name": "Forum + Arimo", "heading": "Forum", "body": "Arimo", "hw": 400, "bw": 400, "note": "Винтажная, благородная" },
-    { "id": "pair19", "name": "Tenor Sans + Roboto", "heading": "Tenor Sans", "body": "Roboto", "hw": 500, "bw": 400, "note": "Чистая, минималистичная" },
+    { "id": "pair17", "name": "Marmelad + Manrope", "heading": "Marmelad", "body": "Manrope", "hw": 500, "bw": 400, "note": "Игривый заголовок, современный текст" },
+    { "id": "pair18", "name": "Forum + PT Sans", "heading": "Forum", "body": "PT Sans", "hw": 400, "bw": 400, "note": "Винтажная, благородная" },
+    { "id": "pair19", "name": "Tenor Sans + Manrope", "heading": "Tenor Sans", "body": "Manrope", "hw": 500, "bw": 400, "note": "Чистая, минималистичная" },
     { "id": "pair20", "name": "Inter + Playfair Display", "heading": "Playfair Display", "body": "Inter", "hw": 500, "bw": 400, "note": "Гротеск + антиква, премиально" },
-    { "id": "pair21", "name": "Inter + EB Garamond", "heading": "EB Garamond", "body": "Inter", "hw": 500, "bw": 400, "note": "Утончённая, для подписей" },
-    { "id": "pair22", "name": "IBM Plex Sans + Vela Sans", "heading": "IBM Plex Sans", "body": "Vela Sans", "hw": 500, "bw": 400, "note": "Чистая, медицинская" },
-    { "id": "pair23", "name": "Geologica + Nunito", "heading": "Geologica", "body": "Nunito", "hw": 500, "bw": 400, "note": "Эмпатичная, тёплая" },
-    { "id": "pair24", "name": "Bebas Neue + Noto Sans Display", "heading": "Bebas Neue", "body": "Noto Sans Display", "hw": 600, "bw": 400, "note": "Акцидентная, IT-стиль" },
-    { "id": "pair25", "name": "Lora + LTSuperior", "heading": "Lora", "body": "Manrope", "hw": 500, "bw": 400, "note": "Антиква + гротеск" },
-    { "id": "pair26", "name": "Manrope + LinguaFranca", "heading": "Manrope", "body": "Lora", "hw": 600, "bw": 400, "note": "Креативная, контрастная" },
-    { "id": "pair27", "name": "Playfair Display + Oswald", "heading": "Playfair Display", "body": "Oswald", "hw": 500, "bw": 400, "note": "Антиква + гротеск" },
-    { "id": "pair28", "name": "Martian Mono + Inter", "heading": "Martian Mono", "body": "Inter", "hw": 500, "bw": 400, "note": "Моноширинный акцент" },
+    { "id": "pair21", "name": "EB Garamond + Inter", "heading": "EB Garamond", "body": "Inter", "hw": 500, "bw": 400, "note": "Утончённый заголовок, современный текст" },
+    { "id": "pair22", "name": "IBM Plex Sans + IBM Plex Sans", "heading": "IBM Plex Sans", "body": "IBM Plex Sans", "hw": 500, "bw": 400, "note": "Единая Plex-система, медицинская" },
+    { "id": "pair23", "name": "Geologica + Manrope", "heading": "Geologica", "body": "Manrope", "hw": 500, "bw": 400, "note": "Характерный заголовок, нейтральный текст" },
+    { "id": "pair24", "name": "Bebas Neue + Inter", "heading": "Bebas Neue", "body": "Inter", "hw": 600, "bw": 400, "note": "Акцидентный заголовок, чистый UI-текст" },
+    { "id": "pair25", "name": "Lora + Manrope", "heading": "Lora", "body": "Manrope", "hw": 500, "bw": 400, "note": "Антиква + гротеск, современная классика" },
+    { "id": "pair26", "name": "Manrope + Lora", "heading": "Manrope", "body": "Lora", "hw": 600, "bw": 400, "note": "Креативная, обратная пара к Lora + Manrope" },
+    { "id": "pair27", "name": "Playfair Display + Manrope", "heading": "Playfair Display", "body": "Manrope", "hw": 500, "bw": 400, "note": "Playfair — главный герой, Manrope — надёжная основа" },
+    { "id": "pair28", "name": "Martian Mono + Manrope", "heading": "Martian Mono", "body": "Manrope", "hw": 500, "bw": 400, "note": "Моноширинный акцент + нейтральный текст" },
     { "id": "pair29", "name": "Handjet + Inter", "heading": "Handjet", "body": "Inter", "hw": 500, "bw": 400, "note": "Пиксельная, игровая" },
     { "id": "pair30", "name": "Noto Serif + Open Sans", "heading": "Noto Serif", "body": "Open Sans", "hw": 500, "bw": 400, "note": "Классическая универсальная" },
-    { "id": "pair31", "name": "Golos Text + Manrope", "heading": "Golos Text", "body": "Manrope", "hw": 500, "bw": 400, "note": "Государственная, строгая" },
-    { "id": "pair32", "name": "Onest + PT Sans", "heading": "Onest", "body": "PT Sans", "hw": 500, "bw": 400, "note": "Современная, читаемая" }
+    { "id": "pair31", "name": "Golos Text + Inter", "heading": "Golos Text", "body": "Inter", "hw": 500, "bw": 400, "note": "Строгая, нейтральная, системная" },
+    { "id": "pair32", "name": "Onest + Manrope", "heading": "Onest", "body": "Manrope", "hw": 500, "bw": 400, "note": "Современная, цельная UI-пара" }
   ];
   let FONTS = [
     { "family": "Manrope", "css": "https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800" },
@@ -225,6 +371,10 @@
       id: 'strict', name: 'Строгий', color: '#374151', icon: 'tabler-square',
       desc: 'Чёткие линии, прямоугольные формы, минимум украшений',
       radius: [2, 4, 6], shadow: 'medium', scale: 'compact', space: 4,
+      paletteIds: ["graphite-order","cold-slate","steel-grid"],
+      allowedPaletteIds: ["ink","white-paper"],
+      fontPairIds: ["pair31","pair22","pair32"],
+      allowedFontPairIds: ["pair9","pair4"],
       styleConfig: {
         effects: { blur: false, glassmorphism: false, noise: false, glow: false },
         borders: { thickness: '1px', style: 'solid' },
@@ -241,6 +391,10 @@
       id: 'neon', name: 'Неоновый', color: '#581C87', icon: 'tabler-sparkles',
       desc: 'Тёмный фон, неоновое свечение, дерзкие акценты',
       radius: [8, 10, 12], shadow: 'glow', scale: 'large', space: 4,
+      paletteIds: ["electric-uv","acid-lime","cyan-pulse"],
+      allowedPaletteIds: ["midnight-magenta","signal-red"],
+      fontPairIds: ["pair28","pair29","pair11","pair24"],
+      allowedFontPairIds: ["pair23","pair16"],
       styleConfig: {
         effects: { blur: { enabled: true, strength: '12px' }, glassmorphism: true, noise: { enabled: true, opacity: '5%' }, glow: { enabled: true, intensity: '20px' } },
         borders: { thickness: '1px', style: 'solid' },
@@ -257,6 +411,10 @@
       id: 'glass', name: 'Стеклянный', color: '#1E40AF', icon: 'tabler-eye',
       desc: 'Полупрозрачные поверхности, blur, мягкий свет',
       radius: [14, 18, 22], shadow: 'soft', scale: 'standard', space: 5,
+      paletteIds: ["sapphire-glass","ice-fog","aquamarine"],
+      allowedPaletteIds: ["lavender-glass","sky-haze"],
+      fontPairIds: ["pair16","pair32","pair15","pair11"],
+      allowedFontPairIds: ["pair22"],
       styleConfig: {
         effects: { blur: { enabled: true, strength: '20px' }, glassmorphism: true, noise: { enabled: true, opacity: '3%' }, glow: false },
         borders: { thickness: '0.5px', style: 'solid' },
@@ -273,6 +431,10 @@
       id: 'brutal', name: 'Брутальный', color: '#991B1B', icon: 'tabler-template',
       desc: 'Резкие границы, жирные рамки, максимум контраста',
       radius: [0, 2, 4], shadow: 'brutal', scale: 'standard', space: 4,
+      paletteIds: ["scarlet-concrete","black-poster","cobalt-strike"],
+      allowedPaletteIds: ["orange-print","burgundy-poster"],
+      fontPairIds: ["pair24","pair11","pair31","pair22"],
+      allowedFontPairIds: ["pair28","pair32"],
       styleConfig: {
         effects: { blur: false, glassmorphism: false, noise: false, glow: false },
         borders: { thickness: '3px', style: 'solid' },
@@ -289,6 +451,10 @@
       id: 'minimal', name: 'Минимальный', color: '#52525B', icon: 'tabler-minus',
       desc: 'Воздух, один акцент, никаких лишних деталей',
       radius: [8, 12, 16], shadow: 'none', scale: 'standard', space: 5,
+      paletteIds: ["milky-minimal","stone-minimal","quiet-olive"],
+      allowedPaletteIds: ["quiet-blue","warm-clay"],
+      fontPairIds: ["pair16","pair32","pair19","pair15"],
+      allowedFontPairIds: ["pair31","pair22"],
       styleConfig: {
         effects: { blur: false, glassmorphism: false, noise: false, glow: false },
         borders: { thickness: '0', style: 'none' },
@@ -305,6 +471,10 @@
       id: 'premium', name: 'Премиум', color: '#92400E', icon: 'tabler-star',
       desc: 'Тёмный фон, золотые акценты, элегантные шрифты',
       radius: [10, 14, 18], shadow: 'strong', scale: 'large', space: 6,
+      paletteIds: ["dark-gold","champagne","wine-brass"],
+      allowedPaletteIds: ["espresso","ivory"],
+      fontPairIds: ["pair27","pair21","pair6","pair25"],
+      allowedFontPairIds: ["pair12","pair1"],
       styleConfig: {
         effects: { blur: { enabled: true, strength: '8px' }, glassmorphism: false, noise: { enabled: true, opacity: '2%' }, glow: { enabled: true, intensity: '10px' } },
         borders: { thickness: '0.5px', style: 'solid' },
@@ -321,6 +491,10 @@
       id: 'friendly', name: 'Дружелюбный', color: '#9D174D', icon: 'tabler-circle-check',
       desc: 'Большие скругления, пастельные тона, тепло',
       radius: [16, 20, 28], shadow: 'soft', scale: 'standard', space: 4,
+      paletteIds: ["peach-warmth","berry-cream","soft-mint"],
+      allowedPaletteIds: ["powder-lavender","lemon-cream"],
+      fontPairIds: ["pair14","pair7","pair17","pair1"],
+      allowedFontPairIds: ["pair8","pair32"],
       styleConfig: {
         effects: { blur: false, glassmorphism: false, noise: false, glow: false },
         borders: { thickness: '1px', style: 'solid' },
@@ -337,6 +511,10 @@
       id: 'tech', name: 'Технологичный', color: '#1E3A5F', icon: 'tabler-grid-dots',
       desc: 'Холодный, заострённый, гротесковые шрифты',
       radius: [4, 6, 8], shadow: 'medium', scale: 'compact', space: 4,
+      paletteIds: ["data-cobalt","engineer-navy","cold-cyan"],
+      allowedPaletteIds: ["indigo-scheme","steel-interface"],
+      fontPairIds: ["pair11","pair23","pair28","pair22"],
+      allowedFontPairIds: ["pair32","pair31"],
       styleConfig: {
         effects: { blur: { enabled: true, strength: '6px' }, glassmorphism: false, noise: false, glow: { enabled: true, intensity: '8px' } },
         borders: { thickness: '1px', style: 'solid' },
@@ -353,6 +531,10 @@
       id: 'retro', name: 'Ретро', color: '#6B4423', icon: 'tabler-book',
       desc: 'Приглушённые тона, плёночная текстура, винтаж',
       radius: [6, 10, 14], shadow: 'soft', scale: 'standard', space: 5,
+      paletteIds: ["film-70s","olive-film","rusty-postcard"],
+      allowedPaletteIds: ["old-coffee","mustard-poster"],
+      fontPairIds: ["pair18","pair25","pair21","pair2"],
+      allowedFontPairIds: ["pair12","pair1"],
       styleConfig: {
         effects: { blur: false, glassmorphism: false, noise: { enabled: true, opacity: '8%' }, glow: false },
         borders: { thickness: '2px', style: 'solid' },
@@ -369,6 +551,10 @@
       id: 'nature', name: 'Природный', color: '#065F46', icon: 'tabler-world',
       desc: 'Землистые оттенки, натуральные фактуры, зелень',
       radius: [10, 14, 20], shadow: 'soft', scale: 'standard', space: 5,
+      paletteIds: ["deep-forest","moss","sage"],
+      allowedPaletteIds: ["clay-grass","pine-shadow"],
+      fontPairIds: ["pair25","pair2","pair3","pair30"],
+      allowedFontPairIds: ["pair18","pair19"],
       styleConfig: {
         effects: { blur: false, glassmorphism: false, noise: { enabled: true, opacity: '4%' }, glow: false },
         borders: { thickness: '1px', style: 'solid' },
@@ -384,13 +570,39 @@
   ];
 
   const SHADOWS = {
-    soft: { subtle: '0 1px 2px rgba(28,25,23,.06), 0 1px 3px rgba(28,25,23,.05)', medium: '0 4px 6px rgba(28,25,23,.08), 0 10px 24px rgba(28,25,23,.07)', focus: '0 0 0 3px rgba(161,98,7,.18)' },
-    medium: { subtle: '0 2px 4px rgba(28,25,23,.08)', medium: '0 8px 16px rgba(28,25,23,.10), 0 16px 40px rgba(28,25,23,.10)', focus: '0 0 0 4px rgba(161,98,7,.26)' },
-    strong: { subtle: '0 3px 6px rgba(28,25,23,.10)', medium: '0 12px 24px rgba(28,25,23,.14), 0 24px 60px rgba(28,25,23,.20)', focus: '0 0 0 4px rgba(161,98,7,.30)' },
-    none: { subtle: 'none', medium: 'none', focus: '0 0 0 3px rgba(161,98,7,.25)' },
-    brutal: { subtle: '4px 4px 0 rgba(20,20,20,1)', medium: '5px 5px 0 rgba(20,20,20,1), 9px 9px 0 rgba(20,20,20,.18)', focus: '0 0 0 3px rgba(20,20,20,.3)' },
-    glow: { subtle: '0 0 12px rgba(255,137,6,.35)', medium: '0 0 22px rgba(255,137,6,.5), 0 4px 14px rgba(0,0,0,.5)', focus: '0 0 0 3px rgba(255,137,6,.4)' },
+    soft: { subtle: '0 1px 2px rgba(28,25,23,.06), 0 1px 3px rgba(28,25,23,.05)', medium: '0 4px 6px rgba(28,25,23,.08), 0 10px 24px rgba(28,25,23,.07)', focus: null },
+    medium: { subtle: '0 2px 4px rgba(28,25,23,.08)', medium: '0 8px 16px rgba(28,25,23,.10), 0 16px 40px rgba(28,25,23,.10)', focus: null },
+    strong: { subtle: '0 3px 6px rgba(28,25,23,.10)', medium: '0 12px 24px rgba(28,25,23,.14), 0 24px 60px rgba(28,25,23,.20)', focus: null },
+    none: { subtle: 'none', medium: 'none', focus: null },
+    brutal: { subtle: null, medium: null, focus: null },
+    glow: { subtle: null, medium: null, focus: null },
   };
+
+  function buildShadow(shadowName, accent) {
+    const base = SHADOWS[shadowName] || SHADOWS.soft;
+    const r = parseInt(accent.slice(1,3), 16);
+    const g = parseInt(accent.slice(3,5), 16);
+    const b = parseInt(accent.slice(5,7), 16);
+    if (shadowName === 'glow') {
+      return {
+        subtle: '0 0 12px rgba(' + r + ',' + g + ',' + b + ',.35)',
+        medium: '0 0 22px rgba(' + r + ',' + g + ',' + b + ',.5), 0 4px 14px rgba(0,0,0,.5)',
+        focus: '0 0 0 3px rgba(' + r + ',' + g + ',' + b + ',.4)'
+      };
+    }
+    if (shadowName === 'brutal') {
+      return {
+        subtle: '4px 4px 0 rgba(' + r + ',' + g + ',' + b + ',1)',
+        medium: '5px 5px 0 rgba(' + r + ',' + g + ',' + b + ',1), 9px 9px 0 rgba(' + r + ',' + g + ',' + b + ',.18)',
+        focus: '0 0 0 3px rgba(' + r + ',' + g + ',' + b + ',.3)'
+      };
+    }
+    return {
+      subtle: base.subtle,
+      medium: base.medium,
+      focus: '0 0 0 3px rgba(' + r + ',' + g + ',' + b + ',.25)'
+    };
+  }
 
   const TYPE_SCALES = { compact: { title: 26, body: 14 }, standard: { title: 32, body: 15 }, large: { title: 40, body: 17 } };
 
@@ -399,10 +611,10 @@
   const wizard = {
     step: 1,
     paletteId: null,
-    fontPairId: 'pair1',
+    fontPairId: null,
     headingFont: '',
     bodyFont: '',
-    conceptId: 'minimal',
+    conceptId: null,
   };
 
   function fontCss(family) {
@@ -454,6 +666,10 @@
     nextBtn.hidden = step === 4;
     renderFooterSelection();
 
+    // Перерисовывать палитры и шрифты при входе на шаги 2 и 3
+    if (step === 2) renderPalettes();
+    if (step === 3) renderFontPairs();
+
     // Показывать FAB только на шаге 4
     const fab = $('#edit-toggle-btn');
     if (fab) fab.hidden = step !== 4;
@@ -467,71 +683,137 @@
   }
 
   function renderFooterSelection() {
+    const concept = getConcept();
     const palette = getPalette();
+    const cs = getSemanticColors(palette);
     const pair = getFontPair();
+    const step = wizard.step;
+
+    const conceptEl = $('#wiz-sel-concept');
     const palEl = $('#wiz-sel-palette');
     const fontEl = $('#wiz-sel-fonts');
-    palEl.innerHTML = palette.colors.map((c) =>
-      '<span class="wiz-dot" style="background:' + c + '"></span>'
-    ).join('');
-    fontEl.innerHTML =
-      '<span class="wiz-font-sample" style="font-family:\'' + pair.heading + '\',sans-serif;font-weight:' + pair.hw + '">Заголовок</span>' +
-      '<span class="wiz-font-divider"></span>' +
-      '<span class="wiz-font-sample wiz-font-body" style="font-family:\'' + pair.body + '\',sans-serif;font-weight:' + pair.bw + '">Основной текст</span>';
+
+    /* Concept: visible only after step >= 1 and concept selected */
+    if (step >= 1 && wizard.conceptId) {
+      conceptEl.innerHTML = '<span class="wiz-sel-label">' + concept.name + '</span>';
+      conceptEl.hidden = false;
+    } else { conceptEl.hidden = true; }
+
+    /* Palette: visible only after step >= 2 and palette selected */
+    if (step >= 2 && wizard.paletteId) {
+      palEl.innerHTML =
+        '<span class="wiz-dot" style="background:' + cs.background + '" title="фон"></span>' +
+        '<span class="wiz-dot" style="background:' + cs.surface + '" title="поверхность"></span>' +
+        '<span class="wiz-dot" style="background:' + cs.accent + '" title="акцент"></span>' +
+        '<span class="wiz-dot" style="background:' + cs.textPrimary + '" title="текст"></span>';
+      palEl.hidden = false;
+    } else { palEl.hidden = true; }
+
+    /* Fonts: visible only after step >= 3 and font pair selected */
+    if (step >= 3 && wizard.fontPairId) {
+      fontEl.innerHTML =
+        '<span class="wiz-font-sample" style="font-family:\'' + pair.heading + '\',sans-serif;font-weight:' + pair.hw + '">Заголовок</span>' +
+        '<span class="wiz-font-divider"></span>' +
+        '<span class="wiz-font-sample wiz-font-body" style="font-family:\'' + pair.body + '\',sans-serif;font-weight:' + pair.bw + '">Основной текст</span>';
+      fontEl.hidden = false;
+    } else { fontEl.hidden = true; }
   }
 
   function renderPalettes() {
     const grid = $('#palette-grid');
     grid.innerHTML = '';
-    PALETTES.forEach((p) => {
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'palette-card' + (wizard.paletteId === p.id ? ' is-active' : '');
-      card.dataset.id = p.id;
-      const isD = isDark(p.colors[0]);
-      card.style.setProperty('--pc-text', isD ? '#fff' : '#111');
-      card.innerHTML =
-        '<div class="palette-swatches">' +
-        p.colors.map((c) => '<span class="palette-swatch" style="background:' + c + '"></span>').join('') +
-        '</div>' +
-        '<span class="palette-name">' + p.name + '</span>';
-      card.addEventListener('click', () => {
-        wizard.paletteId = p.id;
-        $$('.palette-card').forEach((c) => c.classList.toggle('is-active', c.dataset.id === p.id));
-        renderFooterSelection();
-      });
-      grid.appendChild(card);
+    const concept = getConcept();
+    const recommended = concept.paletteIds || [];
+    const allowed = concept.allowedPaletteIds || [];
+    const recPalettes = PALETTES.filter(p => recommended.includes(p.id));
+    const allowedPalettes = PALETTES.filter(p => allowed.includes(p.id));
+
+    if (recPalettes.length) {
+      const head = document.createElement('div');
+      head.className = 'section-heading'; head.textContent = 'Рекомендуемые палитры';
+      grid.appendChild(head);
+    }
+    recPalettes.forEach((p) => { buildPaletteCard(grid, p, recommended); });
+    if (allowedPalettes.length) {
+      const head = document.createElement('div');
+      head.className = 'section-heading'; head.textContent = 'Допустимые палитры';
+      grid.appendChild(head);
+    }
+    allowedPalettes.forEach((p) => { buildPaletteCard(grid, p, recommended); });
+  }
+
+  function buildPaletteCard(grid, p, recommended) {
+    const cs = getSemanticColors(p);
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'palette-card' + (wizard.paletteId === p.id ? ' is-active' : '');
+    card.dataset.id = p.id;
+    const isD = cs.mode === 'dark';
+    card.style.setProperty('--pc-text', isD ? '#fff' : '#111');
+    card.innerHTML =
+      '<div class="palette-swatches">' +
+      '<span class="palette-swatch" style="background:' + cs.background + ';width:32%" title="фон"></span>' +
+      '<span class="palette-swatch" style="background:' + cs.surface + ';width:22%" title="поверхность"></span>' +
+      '<span class="palette-swatch" style="background:' + cs.border + ';width:10%" title="граница"></span>' +
+      '<span class="palette-swatch" style="background:' + cs.accent + ';width:18%" title="акцент"></span>' +
+      '<span class="palette-swatch" style="background:' + cs.textPrimary + ';width:18%" title="текст"></span>' +
+      '</div>' +
+      '<span class="palette-name">' + p.name + '</span>';
+    card.addEventListener('click', () => {
+      wizard.paletteId = p.id;
+      $$('.palette-card').forEach((c) => c.classList.toggle('is-active', c.dataset.id === p.id));
+      renderFooterSelection();
     });
+    grid.appendChild(card);
   }
 
   function renderFontPairs() {
     const grid = $('#wizard-font-pairs');
     grid.innerHTML = '';
-    FONT_PAIRS.forEach((pair) => {
+    const concept = getConcept();
+    const recommended = concept.fontPairIds || [];
+    const allowed = concept.allowedFontPairIds || [];
+    const recFonts = FONT_PAIRS.filter(p => recommended.includes(p.id));
+    const allowedFonts = FONT_PAIRS.filter(p => allowed.includes(p.id));
+
+    if (recFonts.length) {
+      const head = document.createElement('div');
+      head.className = 'section-heading'; head.textContent = 'Шрифтовые пары';
+      grid.appendChild(head);
+    }
+    recFonts.forEach((pair) => { buildFontCard(grid, pair); });
+    if (allowedFonts.length) {
+      const head = document.createElement('div');
+      head.className = 'section-heading'; head.textContent = 'Альтернативы';
+      grid.appendChild(head);
+    }
+    allowedFonts.forEach((pair) => { buildFontCard(grid, pair); });
+    renderTypePreview();
+  }
+
+  function buildFontCard(grid, pair) {
+    loadFont(pair.heading);
+    loadFont(pair.body);
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'font-pair-card' + (wizard.fontPairId === pair.id ? ' is-active' : '');
+    card.dataset.id = pair.id;
+    card.innerHTML =
+      '<span class="font-pair-badge">' + pair.name + '</span>' +
+      '<span class="font-pair-heading" style="font-family:\'' + pair.heading + '\',sans-serif;font-weight:' + pair.hw + '">Заголовок</span>' +
+      '<span class="font-pair-body" style="font-family:\'' + pair.body + '\',sans-serif;font-weight:' + pair.bw + '">Основной текст</span>' +
+      '<span class="font-pair-note">' + pair.note + '</span>';
+    card.addEventListener('click', () => {
+      wizard.fontPairId = pair.id;
+      wizard.headingFont = pair.heading;
+      wizard.bodyFont = pair.body;
       loadFont(pair.heading);
       loadFont(pair.body);
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'font-pair-card' + (wizard.fontPairId === pair.id ? ' is-active' : '');
-      card.dataset.id = pair.id;
-      card.innerHTML =
-        '<span class="font-pair-badge">' + pair.name + '</span>' +
-        '<span class="font-pair-heading" style="font-family:\'' + pair.heading + '\',sans-serif;font-weight:' + pair.hw + '">Заголовок</span>' +
-        '<span class="font-pair-body" style="font-family:\'' + pair.body + '\',sans-serif;font-weight:' + pair.bw + '">Основной текст</span>' +
-        '<span class="font-pair-note">' + pair.note + '</span>';
-      card.addEventListener('click', () => {
-        wizard.fontPairId = pair.id;
-        wizard.headingFont = pair.heading;
-        wizard.bodyFont = pair.body;
-        loadFont(pair.heading);
-        loadFont(pair.body);
-        renderTypePreview();
-        renderFooterSelection();
-        $$('.font-pair-card').forEach((c) => c.classList.toggle('is-active', c.dataset.id === pair.id));
-      });
-      grid.appendChild(card);
+      renderTypePreview();
+      renderFooterSelection();
+      $$('.font-pair-card').forEach((c) => c.classList.toggle('is-active', c.dataset.id === pair.id));
     });
-    renderTypePreview();
+    grid.appendChild(card);
   }
 
   function renderTypePreview() {
@@ -543,39 +825,52 @@
     preview.style.setProperty('--w-body-weight', pair.bw);
   }
 
-  function conceptBadges(sc) {
-    if (!sc) return '';
-    const parts = [];
-    if (sc.animation && sc.animation.style) parts.push(sc.animation.style);
-    if (sc.density && sc.density.ui) parts.push(sc.density.ui);
-    if (sc.borders && sc.borders.thickness !== '1px') parts.push('рамки ' + sc.borders.thickness);
-    if (sc.icons && sc.icons.strokeWidth) parts.push('stroke ' + sc.icons.strokeWidth);
-    if (sc.letterSpacing && sc.letterSpacing.heading !== '0') parts.push('ls ' + sc.letterSpacing.heading);
-    if (sc.layout && sc.layout.maxWidth) parts.push('ширина ' + sc.layout.maxWidth);
-    return parts.join(' · ');
-  }
+  function conceptBadges(sc) { return ''; }
 
   function renderConcepts() {
     const grid = $('#concept-grid');
     grid.innerHTML = '';
     DESIGN_CONCEPTS.forEach((c) => {
+      /* Get first recommended palette and font for styling */
+      const firstPalId = (c.paletteIds || [])[0] || PALETTES[0].id;
+      const palette = PALETTES.find(p => p.id === firstPalId) || PALETTES[0];
+      const cs = getSemanticColors(palette);
+      const firstFontId = (c.fontPairIds || [])[0] || FONT_PAIRS[0].id;
+      const fontPair = FONT_PAIRS.find(f => f.id === firstFontId) || FONT_PAIRS[0];
+      const isD = cs.mode === 'dark';
+      const descColor = isD ? cs.textMuted : cs.textSecondary;
+
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'concept-card' + (wizard.conceptId === c.id ? ' is-active' : '');
       card.dataset.id = c.id;
-      card.style.setProperty('--cc-color', c.color);
-      const badges = conceptBadges(c.styleConfig);
+      card.style.cssText =
+        '--cc-bg:' + cs.background + ';--cc-text:' + cs.textPrimary + ';--cc-desc:' + descColor +
+        ';--cc-font:\'' + fontPair.heading + '\',sans-serif;--cc-body-font:\'' + fontPair.body + '\',sans-serif' +
+        ';--cc-weight:' + fontPair.hw + ';--cc-border:' + cs.border + ';--cc-accent:' + cs.accent +
+        ';background:var(--cc-bg);color:var(--cc-text);font-family:var(--cc-body-font);border-color:var(--cc-border)';
       card.innerHTML =
-        '<div class="concept-head" style="background:' + c.color + '">' +
-          '<svg class="icon concept-icon" aria-hidden="true"><use href="#' + c.icon + '"></use></svg>' +
-          '<span class="concept-name">' + c.name + '</span>' +
-        '</div>' +
-        '<div class="concept-divider"></div>' +
-        '<span class="concept-desc">' + c.desc + '</span>' +
-        (badges ? '<div class="concept-badges">' + badges + '</div>' : '');
+        '<span class="concept-name" style="font-family:var(--cc-font);font-weight:var(--cc-weight)">' + c.name + '</span>' +
+        '<span class="concept-desc" style="color:var(--cc-desc)">' + c.desc + '</span>';
       card.addEventListener('click', () => {
         wizard.conceptId = c.id;
+        const recPalettes = c.paletteIds || [];
+        const allowedPalettes = c.allowedPaletteIds || [];
+        if (!recPalettes.concat(allowedPalettes).includes(wizard.paletteId)) {
+          wizard.paletteId = recPalettes[0] || allowedPalettes[0] || PALETTES[0].id;
+        }
+        const recFonts = c.fontPairIds || [];
+        const allowedFonts = c.allowedFontPairIds || [];
+        if (!recFonts.concat(allowedFonts).includes(wizard.fontPairId)) {
+          wizard.fontPairId = recFonts[0] || allowedFonts[0] || FONT_PAIRS[0].id;
+          const pair = getFontPair();
+          wizard.headingFont = pair.heading;
+          wizard.bodyFont = pair.body;
+          loadFont(pair.heading);
+          loadFont(pair.body);
+        }
         $$('.concept-card').forEach((x) => x.classList.toggle('is-active', x.dataset.id === c.id));
+        renderFooterSelection();
       });
       grid.appendChild(card);
     });
@@ -585,37 +880,26 @@
   function getFontPair() { return FONT_PAIRS.find((p) => p.id === wizard.fontPairId) || FONT_PAIRS[0]; }
   function getConcept() { return DESIGN_CONCEPTS.find((c) => c.id === wizard.conceptId) || DESIGN_CONCEPTS[0]; }
 
-  function getSafeColors(palette) {
-    const isD = isDark(palette.colors[0]);
-    const bg = palette.colors[0];
-    const surface = palette.colors[1];
-    const rawText = isD ? palette.colors[4] : palette.colors[3];
-    const rawTextMuted = palette.colors[2];
-    const rawAccent = palette.colors[3];
-    return {
-      bg, surface,
-      text: ensureContrast(rawText, bg, 4.5),
-      textMuted: ensureContrast(rawTextMuted, bg, 3),
-      accent: ensureContrast(rawAccent, bg, 3),
-    };
-  }
+  function getSafeColors(palette) { return getSemanticColors(palette); }
 
   function renderStep4() {
     const palette = getPalette();
     const pair = getFontPair();
     const concept = getConcept();
-    const { bg, surface, text, textMuted, accent } = getSafeColors(palette, concept);
-    const isD = isDark(bg);
+    const cs = getSemanticColors(palette);
+    const bg = cs.background, surface = cs.surface, text = cs.textPrimary;
+    const textMuted = cs.textMuted, accent = cs.accent;
+    const isD = cs.mode === 'dark';
     const scale = TYPE_SCALES[concept.scale] || TYPE_SCALES.standard;
     const radii = concept.radius;
-    const shadow = SHADOWS[concept.shadow] || SHADOWS.soft;
+    const shadow = buildShadow(concept.shadow, accent);
 
     const badge = $('#preview-info-badge');
     const hf = wizard.headingFont || pair.heading;
     const bf = wizard.bodyFont || pair.body;
     loadFont(hf); loadFont(bf);
     badge.innerHTML =
-      '<span class="badge-item"><span class="badge-dot" style="background:' + palette.colors[0] + '"></span>' + palette.name + '</span>' +
+      '<span class="badge-item"><span class="badge-dot" style="background:' + cs.background + '"></span>' + palette.name + '</span>' +
       '<span class="badge-sep"></span>' +
       '<span class="badge-item">' + hf + ' + ' + bf + '</span>' +
       '<span class="badge-sep"></span>' +
@@ -665,8 +949,14 @@
         '<div style="display:flex;gap:16px;margin-bottom:32px;flex-wrap:wrap">' +
           '<article style="flex:1;min-width:200px;padding:20px;background:var(--fp-surface);border-radius:var(--fp-radius-lg);box-shadow:var(--fp-shadow-medium)">' +
             '<h3 style="font-family:var(--fp-font);font-weight:var(--fp-heading-weight);font-size:18px;margin:0 0 8px">Палитра</h3>' +
-            '<p style="color:var(--fp-text-muted);font-size:var(--fp-body-size);line-height:1.5;margin:0 0 12px">Пять оттенков по правилам цветового круга.</p>' +
-            '<div style="display:flex;gap:4px">' + palette.colors.map((c) => '<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:' + c + ';border:1px solid rgba(0,0,0,.08)"></span>').join('') + '</div>' +
+            '<p style="color:var(--fp-text-muted);font-size:var(--fp-body-size);line-height:1.5;margin:0 0 12px">' + cs.mode + ' · семантические токены</p>' +
+            '<div style="display:flex;gap:4px">' +
+              '<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:' + cs.background + ';border:1px solid rgba(0,0,0,.08)" title="background"></span>' +
+              '<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:' + cs.surface + ';border:1px solid rgba(0,0,0,.08)" title="surface"></span>' +
+              '<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:' + cs.border + ';border:1px solid rgba(0,0,0,.08)" title="border"></span>' +
+              '<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:' + cs.accent + ';border:1px solid rgba(0,0,0,.08)" title="accent"></span>' +
+              '<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:' + cs.textPrimary + ';border:1px solid rgba(0,0,0,.08)" title="text"></span>' +
+            '</div>' +
           '</article>' +
           '<article style="flex:1;min-width:200px;padding:20px;background:var(--fp-surface);border-radius:var(--fp-radius-lg);box-shadow:var(--fp-shadow-medium)">' +
             '<h3 style="font-family:var(--fp-font);font-weight:var(--fp-heading-weight);font-size:18px;margin:0 0 8px">Типографика</h3>' +
@@ -690,6 +980,66 @@
       '<footer style="padding:16px;text-align:center;border-top:1px solid var(--fp-surface);color:var(--fp-text-muted);font-size:13px">' +
         'Сгенерировано в DSgen · ' + palette.name + ' · ' + concept.name +
       '</footer>';
+
+    /* ---- Mobile preview ---- */
+    const mp = $('#mobile-preview');
+    mp.style.cssText = 'display:flex;justify-content:center;padding:24px 0 40px;background:var(--fp-bg);color:var(--fp-text);font-family:var(--fp-body-font)';
+    mp.innerHTML =
+      '<div class="phone-frame">' +
+        '<div class="phone-notch"></div>' +
+        '<div class="phone-screen" style="background:' + bg + ';color:' + text + ';font-family:\'' + bf + '\',sans-serif">' +
+          /* Status bar */
+          '<div style="display:flex;justify-content:space-between;padding:8px 16px;font-size:11px;font-weight:600;color:' + textMuted + '">' +
+            '<span>9:41</span><span>●●●</span>' +
+          '</div>' +
+          /* Header */
+          '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid ' + mix(bg, text, 0.1) + '">' +
+            '<span style="font-family:\'' + hf + '\',sans-serif;font-weight:600;font-size:17px;color:' + text + '">Мой APP</span>' +
+            '<div style="width:24px;height:24px;border-radius:50%;background:' + accent + ';display:flex;align-items:center;justify-content:center"><svg style="width:14px;height:14px" aria-hidden="true"><use href="#tabler-palette"></use></svg></div>' +
+          '</div>' +
+          /* Content */
+          '<div style="padding:16px">' +
+            '<p style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:' + accent + ';margin:0 0 6px">Привет</p>' +
+            '<h2 style="font-family:\'' + hf + '\',sans-serif;font-weight:600;font-size:20px;margin:0 0 8px;color:' + text + '">Добро пожаловать</h2>' +
+            '<p style="font-size:13px;line-height:1.5;color:' + textMuted + ';margin:0 0 16px">Это мобильное приложение использует вашу дизайн-систему с теми же токенами, цветами и шрифтами.</p>' +
+            /* Card */
+            '<div style="padding:16px;background:' + surface + ';border-radius:' + radii[2] + 'px;box-shadow:' + shadow.subtle + ';margin-bottom:16px">' +
+              '<div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">' +
+                '<div style="width:36px;height:36px;border-radius:' + radii[1] + 'px;background:' + accent + ';flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff"><svg style="width:18px;height:18px" aria-hidden="true"><use href="#tabler-palette"></use></svg></div>' +
+                '<div><div style="font-weight:600;font-size:14px;color:' + text + '">Статус проекта</div><div style="font-size:12px;color:' + textMuted + '">3 задачи завершены</div></div>' +
+              '</div>' +
+              '<div style="height:6px;border-radius:3px;background:' + mix(accent, bg, 0.85) + ';overflow:hidden"><div style="width:70%;height:100%;border-radius:3px;background:' + accent + '"></div></div>' +
+            '</div>' +
+            /* Form field */
+            '<div style="margin-bottom:12px">' +
+              '<label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:' + text + '">Имя</label>' +
+              '<input type="text" value="Иван Петров" readonly style="width:100%;padding:10px 12px;border:1px solid ' + mix(bg, text, 0.15) + ';border-radius:' + radii[0] + 'px;background:' + bg + ';color:' + text + ';font-size:13px;outline:none;font-family:inherit">' +
+            '</div>' +
+            /* Primary button */
+            '<button style="width:100%;padding:12px;border:none;border-radius:' + radii[1] + 'px;background:' + accent + ';color:#fff;font-weight:600;font-size:14px;cursor:default;font-family:inherit;margin-bottom:10px">Отправить</button>' +
+            /* Secondary button */
+            '<button style="width:100%;padding:12px;border:1px solid ' + mix(bg, text, 0.15) + ';border-radius:' + radii[1] + 'px;background:transparent;color:' + text + ';font-weight:500;font-size:14px;cursor:default;font-family:inherit">Отмена</button>' +
+          '</div>' +
+          /* Bottom nav */
+          '<div style="display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid ' + mix(bg, text, 0.1) + ';margin-top:auto">' +
+            '<span style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:' + accent + '"><svg style="width:20px;height:20px" aria-hidden="true"><use href="#tabler-world"></use></svg>Главная</span>' +
+            '<span style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:' + textMuted + '"><svg style="width:20px;height:20px" aria-hidden="true"><use href="#tabler-search"></use></svg>Поиск</span>' +
+            '<span style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:' + textMuted + '"><svg style="width:20px;height:20px" aria-hidden="true"><use href="#tabler-settings"></use></svg>Профиль</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    /* Tab switching */
+    const tabs = $$('.preview-tab');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        const target = tab.dataset.tab;
+        wrap.hidden = target !== 'web';
+        mp.hidden = target !== 'mobile';
+      });
+    });
   }
 
   /* ---------- Генераторы ---------- */
@@ -698,21 +1048,23 @@
     const palette = getPalette();
     const pair = getFontPair();
     const concept = getConcept();
-    const { bg, surface, text, textMuted, accent } = getSafeColors(palette, concept);
-    const isD = isDark(bg);
+    const cs = getSemanticColors(palette);
+    const bg = cs.background, surface = cs.surface, text = cs.textPrimary;
+    const textMuted = cs.textMuted, accent = cs.accent;
+    const isD = cs.mode === 'dark';
     const scale = TYPE_SCALES[concept.scale] || TYPE_SCALES.standard;
     const radii = concept.radius;
     const spaceBase = concept.space * 4;
     const sc = concept.styleConfig || {};
-    const shadow = SHADOWS[concept.shadow] || SHADOWS.soft;
+    const shadow = buildShadow(concept.shadow, accent);
     const date = new Date().toISOString().slice(0, 10);
-    const secText = isD ? mix(text, '#ffffff', 0.3) : textMuted;
-    const borderCol = isD ? mix(bg, '#ffffff', 0.15) : mix(text, '#ffffff', 0.7);
+    const secText = cs.textSecondary;
+    const borderCol = cs.border;
     const sText = isD ? mix(text, '#ffffff', 0.2) : mix(text, '#ffffff', 0.4);
     const bgSubtle = isD ? mix(bg, '#ffffff', 0.04) : mix(bg, '#000000', 0.02);
-    const surfaceElevated = isD ? mix(surface, '#ffffff', 0.05) : surface;
+    const surfaceElevated = cs.surfaceElevated;
     const surfaceHover = isD ? mix(surface, '#ffffff', 0.08) : mix(surface, '#000000', 0.03);
-    const borderSubtle = isD ? mix(borderCol, bg, 0.3) : mix(borderCol, '#ffffff', 0.3);
+    const borderSubtle = cs.borderSubtle;
 
     const conceptKeywords = {
       strict: 'Строгий / Деловой / Чёткий', neon: 'Неоновый / Футуристический / Дерзкий', glass: 'Стеклянный / Мягкий / Современный', brutal: 'Брутальный / Резкий / Сырой', minimal: 'Минимальный / Чистый / Воздушный', premium: 'Премиальный / Элегантный / Тёмный', friendly: 'Дружелюбный / Тёплый / Мягкий', tech: 'Технологичный / Холодный / Точный', retro: 'Винтажный / Приглушённый / Ностальгический', nature: 'Природный / Землистый / Спокойный',
@@ -802,7 +1154,7 @@
 
 \`\`\`text
 Primary:        ${accent}
-Primary Hover:  ${mix(accent, isD ? '#ffffff' : '#000000', 0.15)}
+Primary Hover:  ${cs.accentHover}
 Primary Active: ${mix(accent, isD ? '#ffffff' : '#000000', 0.3)}
 Secondary:      ${surface}
 Secondary Hover: ${surfaceHover}
@@ -839,10 +1191,10 @@ Border Strong: ${borderCol}
 ## Семантические цвета
 
 \`\`\`text
-Success: #22C55E
-Warning: #F59E0B
-Error:   #EF4444
-Info:    #3B82F6
+Success: ${cs.semantic.success}
+Warning: ${cs.semantic.warning}
+Error:   ${cs.semantic.error}
+Info:    ${cs.semantic.info}
 \`\`\`
 
 ## Правила по цвету
@@ -1074,11 +1426,11 @@ ${shadow.medium}
 Состояния:
 \`\`\`text
 Default:  ${accent}
-Hover:    ${mix(accent, isD ? '#ffffff' : '#000000', 0.15)}
+Hover:    ${cs.accentHover}
 Active:   ${mix(accent, isD ? '#ffffff' : '#000000', 0.3)}
 Focus:    ${shadow.focus}
 Disabled: ${sText} bg, ${borderCol} text
-Loading:  spinner + ${mix(accent, '#000000', 0.2)}
+Loading:  spinner + ${cs.accentSoft}
 \`\`\`
 
 ### Secondary
@@ -1626,11 +1978,13 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     const palette = getPalette();
     const pair = getFontPair();
     const concept = getConcept();
-    const { bg, surface, text, textMuted, accent } = getSafeColors(palette, concept);
+    const cs = getSemanticColors(palette);
+    const bg = cs.background, surface = cs.surface, text = cs.textPrimary;
+    const textMuted = cs.textMuted, accent = cs.accent;
     const radii = concept.radius;
     const spaceBase = concept.space * 4;
     const scale = TYPE_SCALES[concept.scale] || TYPE_SCALES.standard;
-    const isD = isDark(bg);
+    const isD = cs.mode === 'dark';
     const sc = concept.styleConfig || {};
 
     return JSON.stringify({
@@ -1638,16 +1992,19 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
       color: {
         background: bg,
         surface: surface,
+        'surface-elevated': cs.surfaceElevated,
         'text-primary': text,
-        'text-secondary': isD ? mix(text, '#ffffff', 0.3) : textMuted,
+        'text-secondary': cs.textSecondary,
         'text-muted': textMuted,
         'text-inverse': isD ? '#1C1917' : '#FFFFFF',
         accent: accent,
-        'accent-hover': mix(accent, isD ? '#ffffff' : '#000000', 0.15),
+        'accent-hover': cs.accentHover,
         'accent-active': mix(accent, isD ? '#ffffff' : '#000000', 0.3),
-        'border': isD ? mix(bg, '#ffffff', 0.15) : mix(text, '#ffffff', 0.7),
+        'accent-soft': cs.accentSoft,
+        'border': cs.border,
+        'border-subtle': cs.borderSubtle,
         'palette-original': palette.colors,
-        success: '#22C55E', warning: '#F59E0B', error: '#EF4444', info: '#3B82F6',
+        success: cs.semantic.success, warning: cs.semantic.warning, error: cs.semantic.error, info: cs.semantic.info,
       },
       typography: {
         'font-heading': pair.heading,
@@ -1673,13 +2030,15 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     const palette = getPalette();
     const pair = getFontPair();
     const concept = getConcept();
-    const { bg, surface, text, textMuted, accent } = getSafeColors(palette, concept);
-    const isD = isDark(bg);
+    const cs = getSemanticColors(palette);
+    const bg = cs.background, surface = cs.surface, text = cs.textPrimary;
+    const textMuted = cs.textMuted, accent = cs.accent;
+    const isD = cs.mode === 'dark';
     const radii = concept.radius;
     const sc = concept.styleConfig || {};
     const comp = sc.components || {};
-    const borderCol = isD ? mix(bg, '#ffffff', 0.15) : mix(text, '#ffffff', 0.7);
-    const secText = isD ? mix(text, '#ffffff', 0.3) : textMuted;
+    const borderCol = cs.border;
+    const secText = cs.textSecondary;
 
     return `# Components
 
@@ -1702,10 +2061,10 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   transition: background 0.2s, box-shadow 0.2s;
 }
 .btn-primary:hover {
-  background: ${mix(accent, isD ? '#ffffff' : '#000000', 0.15)};
+  background: ${cs.accentHover};
 }
 .btn-primary:focus-visible {
-  box-shadow: 0 0 0 3px ${mix(accent, '#ffffff', 0.5)};
+  box-shadow: 0 0 0 3px ${cs.accentSoft};
   outline: none;
 }
 .btn-primary:disabled {
@@ -1736,7 +2095,7 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   background: ${mix(surface, isD ? '#ffffff' : '#000000', isD ? 0.05 : 0.03)};
 }
 .btn-secondary:focus-visible {
-  box-shadow: 0 0 0 3px ${mix(accent, '#ffffff', 0.5)};
+box-shadow: 0 0 0 3px ${cs.accentSoft};
   outline: none;
 }
 \`\`\`
@@ -1752,16 +2111,16 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   color: ${accent};
   border: none;
   border-radius: ${radii[1]}px;
-  padding: 10px 16px;
+  padding: 10px 22px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
 }
 .btn-ghost:hover {
-  background: ${mix(accent, '#ffffff', 0.9)};
+  background: ${cs.accentSoft};
 }
 .btn-ghost:focus-visible {
-  box-shadow: 0 0 0 3px ${mix(accent, '#ffffff', 0.5)};
+  box-shadow: 0 0 0 3px ${cs.accentSoft};
   outline: none;
 }
 \`\`\`
@@ -1813,11 +2172,11 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
 }
 .input:focus {
   border-color: ${accent};
-  box-shadow: 0 0 0 3px ${mix(accent, '#ffffff', 0.5)};
+  box-shadow: 0 0 0 3px ${cs.accentSoft};
   outline: none;
 }
 .input:disabled {
-  background: ${isD ? mix(bg, '#ffffff', 0.04) : mix(bg, '#000000', 0.02)};
+  background: ${cs.borderSubtle};
   color: ${secText};
   cursor: not-allowed;
 }
@@ -1840,11 +2199,11 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
   background: ${surface};
   border-radius: ${radii[2]}px;
   padding: 20px;
-  box-shadow: ${SHADOWS[concept.shadow] ? SHADOWS[concept.shadow].subtle : 'none'};
+  box-shadow: ${buildShadow(concept.shadow, accent).subtle};
   transition: box-shadow 0.3s;
 }
 .card:hover {
-  box-shadow: ${SHADOWS[concept.shadow] ? SHADOWS[concept.shadow].medium : 'none'};
+  box-shadow: ${buildShadow(concept.shadow, accent).medium};
 }
 \`\`\`
 
@@ -2028,11 +2387,16 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     if (palGrid) {
       palGrid.innerHTML = '';
       PALETTES.forEach((p) => {
+        const cs = getSemanticColors(p);
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'edit-palette-btn' + (wizard.paletteId === p.id ? ' is-active' : '');
         btn.dataset.id = p.id;
-        btn.innerHTML = p.colors.map((c) => '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:' + c + ';border:1px solid rgba(0,0,0,.08)"></span>').join('');
+        btn.innerHTML =
+          '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:' + cs.background + ';border:1px solid rgba(0,0,0,.08)" title="фон"></span>' +
+          '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:' + cs.surface + ';border:1px solid rgba(0,0,0,.08)" title="поверхность"></span>' +
+          '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:' + cs.accent + ';border:1px solid rgba(0,0,0,.08)" title="акцент"></span>' +
+          '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:' + cs.textPrimary + ';border:1px solid rgba(0,0,0,.08)" title="текст"></span>';
         btn.title = p.name;
         btn.addEventListener('click', () => {
           wizard.paletteId = p.id;
@@ -2125,9 +2489,10 @@ Generated by DSgen — ${palette.name} · ${pair.name} · ${concept.name}
     wizard.paletteId = PALETTES[0].id;
     wizard.headingFont = FONT_PAIRS[0].heading;
     wizard.bodyFont = FONT_PAIRS[0].body;
+    wizard.conceptId = DESIGN_CONCEPTS[0].id;
+    renderConcepts();
     renderPalettes();
     renderFontPairs();
-    renderConcepts();
     wizardGo(1);
 
     $('#wizard-next-btn').addEventListener('click', () => {

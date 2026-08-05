@@ -1,52 +1,1902 @@
 [
-  { "id": "warm-minimal", "name": "Тёплый минимализм", "colors": ["#FDFBF7","#F5F0E8","#D4A574","#8B5E34","#2B2B27"] },
-  { "id": "ocean", "name": "Морской бриз", "colors": ["#F0F9FF","#BAE6FD","#38BDF8","#0284C7","#0F172A"] },
-  { "id": "sunset", "name": "Закат", "colors": ["#FFF7ED","#FED7AA","#FB923C","#EA580C","#7C2D12"] },
-  { "id": "forest", "name": "Лес", "colors": ["#ECFDF5","#BBF7D0","#34D399","#059669","#064E3B"] },
-  { "id": "lavender", "name": "Лаванда", "colors": ["#F3E8FF","#D8B4FE","#A855F7","#7E22CE","#581C87"] },
-  { "id": "rose", "name": "Роза", "colors": ["#FFF1F2","#FECDD3","#FB7185","#E11D48","#9F1239"] },
-  { "id": "indigo", "name": "Индиго", "colors": ["#E0E7FF","#A5B4FC","#6366F1","#4338CA","#312E81"] },
-  { "id": "neon", "name": "Неон", "colors": ["#0F0E17","#23203A","#FF8906","#E53170","#7A5AF0"] },
-  { "id": "sand", "name": "Песок", "colors": ["#FEF9EF","#FDE68A","#F59E0B","#B45309","#78350F"] },
-  { "id": "snow", "name": "Снег", "colors": ["#FFFFFF","#F8FAFC","#E2E8F0","#64748B","#0F172A"] },
-  { "id": "wine", "name": "Вино", "colors": ["#FDF2F8","#FBCFE8","#EC4899","#BE185D","#701A4E"] },
-  { "id": "hacker", "name": "Матрица", "colors": ["#010B07","#0A2E1A","#00FF7F","#39FF14","#E8FFE8"] },
-  { "id": "gold", "name": "Золото", "colors": ["#FFFBE6","#FDE68A","#D97706","#92400E","#451A03"] },
-  { "id": "arctic", "name": "Арктика", "colors": ["#ECFEFF","#A5F3FC","#22D3EE","#0891B2","#164E63"] },
-  { "id": "coffee", "name": "Кофе", "colors": ["#FBF7F0","#E8DCCC","#A0846C","#5C4033","#2D1810"] },
-  { "id": "cyberpunk", "name": "Киберпанк", "colors": ["#0B0518","#2B0F66","#7F3FF2","#F875AA","#F5F0FF"] },
-  { "id": "olive", "name": "Оливковый", "colors": ["#F7FEE7","#ECFCCB","#84CC16","#4D7C0F","#365314"] },
-  { "id": "fuchsia", "name": "Фуксия", "colors": ["#FDF4FF","#F5D0FE","#D946EF","#A21CAF","#701A75"] },
-  { "id": "graphite", "name": "Графит", "colors": ["#16181D","#1E2128","#3D424C","#8A8F98","#E8EAED"] },
-  { "id": "mango", "name": "Манго", "colors": ["#FFF9ED","#FFE5A3","#FFB347","#FF8C00","#CC7000"] },
-  { "id": "lilac-mist", "name": "Сиреневый туман", "colors": ["#F5F3FF","#DDD6FE","#A78BFA","#7C3AED","#5B21B6"] },
-  { "id": "tiffany", "name": "Тиффани", "colors": ["#F0FDFA","#CCFBF1","#2DD4BF","#0D9488","#115E59"] },
-  { "id": "scarlet", "name": "Алый", "colors": ["#FEF2F2","#FECACA","#EF4444","#B91C1C","#7F1D1D"] },
-  { "id": "rainy", "name": "Дождливый", "colors": ["#F8FAFC","#E2E8F0","#94A3B8","#475569","#1E293B"] },
-  { "id": "amber", "name": "Янтарь", "colors": ["#FFFBEB","#FDE68A","#F59E0B","#D97706","#92400E"] },
-  { "id": "emerald", "name": "Изумруд", "colors": ["#ECFDF5","#A7F3D0","#10B981","#047857","#064E3B"] },
-  { "id": "sakura", "name": "Сакура", "colors": ["#FFF0F5","#F9A8D4","#F472B6","#DB2777","#9D174D"] },
-  { "id": "stormy", "name": "Грозовой", "colors": ["#0F172A","#1E293B","#334155","#475569","#CBD5E1"] },
-  { "id": "sun", "name": "Солнце", "colors": ["#FFFBE6","#FEF08A","#EAB308","#A16207","#713F12"] },
-  { "id": "deep-ocean", "name": "Глубокий океан", "colors": ["#F0F9FF","#E0F2FE","#7DD3FC","#38BDF8","#0369A1"] },
-  { "id": "chocolate", "name": "Шоколад", "colors": ["#FBF7F0","#D4A574","#A0724A","#6B4423","#3E2723"] },
-  { "id": "burgundy", "name": "Бургунди", "colors": ["#FDF2F8","#FCE7F3","#F472B6","#BE123C","#6B0F2A"] },
-  { "id": "sky", "name": "Небо", "colors": ["#F0F9FF","#E0F2FE","#93C5FD","#60A5FA","#1D4ED8"] },
-  { "id": "mint", "name": "Мятный", "colors": ["#F3FAF7","#D1FAE5","#6EE7B7","#059669","#065F46"] },
-  { "id": "terracotta", "name": "Терракота", "colors": ["#FEF7F3","#FED7AA","#D97A4A","#9C4221","#5C2211"] },
-  { "id": "midnight", "name": "Полночь", "colors": ["#0B0E14","#1A1F2E","#2D3654","#4A5880","#8EA0C8"] },
-  { "id": "spring", "name": "Весна", "colors": ["#F0FDF4","#BBF7D0","#4ADE80","#22C55E","#166534"] },
-  { "id": "honey", "name": "Медовый", "colors": ["#FFF7ED","#FFEDD5","#FDBA74","#EA580C","#9A3412"] },
-  { "id": "sapphire", "name": "Сапфир", "colors": ["#EFF6FF","#BFDBFE","#3B82F6","#2563EB","#1E40AF"] },
-  { "id": "bamboo", "name": "Бамбук", "colors": ["#F7FEE7","#D9F99D","#65A30D","#4D7C0F","#3F6212"] },
-  { "id": "lilac", "name": "Лиловый", "colors": ["#FAF5FF","#E9D5FF","#C084FC","#9333EA","#6B21A8"] },
-  { "id": "mocha", "name": "Мокко", "colors": ["#FAF7F2","#E8DDD0","#C4AD93","#8B7355","#4A3F32"] },
-  { "id": "ruby", "name": "Рубин", "colors": ["#FFF1F2","#FFA3A3","#F43F5E","#BE123C","#881337"] },
-  { "id": "foggy", "name": "Туманный", "colors": ["#F9FAFB","#F3F4F6","#D1D5DB","#6B7280","#374151"] },
-  { "id": "agate", "name": "Агат", "colors": ["#FDF4FF","#FAE8FF","#E879F9","#C026D3","#86198F"] },
-  { "id": "cinnamon", "name": "Корица", "colors": ["#FFF9ED","#FDE68A","#D97706","#B45309","#92400E"] },
-  { "id": "turquoise", "name": "Бирюза", "colors": ["#F0FDFA","#CCFBF1","#5EEAD4","#14B8A6","#0F766E"] },
-  { "id": "pomegranate", "name": "Гранат", "colors": ["#FFF1F2","#FFC4C4","#E5484D","#C1121F","#780A16"] },
-  { "id": "silver", "name": "Серебро", "colors": ["#F8F9FA","#E9ECEF","#CED4DA","#6C757D","#343A40"] },
-  { "id": "aurora", "name": "Аврора", "colors": ["#F0F9FF","#E0F2FE","#93C5FD","#60A5FA","#1D4ED8"] }
+  {
+    "id": "graphite-order",
+    "name": "Графитовый порядок",
+    "colors": [
+      "#F7F8FA",
+      "#FFFFFF",
+      "#343A40",
+      "#6C757D",
+      "#16181D"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F7F8FA",
+      "surfaceElevated": "#fbfcfd",
+      "border": "#e3e3e4",
+      "borderSubtle": "#f1f1f1",
+      "textPrimary": "#16181D",
+      "textSecondary": "#343A40",
+      "textMuted": "#6C757D",
+      "accent": "#6C757D",
+      "accentHover": "#54616c",
+      "accentSoft": "#c4c8cb",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F7F8FA",
+      "#FFFFFF",
+      "#343A40",
+      "#6C757D",
+      "#16181D"
+    ]
+  },
+  {
+    "id": "cold-slate",
+    "name": "Холодный сланец",
+    "colors": [
+      "#F5F7F9",
+      "#FFFFFF",
+      "#334155",
+      "#64748B",
+      "#172033"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F5F7F9",
+      "surfaceElevated": "#fafbfc",
+      "border": "#e3e4e7",
+      "borderSubtle": "#f1f2f3",
+      "textPrimary": "#172033",
+      "textSecondary": "#747985",
+      "textMuted": "#8f929c",
+      "accent": "#64748B",
+      "accentHover": "#4a5a72",
+      "accentSoft": "#e8eaee",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F5F7F9",
+      "#FFFFFF",
+      "#334155",
+      "#64748B",
+      "#172033"
+    ]
+  },
+  {
+    "id": "steel-grid",
+    "name": "Стальная сетка",
+    "colors": [
+      "#F4F6F8",
+      "#FBFCFD",
+      "#3F4A56",
+      "#7B8794",
+      "#20262D"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FBFCFD",
+      "surface": "#F4F6F8",
+      "surfaceElevated": "#fafbfc",
+      "border": "#e1e2e4",
+      "borderSubtle": "#eeeff1",
+      "textPrimary": "#20262D",
+      "textSecondary": "#3F4A56",
+      "textMuted": "#7B8794",
+      "accent": "#7B8794",
+      "accentHover": "#617285",
+      "accentSoft": "#c8cdd3",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F4F6F8",
+      "#FBFCFD",
+      "#3F4A56",
+      "#7B8794",
+      "#20262D"
+    ]
+  },
+  {
+    "id": "ink",
+    "name": "Чернила",
+    "colors": [
+      "#FAFAF9",
+      "#FFFFFF",
+      "#27272A",
+      "#71717A",
+      "#18181B"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#FAFAF9",
+      "surfaceElevated": "#fdfdfc",
+      "border": "#e3e3e4",
+      "borderSubtle": "#f1f1f1",
+      "textPrimary": "#18181B",
+      "textSecondary": "#27272A",
+      "textMuted": "#71717A",
+      "accent": "#71717A",
+      "accentHover": "#59596a",
+      "accentSoft": "#c6c6ca",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FAFAF9",
+      "#FFFFFF",
+      "#27272A",
+      "#71717A",
+      "#18181B"
+    ]
+  },
+  {
+    "id": "white-paper",
+    "name": "Белая бумага",
+    "colors": [
+      "#FCFCFB",
+      "#F7F7F5",
+      "#404040",
+      "#737373",
+      "#171717"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FCFCFB",
+      "surface": "#F7F7F5",
+      "surfaceElevated": "#fbfbfa",
+      "border": "#e1e1e0",
+      "borderSubtle": "#eeeeed",
+      "textPrimary": "#171717",
+      "textSecondary": "#404040",
+      "textMuted": "#737373",
+      "accent": "#737373",
+      "accentHover": "#635a5a",
+      "accentSoft": "#c5c5c5",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FCFCFB",
+      "#F7F7F5",
+      "#404040",
+      "#737373",
+      "#171717"
+    ]
+  },
+  {
+    "id": "electric-uv",
+    "name": "Электрический ультрафиолет",
+    "colors": [
+      "#090812",
+      "#151127",
+      "#9B5CFF",
+      "#FF3CAC",
+      "#F7F2FF"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#090812",
+      "surface": "#151127",
+      "surfaceElevated": "#9B5CFF",
+      "border": "#393741",
+      "borderSubtle": "#211f2a",
+      "textPrimary": "#F7F2FF",
+      "textSecondary": "#a4a0ac",
+      "textMuted": "#66636e",
+      "accent": "#FF3CAC",
+      "accentHover": "#ff79c6",
+      "accentSoft": "#471539",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#090812",
+      "#151127",
+      "#9B5CFF",
+      "#FF3CAC",
+      "#F7F2FF"
+    ]
+  },
+  {
+    "id": "acid-lime",
+    "name": "Кислотный лайм",
+    "colors": [
+      "#060A08",
+      "#101A14",
+      "#B7FF00",
+      "#00F5A0",
+      "#EEFFF4"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#060A08",
+      "surface": "#101A14",
+      "surfaceElevated": "#232c27",
+      "border": "#343b37",
+      "borderSubtle": "#1d2320",
+      "textPrimary": "#EEFFF4",
+      "textSecondary": "#9da9a1",
+      "textMuted": "#616964",
+      "accent": "#B7FF00",
+      "accentHover": "#c8ff3d",
+      "accentSoft": "#324706",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#060A08",
+      "#101A14",
+      "#B7FF00",
+      "#00F5A0",
+      "#EEFFF4"
+    ]
+  },
+  {
+    "id": "cyan-pulse",
+    "name": "Циановый импульс",
+    "colors": [
+      "#070B12",
+      "#111A27",
+      "#22D3EE",
+      "#6366F1",
+      "#ECFEFF"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#070B12",
+      "surface": "#111A27",
+      "surfaceElevated": "#6366F1",
+      "border": "#353c41",
+      "borderSubtle": "#1e232a",
+      "textPrimary": "#ECFEFF",
+      "textSecondary": "#9ca9ac",
+      "textMuted": "#606a6e",
+      "accent": "#22D3EE",
+      "accentHover": "#52e5fb",
+      "accentSoft": "#0e3d49",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#070B12",
+      "#111A27",
+      "#22D3EE",
+      "#6366F1",
+      "#ECFEFF"
+    ]
+  },
+  {
+    "id": "midnight-magenta",
+    "name": "Магента после полуночи",
+    "colors": [
+      "#100711",
+      "#211022",
+      "#F43F9E",
+      "#A855F7",
+      "#FFF1FA"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#100711",
+      "surface": "#211022",
+      "surfaceElevated": "#A855F7",
+      "border": "#403640",
+      "borderSubtle": "#281e28",
+      "textPrimary": "#FFF1FA",
+      "textSecondary": "#ab9fa8",
+      "textMuted": "#6d626c",
+      "accent": "#F43F9E",
+      "accentHover": "#fe72bc",
+      "accentSoft": "#491534",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#100711",
+      "#211022",
+      "#F43F9E",
+      "#A855F7",
+      "#FFF1FA"
+    ]
+  },
+  {
+    "id": "signal-red",
+    "name": "Сигнальный красный",
+    "colors": [
+      "#0D090A",
+      "#1C1113",
+      "#FF3158",
+      "#FFB000",
+      "#FFF5F6"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#0D090A",
+      "surface": "#1C1113",
+      "surfaceElevated": "#FF3158",
+      "border": "#3d3839",
+      "borderSubtle": "#252122",
+      "textPrimary": "#FFF5F6",
+      "textSecondary": "#aaa2a3",
+      "textMuted": "#6b6566",
+      "accent": "#FFB000",
+      "accentHover": "#ffc33d",
+      "accentSoft": "#4a3308",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#0D090A",
+      "#1C1113",
+      "#FF3158",
+      "#FFB000",
+      "#FFF5F6"
+    ]
+  },
+  {
+    "id": "sapphire-glass",
+    "name": "Сапфировое стекло",
+    "colors": [
+      "#F3F8FF",
+      "#FFFFFF",
+      "#2563EB",
+      "#60A5FA",
+      "#172554"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F3F8FF",
+      "surfaceElevated": "#f9fcff",
+      "border": "#e3e5ea",
+      "borderSubtle": "#f1f2f5",
+      "textPrimary": "#172554",
+      "textSecondary": "#2563EB",
+      "textMuted": "#6390f1",
+      "accent": "#2563EB",
+      "accentHover": "#0d4ad0",
+      "accentSoft": "#dee8fc",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F3F8FF",
+      "#FFFFFF",
+      "#2563EB",
+      "#60A5FA",
+      "#172554"
+    ]
+  },
+  {
+    "id": "ice-fog",
+    "name": "Ледяной туман",
+    "colors": [
+      "#F5FAFC",
+      "#FFFFFF",
+      "#0E7490",
+      "#67E8F9",
+      "#164E63"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F5FAFC",
+      "surfaceElevated": "#fafdfe",
+      "border": "#e3eaec",
+      "borderSubtle": "#f1f4f6",
+      "textPrimary": "#164E63",
+      "textSecondary": "#0E7490",
+      "textMuted": "#569eb2",
+      "accent": "#00a2b8",
+      "accentHover": "#007585",
+      "accentSoft": "#d9f1f4",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F5FAFC",
+      "#FFFFFF",
+      "#0E7490",
+      "#67E8F9",
+      "#164E63"
+    ]
+  },
+  {
+    "id": "aquamarine",
+    "name": "Аквамарин",
+    "colors": [
+      "#F2FCFB",
+      "#FFFFFF",
+      "#0F766E",
+      "#5EEAD4",
+      "#134E4A"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F2FCFB",
+      "surfaceElevated": "#f9fefd",
+      "border": "#e3eae9",
+      "borderSubtle": "#f1f4f4",
+      "textPrimary": "#134E4A",
+      "textSecondary": "#0F766E",
+      "textMuted": "#5ba09b",
+      "accent": "#0b9e88",
+      "accentHover": "#057161",
+      "accentSoft": "#daf0ed",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F2FCFB",
+      "#FFFFFF",
+      "#0F766E",
+      "#5EEAD4",
+      "#134E4A"
+    ]
+  },
+  {
+    "id": "lavender-glass",
+    "name": "Лавандовое стекло",
+    "colors": [
+      "#F8F6FF",
+      "#FFFFFF",
+      "#6D5BD0",
+      "#B8A8FF",
+      "#312E5A"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F8F6FF",
+      "surfaceElevated": "#fcfbff",
+      "border": "#e6e6eb",
+      "borderSubtle": "#f3f2f5",
+      "textPrimary": "#312E5A",
+      "textSecondary": "#6D5BD0",
+      "textMuted": "#9385dd",
+      "accent": "#6D5BD0",
+      "accentHover": "#4831c7",
+      "accentSoft": "#e9e6f8",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F8F6FF",
+      "#FFFFFF",
+      "#6D5BD0",
+      "#B8A8FF",
+      "#312E5A"
+    ]
+  },
+  {
+    "id": "sky-haze",
+    "name": "Небесная дымка",
+    "colors": [
+      "#F2F8FF",
+      "#FFFFFF",
+      "#3478C5",
+      "#8EC5FF",
+      "#183B61"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F2F8FF",
+      "surfaceElevated": "#f9fcff",
+      "border": "#e3e7ec",
+      "borderSubtle": "#f1f3f6",
+      "textPrimary": "#183B61",
+      "textSecondary": "#3478C5",
+      "textMuted": "#6397d2",
+      "accent": "#3478C5",
+      "accentHover": "#245fa2",
+      "accentSoft": "#e1ebf6",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F2F8FF",
+      "#FFFFFF",
+      "#3478C5",
+      "#8EC5FF",
+      "#183B61"
+    ]
+  },
+  {
+    "id": "scarlet-concrete",
+    "name": "Алый бетон",
+    "colors": [
+      "#F8F4F2",
+      "#FFFFFF",
+      "#C91C2B",
+      "#262626",
+      "#111111"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F8F4F2",
+      "surfaceElevated": "#fcfaf9",
+      "border": "#e2e2e2",
+      "borderSubtle": "#f1f1f1",
+      "textPrimary": "#111111",
+      "textSecondary": "#262626",
+      "textMuted": "#939393",
+      "accent": "#C91C2B",
+      "accentHover": "#a1111e",
+      "accentSoft": "#f7dddf",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F8F4F2",
+      "#FFFFFF",
+      "#C91C2B",
+      "#262626",
+      "#111111"
+    ]
+  },
+  {
+    "id": "black-poster",
+    "name": "Чёрный плакат",
+    "colors": [
+      "#F2F2F0",
+      "#FFFFFF",
+      "#111111",
+      "#E03A2F",
+      "#090909"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F2F2F0",
+      "surfaceElevated": "#f9f9f8",
+      "border": "#e1e1e1",
+      "borderSubtle": "#f0f0f0",
+      "textPrimary": "#090909",
+      "textSecondary": "#111111",
+      "textMuted": "#888888",
+      "accent": "#E03A2F",
+      "accentHover": "#c52217",
+      "accentSoft": "#fae1e0",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F2F2F0",
+      "#FFFFFF",
+      "#111111",
+      "#E03A2F",
+      "#090909"
+    ]
+  },
+  {
+    "id": "cobalt-strike",
+    "name": "Кобальтовый удар",
+    "colors": [
+      "#F4F6FA",
+      "#FFFFFF",
+      "#1646D8",
+      "#111827",
+      "#0A0F1A"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F4F6FA",
+      "surfaceElevated": "#fafbfd",
+      "border": "#e2e2e4",
+      "borderSubtle": "#f0f1f1",
+      "textPrimary": "#0A0F1A",
+      "textSecondary": "#111827",
+      "textMuted": "#888c93",
+      "accent": "#1646D8",
+      "accentHover": "#0d35ae",
+      "accentSoft": "#dce3f9",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F4F6FA",
+      "#FFFFFF",
+      "#1646D8",
+      "#111827",
+      "#0A0F1A"
+    ]
+  },
+  {
+    "id": "orange-print",
+    "name": "Оранжевый принт",
+    "colors": [
+      "#FFF8F0",
+      "#FFFFFF",
+      "#EA580C",
+      "#1F2937",
+      "#171717"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#FFF8F0",
+      "surfaceElevated": "#fffcf8",
+      "border": "#e3e3e3",
+      "borderSubtle": "#f1f1f1",
+      "textPrimary": "#171717",
+      "textSecondary": "#1F2937",
+      "textMuted": "#8f949b",
+      "accent": "#EA580C",
+      "accentHover": "#be4405",
+      "accentSoft": "#fce6db",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FFF8F0",
+      "#FFFFFF",
+      "#EA580C",
+      "#1F2937",
+      "#171717"
+    ]
+  },
+  {
+    "id": "burgundy-poster",
+    "name": "Бордовый постер",
+    "colors": [
+      "#FAF5F6",
+      "#FFFFFF",
+      "#8F1D35",
+      "#26202A",
+      "#171014"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#171014",
+      "surface": "#26202A",
+      "surfaceElevated": "#8F1D35",
+      "border": "#454043",
+      "borderSubtle": "#2e282c",
+      "textPrimary": "#FFFFFF",
+      "textSecondary": "#FAF5F6",
+      "textMuted": "#9f999c",
+      "accent": "#b92645",
+      "accentHover": "#e4385d",
+      "accentSoft": "#401620",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#FAF5F6",
+      "#FFFFFF",
+      "#8F1D35",
+      "#26202A",
+      "#171014"
+    ]
+  },
+  {
+    "id": "milky-minimal",
+    "name": "Молочный минимализм",
+    "colors": [
+      "#FCFCFA",
+      "#FFFFFF",
+      "#30343B",
+      "#9AA0A8",
+      "#17191C"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#FCFCFA",
+      "surfaceElevated": "#fefefd",
+      "border": "#e3e3e4",
+      "borderSubtle": "#f1f1f1",
+      "textPrimary": "#17191C",
+      "textSecondary": "#30343B",
+      "textMuted": "#9AA0A8",
+      "accent": "#8a919a",
+      "accentHover": "#6e7c8d",
+      "accentSoft": "#d0d3d7",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FCFCFA",
+      "#FFFFFF",
+      "#30343B",
+      "#9AA0A8",
+      "#17191C"
+    ]
+  },
+  {
+    "id": "stone-minimal",
+    "name": "Каменный минимализм",
+    "colors": [
+      "#F6F5F2",
+      "#FFFFFF",
+      "#57534E",
+      "#A8A29E",
+      "#292524"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F6F5F2",
+      "surfaceElevated": "#fbfaf9",
+      "border": "#e5e5e5",
+      "borderSubtle": "#f2f2f2",
+      "textPrimary": "#292524",
+      "textSecondary": "#57534E",
+      "textMuted": "#A8A29E",
+      "accent": "#9a938e",
+      "accentHover": "#8d7d72",
+      "accentSoft": "#d7d4d2",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F6F5F2",
+      "#FFFFFF",
+      "#57534E",
+      "#A8A29E",
+      "#292524"
+    ]
+  },
+  {
+    "id": "quiet-olive",
+    "name": "Тихая олива",
+    "colors": [
+      "#F8FAF3",
+      "#FFFFFF",
+      "#657A3A",
+      "#A3B18A",
+      "#26301B"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F8FAF3",
+      "surfaceElevated": "#fcfdf9",
+      "border": "#e5e6e4",
+      "borderSubtle": "#f2f3f1",
+      "textPrimary": "#26301B",
+      "textSecondary": "#7d8376",
+      "textMuted": "#90958b",
+      "accent": "#657A3A",
+      "accentHover": "#495b26",
+      "accentSoft": "#e8ebe1",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F8FAF3",
+      "#FFFFFF",
+      "#657A3A",
+      "#A3B18A",
+      "#26301B"
+    ]
+  },
+  {
+    "id": "quiet-blue",
+    "name": "Тихий синий",
+    "colors": [
+      "#F7F9FC",
+      "#FFFFFF",
+      "#4B6B8A",
+      "#9CB4CA",
+      "#1F3040"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F7F9FC",
+      "surfaceElevated": "#fbfcfe",
+      "border": "#e4e6e8",
+      "borderSubtle": "#f2f3f4",
+      "textPrimary": "#1F3040",
+      "textSecondary": "#4B6B8A",
+      "textMuted": "#8096ad",
+      "accent": "#4B6B8A",
+      "accentHover": "#35516d",
+      "accentSoft": "#e4e9ed",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F7F9FC",
+      "#FFFFFF",
+      "#4B6B8A",
+      "#9CB4CA",
+      "#1F3040"
+    ]
+  },
+  {
+    "id": "warm-clay",
+    "name": "Тёплая глина",
+    "colors": [
+      "#FBF8F4",
+      "#FFFFFF",
+      "#A66A45",
+      "#D7B39A",
+      "#34251D"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#FBF8F4",
+      "surfaceElevated": "#fdfcfa",
+      "border": "#e7e5e4",
+      "borderSubtle": "#f3f2f1",
+      "textPrimary": "#34251D",
+      "textSecondary": "#857c77",
+      "textMuted": "#97908b",
+      "accent": "#A66A45",
+      "accentHover": "#875231",
+      "accentSoft": "#f2e9e3",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FBF8F4",
+      "#FFFFFF",
+      "#A66A45",
+      "#D7B39A",
+      "#34251D"
+    ]
+  },
+  {
+    "id": "dark-gold",
+    "name": "Тёмное золото",
+    "colors": [
+      "#17130E",
+      "#231C12",
+      "#D6A84F",
+      "#8D6A2F",
+      "#F7EFD9"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#17130E",
+      "surface": "#231C12",
+      "surfaceElevated": "#8D6A2F",
+      "border": "#443f37",
+      "borderSubtle": "#2d2922",
+      "textPrimary": "#F7EFD9",
+      "textSecondary": "#D6A84F",
+      "textMuted": "#8a6c35",
+      "accent": "#D6A84F",
+      "accentHover": "#e9c379",
+      "accentSoft": "#47381e",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#17130E",
+      "#231C12",
+      "#D6A84F",
+      "#8D6A2F",
+      "#F7EFD9"
+    ]
+  },
+  {
+    "id": "champagne",
+    "name": "Шампанское",
+    "colors": [
+      "#F7F2E8",
+      "#FFFCF5",
+      "#B8893D",
+      "#D8C29A",
+      "#29231A"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFCF5",
+      "surface": "#F7F2E8",
+      "surfaceElevated": "#fbf9f4",
+      "border": "#e5e2db",
+      "borderSubtle": "#f2efe8",
+      "textPrimary": "#29231A",
+      "textSecondary": "#7f7a72",
+      "textMuted": "#958e82",
+      "accent": "#B8893D",
+      "accentHover": "#976e2b",
+      "accentSoft": "#f4ebd9",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F7F2E8",
+      "#FFFCF5",
+      "#B8893D",
+      "#D8C29A",
+      "#29231A"
+    ]
+  },
+  {
+    "id": "wine-brass",
+    "name": "Вино и латунь",
+    "colors": [
+      "#1A1014",
+      "#29171D",
+      "#C59A55",
+      "#8E3048",
+      "#F4E8DC"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#1A1014",
+      "surface": "#29171D",
+      "surfaceElevated": "#8E3048",
+      "border": "#463b3c",
+      "borderSubtle": "#302628",
+      "textPrimary": "#F4E8DC",
+      "textSecondary": "#a89c96",
+      "textMuted": "#6f6462",
+      "accent": "#C59A55",
+      "accentHover": "#ddb77a",
+      "accentSoft": "#453324",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#1A1014",
+      "#29171D",
+      "#C59A55",
+      "#8E3048",
+      "#F4E8DC"
+    ]
+  },
+  {
+    "id": "espresso",
+    "name": "Эспрессо",
+    "colors": [
+      "#211813",
+      "#30231B",
+      "#C59A72",
+      "#79553C",
+      "#F4E8D8"
+    ],
+    "colorSystem": {
+      "mode": "dark",
+      "background": "#211813",
+      "surface": "#30231B",
+      "surfaceElevated": "#79553C",
+      "border": "#4b423a",
+      "borderSubtle": "#362d27",
+      "textPrimary": "#F4E8D8",
+      "textSecondary": "#aa9f93",
+      "textMuted": "#736960",
+      "accent": "#C59A72",
+      "accentHover": "#deb996",
+      "accentSoft": "#4a392b",
+      "semantic": {
+        "success": "#349b5a",
+        "warning": "#b08619",
+        "error": "#ae4f4f",
+        "info": "#4374af"
+      }
+    },
+    "sourcePalette": [
+      "#211813",
+      "#30231B",
+      "#C59A72",
+      "#79553C",
+      "#F4E8D8"
+    ]
+  },
+  {
+    "id": "ivory",
+    "name": "Слоновая кость",
+    "colors": [
+      "#FAF7EF",
+      "#FFFDF8",
+      "#9B7139",
+      "#C8A66A",
+      "#29251E"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFDF8",
+      "surface": "#FAF7EF",
+      "surfaceElevated": "#fdfbf7",
+      "border": "#e5e3de",
+      "borderSubtle": "#f2f0eb",
+      "textPrimary": "#29251E",
+      "textSecondary": "#7f7b75",
+      "textMuted": "#948f86",
+      "accent": "#9B7139",
+      "accentHover": "#7a5627",
+      "accentSoft": "#f0e8db",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FAF7EF",
+      "#FFFDF8",
+      "#9B7139",
+      "#C8A66A",
+      "#29251E"
+    ]
+  },
+  {
+    "id": "peach-warmth",
+    "name": "Персиковое тепло",
+    "colors": [
+      "#FFF8F4",
+      "#FFFFFF",
+      "#E97858",
+      "#F5B39E",
+      "#3A2722"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#FFF8F4",
+      "surfaceElevated": "#fffcfa",
+      "border": "#e7e5e4",
+      "borderSubtle": "#f3f2f2",
+      "textPrimary": "#3A2722",
+      "textSecondary": "#897d7a",
+      "textMuted": "#998e8d",
+      "accent": "#e8714f",
+      "accentHover": "#e8491c",
+      "accentSoft": "#fceae5",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FFF8F4",
+      "#FFFFFF",
+      "#E97858",
+      "#F5B39E",
+      "#3A2722"
+    ]
+  },
+  {
+    "id": "berry-cream",
+    "name": "Ягодный крем",
+    "colors": [
+      "#FFF7FA",
+      "#FFFFFF",
+      "#C94B78",
+      "#F2A7BF",
+      "#3B202B"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#FFF7FA",
+      "surfaceElevated": "#fffbfd",
+      "border": "#e7e4e6",
+      "borderSubtle": "#f3f2f2",
+      "textPrimary": "#3B202B",
+      "textSecondary": "#897980",
+      "textMuted": "#9e9197",
+      "accent": "#C94B78",
+      "accentHover": "#b32e5e",
+      "accentSoft": "#f7e4eb",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FFF7FA",
+      "#FFFFFF",
+      "#C94B78",
+      "#F2A7BF",
+      "#3B202B"
+    ]
+  },
+  {
+    "id": "soft-mint",
+    "name": "Мягкая мята",
+    "colors": [
+      "#F5FBF8",
+      "#FFFFFF",
+      "#3F9B7A",
+      "#A9DEC9",
+      "#20382F"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F5FBF8",
+      "surfaceElevated": "#fafdfc",
+      "border": "#e4e7e6",
+      "borderSubtle": "#f2f3f3",
+      "textPrimary": "#20382F",
+      "textSecondary": "#798882",
+      "textMuted": "#86948f",
+      "accent": "#3F9B7A",
+      "accentHover": "#2c7b5f",
+      "accentSoft": "#e2f0eb",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F5FBF8",
+      "#FFFFFF",
+      "#3F9B7A",
+      "#A9DEC9",
+      "#20382F"
+    ]
+  },
+  {
+    "id": "powder-lavender",
+    "name": "Пудровая лаванда",
+    "colors": [
+      "#FAF8FF",
+      "#FFFFFF",
+      "#8068C8",
+      "#C9BDF0",
+      "#30294A"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#FAF8FF",
+      "surfaceElevated": "#fdfcff",
+      "border": "#e6e5e9",
+      "borderSubtle": "#f3f2f4",
+      "textPrimary": "#30294A",
+      "textSecondary": "#8068C8",
+      "textMuted": "#9a87d4",
+      "accent": "#8068C8",
+      "accentHover": "#5e3dc0",
+      "accentSoft": "#ece8f7",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FAF8FF",
+      "#FFFFFF",
+      "#8068C8",
+      "#C9BDF0",
+      "#30294A"
+    ]
+  },
+  {
+    "id": "lemon-cream",
+    "name": "Лимонный крем",
+    "colors": [
+      "#FFFCF0",
+      "#FFFFFF",
+      "#C79A18",
+      "#F1D878",
+      "#3A3117"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#FFFCF0",
+      "surfaceElevated": "#fffef8",
+      "border": "#e7e6e3",
+      "borderSubtle": "#f3f3f1",
+      "textPrimary": "#3A3117",
+      "textSecondary": "#898374",
+      "textMuted": "#959083",
+      "accent": "#b58c16",
+      "accentHover": "#8b6b0d",
+      "accentSoft": "#f4eedc",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#FFFCF0",
+      "#FFFFFF",
+      "#C79A18",
+      "#F1D878",
+      "#3A3117"
+    ]
+  },
+  {
+    "id": "data-cobalt",
+    "name": "Кобальт данных",
+    "colors": [
+      "#F4F7FB",
+      "#FFFFFF",
+      "#2457C5",
+      "#7B9DE8",
+      "#14213D"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F4F7FB",
+      "surfaceElevated": "#fafbfd",
+      "border": "#e3e4e8",
+      "borderSubtle": "#f1f2f3",
+      "textPrimary": "#14213D",
+      "textSecondary": "#2457C5",
+      "textMuted": "#7292d9",
+      "accent": "#2457C5",
+      "accentHover": "#18429e",
+      "accentSoft": "#dee6f6",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F4F7FB",
+      "#FFFFFF",
+      "#2457C5",
+      "#7B9DE8",
+      "#14213D"
+    ]
+  },
+  {
+    "id": "engineer-navy",
+    "name": "Инженерный navy",
+    "colors": [
+      "#F2F5F8",
+      "#FFFFFF",
+      "#183B5B",
+      "#4E86B8",
+      "#0D1B2A"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F2F5F8",
+      "surfaceElevated": "#f9fafc",
+      "border": "#e2e4e5",
+      "borderSubtle": "#f0f1f2",
+      "textPrimary": "#0D1B2A",
+      "textSecondary": "#6e767f",
+      "textMuted": "#8c9299",
+      "accent": "#4E86B8",
+      "accentHover": "#376c9c",
+      "accentSoft": "#e4edf4",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F2F5F8",
+      "#FFFFFF",
+      "#183B5B",
+      "#4E86B8",
+      "#0D1B2A"
+    ]
+  },
+  {
+    "id": "cold-cyan",
+    "name": "Холодный циан",
+    "colors": [
+      "#F3F9FB",
+      "#FFFFFF",
+      "#087F8C",
+      "#55C7D1",
+      "#12343B"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F3F9FB",
+      "surfaceElevated": "#f9fcfd",
+      "border": "#e3e7e7",
+      "borderSubtle": "#f1f3f3",
+      "textPrimary": "#12343B",
+      "textSecondary": "#087F8C",
+      "textMuted": "#4fa0aa",
+      "accent": "#087F8C",
+      "accentHover": "#03555e",
+      "accentSoft": "#daecee",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F3F9FB",
+      "#FFFFFF",
+      "#087F8C",
+      "#55C7D1",
+      "#12343B"
+    ]
+  },
+  {
+    "id": "indigo-scheme",
+    "name": "Индиго-схема",
+    "colors": [
+      "#F5F6FC",
+      "#FFFFFF",
+      "#4F46A5",
+      "#8B91D9",
+      "#20204A"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F5F6FC",
+      "surfaceElevated": "#fafbfe",
+      "border": "#e4e4e9",
+      "borderSubtle": "#f2f2f4",
+      "textPrimary": "#20204A",
+      "textSecondary": "#4F46A5",
+      "textMuted": "#938ec8",
+      "accent": "#4F46A5",
+      "accentHover": "#3a3286",
+      "accentSoft": "#e5e3f2",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F5F6FC",
+      "#FFFFFF",
+      "#4F46A5",
+      "#8B91D9",
+      "#20204A"
+    ]
+  },
+  {
+    "id": "steel-interface",
+    "name": "Стальной интерфейс",
+    "colors": [
+      "#F5F7F9",
+      "#FFFFFF",
+      "#52606D",
+      "#9AA6B2",
+      "#202A33"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F5F7F9",
+      "surfaceElevated": "#fafbfc",
+      "border": "#e4e5e7",
+      "borderSubtle": "#f2f2f3",
+      "textPrimary": "#202A33",
+      "textSecondary": "#52606D",
+      "textMuted": "#9AA6B2",
+      "accent": "#8392a0",
+      "accentHover": "#667e94",
+      "accentSoft": "#cdd3d9",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F5F7F9",
+      "#FFFFFF",
+      "#52606D",
+      "#9AA6B2",
+      "#202A33"
+    ]
+  },
+  {
+    "id": "film-70s",
+    "name": "Плёнка 70-х",
+    "colors": [
+      "#F4EBDD",
+      "#FBF5E9",
+      "#A85B32",
+      "#D0A15C",
+      "#493329"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FBF5E9",
+      "surface": "#F4EBDD",
+      "surfaceElevated": "#faf5ee",
+      "border": "#e6ded2",
+      "borderSubtle": "#f0e9dd",
+      "textPrimary": "#493329",
+      "textSecondary": "#A85B32",
+      "textMuted": "#bb7b54",
+      "accent": "#A85B32",
+      "accentHover": "#854422",
+      "accentSoft": "#efdece",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F4EBDD",
+      "#FBF5E9",
+      "#A85B32",
+      "#D0A15C",
+      "#493329"
+    ]
+  },
+  {
+    "id": "olive-film",
+    "name": "Оливковая плёнка",
+    "colors": [
+      "#EFEBDD",
+      "#F8F4E8",
+      "#6C7042",
+      "#B59A5A",
+      "#36352A"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#F8F4E8",
+      "surface": "#EFEBDD",
+      "surfaceElevated": "#f7f5ee",
+      "border": "#e1ddd1",
+      "borderSubtle": "#ece9dd",
+      "textPrimary": "#36352A",
+      "textSecondary": "#848176",
+      "textMuted": "#908b77",
+      "accent": "#9f8547",
+      "accentHover": "#806933",
+      "accentSoft": "#ebe3d0",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#EFEBDD",
+      "#F8F4E8",
+      "#6C7042",
+      "#B59A5A",
+      "#36352A"
+    ]
+  },
+  {
+    "id": "rusty-postcard",
+    "name": "Ржавая открытка",
+    "colors": [
+      "#F7E9DD",
+      "#FFF5EA",
+      "#A64B2A",
+      "#D08B52",
+      "#45291E"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFF5EA",
+      "surface": "#F7E9DD",
+      "surfaceElevated": "#fbf4ee",
+      "border": "#e9ddd2",
+      "borderSubtle": "#f4e9de",
+      "textPrimary": "#45291E",
+      "textSecondary": "#A64B2A",
+      "textMuted": "#c27c5e",
+      "accent": "#c97b3a",
+      "accentHover": "#a86228",
+      "accentSoft": "#f7e3d0",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F7E9DD",
+      "#FFF5EA",
+      "#A64B2A",
+      "#D08B52",
+      "#45291E"
+    ]
+  },
+  {
+    "id": "old-coffee",
+    "name": "Старая кофейня",
+    "colors": [
+      "#F1E6D7",
+      "#FAF1E4",
+      "#76513B",
+      "#B68A62",
+      "#38271F"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FAF1E4",
+      "surface": "#F1E6D7",
+      "surfaceElevated": "#f8f3eb",
+      "border": "#e3d9cc",
+      "borderSubtle": "#eee5d8",
+      "textPrimary": "#38271F",
+      "textSecondary": "#86786e",
+      "textMuted": "#998774",
+      "accent": "#b08054",
+      "accentHover": "#94673d",
+      "accentSoft": "#efe0ce",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F1E6D7",
+      "#FAF1E4",
+      "#76513B",
+      "#B68A62",
+      "#38271F"
+    ]
+  },
+  {
+    "id": "mustard-poster",
+    "name": "Горчичный плакат",
+    "colors": [
+      "#F7EFD4",
+      "#FFF8E4",
+      "#9B751C",
+      "#C8A449",
+      "#40351B"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFF8E4",
+      "surface": "#F7EFD4",
+      "surfaceElevated": "#fbf7ea",
+      "border": "#e8e1cc",
+      "borderSubtle": "#f4ecd8",
+      "textPrimary": "#40351B",
+      "textSecondary": "#9B751C",
+      "textMuted": "#a68941",
+      "accent": "#9B751C",
+      "accentHover": "#735611",
+      "accentSoft": "#f0e4c6",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F7EFD4",
+      "#FFF8E4",
+      "#9B751C",
+      "#C8A449",
+      "#40351B"
+    ]
+  },
+  {
+    "id": "deep-forest",
+    "name": "Глубокий лес",
+    "colors": [
+      "#F2F7F1",
+      "#FFFFFF",
+      "#216E4A",
+      "#6FA77D",
+      "#173426"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F2F7F1",
+      "surfaceElevated": "#f9fbf8",
+      "border": "#e3e7e5",
+      "borderSubtle": "#f1f3f2",
+      "textPrimary": "#173426",
+      "textSecondary": "#74857d",
+      "textMuted": "#899790",
+      "accent": "#216E4A",
+      "accentHover": "#134930",
+      "accentSoft": "#dee9e4",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F2F7F1",
+      "#FFFFFF",
+      "#216E4A",
+      "#6FA77D",
+      "#173426"
+    ]
+  },
+  {
+    "id": "moss",
+    "name": "Мох",
+    "colors": [
+      "#F6F7EE",
+      "#FFFFFF",
+      "#667A36",
+      "#A5B56A",
+      "#303A1D"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F6F7EE",
+      "surfaceElevated": "#fbfbf7",
+      "border": "#e6e7e4",
+      "borderSubtle": "#f3f3f1",
+      "textPrimary": "#303A1D",
+      "textSecondary": "#838977",
+      "textMuted": "#8f9584",
+      "accent": "#87974b",
+      "accentHover": "#6b7936",
+      "accentSoft": "#edefe4",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F6F7EE",
+      "#FFFFFF",
+      "#667A36",
+      "#A5B56A",
+      "#303A1D"
+    ]
+  },
+  {
+    "id": "sage",
+    "name": "Шалфей",
+    "colors": [
+      "#F3F7F3",
+      "#FFFFFF",
+      "#557A68",
+      "#9DB9A8",
+      "#25352E"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFFFF",
+      "surface": "#F3F7F3",
+      "surfaceElevated": "#f9fbf9",
+      "border": "#e5e7e6",
+      "borderSubtle": "#f2f3f2",
+      "textPrimary": "#25352E",
+      "textSecondary": "#9DB9A8",
+      "textMuted": "#759c86",
+      "accent": "#557A68",
+      "accentHover": "#3c604e",
+      "accentSoft": "#e6ebe8",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F3F7F3",
+      "#FFFFFF",
+      "#557A68",
+      "#9DB9A8",
+      "#25352E"
+    ]
+  },
+  {
+    "id": "clay-grass",
+    "name": "Глина и трава",
+    "colors": [
+      "#F8F3EA",
+      "#FFFDF8",
+      "#8C5A3C",
+      "#78965B",
+      "#35291F"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#FFFDF8",
+      "surface": "#F8F3EA",
+      "surfaceElevated": "#fcf9f5",
+      "border": "#e7e4de",
+      "borderSubtle": "#f3f0eb",
+      "textPrimary": "#35291F",
+      "textSecondary": "#867e76",
+      "textMuted": "#999185",
+      "accent": "#8C5A3C",
+      "accentHover": "#6c4229",
+      "accentSoft": "#eee5dc",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#F8F3EA",
+      "#FFFDF8",
+      "#8C5A3C",
+      "#78965B",
+      "#35291F"
+    ]
+  },
+  {
+    "id": "pine-shadow",
+    "name": "Сосновая тень",
+    "colors": [
+      "#EEF4F0",
+      "#F9FCFA",
+      "#285943",
+      "#86A58E",
+      "#183126"
+    ],
+    "colorSystem": {
+      "mode": "light",
+      "background": "#F9FCFA",
+      "surface": "#EEF4F0",
+      "surfaceElevated": "#f7faf8",
+      "border": "#dee4e1",
+      "borderSubtle": "#ecf0ed",
+      "textPrimary": "#183126",
+      "textSecondary": "#72827b",
+      "textMuted": "#85948d",
+      "accent": "#285943",
+      "accentHover": "#163829",
+      "accentSoft": "#dae4df",
+      "semantic": {
+        "success": "#3F6212",
+        "warning": "#92400E",
+        "error": "#9A3412",
+        "info": "#1E40AF"
+      }
+    },
+    "sourcePalette": [
+      "#EEF4F0",
+      "#F9FCFA",
+      "#285943",
+      "#86A58E",
+      "#183126"
+    ]
+  }
 ]

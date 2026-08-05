@@ -18,20 +18,32 @@
       <svg class="icon" aria-hidden="true"><use href="#tabler-palette"></use></svg>
       <span class="brand-name">DSgen</span>
     </span>
-    <ol class="wizard-steps" aria-label="Прогресс шагов">
-      <li class="wizard-step is-active" data-step="1">Палитра</li>
-      <li class="wizard-step" data-step="2">Шрифты</li>
-      <li class="wizard-step" data-step="3">Концепция</li>
+<ol class="wizard-steps" aria-label="Прогресс шагов">
+      <li class="wizard-step is-active" data-step="1">Концепция</li>
+      <li class="wizard-step" data-step="2">Палитра</li>
+      <li class="wizard-step" data-step="3">Шрифты</li>
       <li class="wizard-step" data-step="4">Превью</li>
     </ol>
   </header>
 
   <main class="wizard-body">
 
-    <!-- Шаг 1. Палитра -->
-    <section class="wizard-panel" id="wizard-step-1" aria-label="Шаг 1: выберите палитру">
+    <!-- Шаг 1. Концепция -->
+    <section class="wizard-panel" id="wizard-step-1" aria-label="Шаг 1: выберите концепцию">
       <div class="wizard-panel-head">
         <p class="start-eyebrow">Шаг 1 из 4</p>
+        <h2 class="wizard-panel-title">Выберите дизайн-концепцию</h2>
+        <p class="wizard-panel-desc">
+          Характер интерфейса: скругления, тени, отступы — каждая концепция задаёт настроение.
+        </p>
+      </div>
+      <div class="concept-grid" id="concept-grid"></div>
+    </section>
+
+    <!-- Шаг 2. Палитра -->
+    <section class="wizard-panel" id="wizard-step-2" aria-label="Шаг 2: выберите палитру" hidden>
+      <div class="wizard-panel-head">
+        <p class="start-eyebrow">Шаг 2 из 4</p>
         <h2 class="wizard-panel-title">Выберите цветовую палитру</h2>
         <p class="wizard-panel-desc">
           Трендовые палитры из Coolors — выберите ту, что отражает характер вашего бренда.
@@ -40,10 +52,10 @@
       <div class="palette-grid" id="palette-grid"></div>
     </section>
 
-    <!-- Шаг 2. Шрифты -->
-    <section class="wizard-panel" id="wizard-step-2" aria-label="Шаг 2: выберите шрифты" hidden>
+    <!-- Шаг 3. Шрифты -->
+    <section class="wizard-panel" id="wizard-step-3" aria-label="Шаг 3: выберите шрифты" hidden>
       <div class="wizard-panel-head">
-        <p class="start-eyebrow">Шаг 2 из 4</p>
+        <p class="start-eyebrow">Шаг 3 из 4</p>
         <h2 class="wizard-panel-title">Выберите шрифтовую пару</h2>
         <p class="wizard-panel-desc">
           Один шрифт для заголовков, другой — для основного текста. Или один универсальный.
@@ -56,23 +68,11 @@
       <div class="font-pair-grid" id="wizard-font-pairs"></div>
     </section>
 
-    <!-- Шаг 3. Концепция -->
-    <section class="wizard-panel" id="wizard-step-3" aria-label="Шаг 3: выберите концепцию" hidden>
-      <div class="wizard-panel-head">
-        <p class="start-eyebrow">Шаг 3 из 4</p>
-        <h2 class="wizard-panel-title">Выберите дизайн-концепцию</h2>
-        <p class="wizard-panel-desc">
-          Характер интерфейса: скругления, тени, отступы — каждая концепция задаёт настроение.
-        </p>
-      </div>
-      <div class="concept-grid" id="concept-grid"></div>
-    </section>
-
     <!-- Шаг 4. Превью -->
     <section class="wizard-panel" id="wizard-step-4" aria-label="Шаг 4: предпросмотр" hidden>
       <div class="wizard-panel-head">
         <p class="start-eyebrow">Шаг 4 из 4</p>
-        <h2 class="wizard-panel-title">Предпросмотр сайта</h2>
+        <h2 class="wizard-panel-title">Предпросмотр дизайна</h2>
         <p class="wizard-panel-desc">
           Ваша дизайн-система в действии. Все элементы используют выбранные цвета, шрифты и стиль.
         </p>
@@ -133,7 +133,12 @@
         </div>
       </div>
 
+      <div class="preview-tabs" id="preview-tabs">
+        <button type="button" class="preview-tab is-active" data-tab="web">Сайт</button>
+        <button type="button" class="preview-tab" data-tab="mobile">Мобильное приложение</button>
+      </div>
       <div class="final-preview" id="final-preview"></div>
+      <div class="mobile-preview" id="mobile-preview" hidden></div>
 
       <button type="button" class="fab-edit" id="edit-toggle-btn" aria-label="Редактировать">
         <svg class="icon" aria-hidden="true"><use href="#tabler-edit"></use></svg>
@@ -148,6 +153,7 @@
       Назад
     </button>
     <div class="wizard-selection" id="wizard-selection">
+      <div class="wiz-sel-concept" id="wiz-sel-concept"></div>
       <div class="wiz-sel-palette" id="wiz-sel-palette"></div>
       <div class="wiz-sel-fonts" id="wiz-sel-fonts"></div>
     </div>
