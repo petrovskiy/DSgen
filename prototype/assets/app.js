@@ -87,57 +87,158 @@
     return m ? '#' + m[1] : null;
   }
 
-  /* ---------- Пресеты ---------- */
-  const PRESETS = {
+  /* ---------- Стили и варианты пресетов ----------
+     У каждого стиля — несколько готовых вариантов (палитра + типографика).
+     Варианты собраны по канонам дизайн-систем (по аналогии с галереями
+     вроде uizze.com), базовый набор значений идентичен пресетам PRD. */
+  const STYLES = {
+    brutalism: {
+      name: 'Брутализм', note: 'Резкие границы, максимум контраста',
+      variants: [
+        { name: 'Акцидент',
+          palette: ['#F4F1DE', '#E07A5F', '#3D405B', '#81B29A', '#1C110A'],
+          previewBg: '#F4F1DE', previewText: '#1C110A',
+          bg: '#F4F1DE', surface: '#FFFFFF', text: '#1C110A', textMuted: '#6B5B45',
+          base: '#E07A5F', accent: '#C05638', font: 'Archivo', fontPreview: 'Archivo',
+          radius: 2, shadow: 'none', harmony: 'complementary' },
+        { name: 'Неоньюар',
+          palette: ['#111111', '#FFFFFF', '#FF2B2B', '#2B2B2B', '#A0A0A0'],
+          previewBg: '#161616', previewText: '#FFFFFF',
+          bg: '#111111', surface: '#1A1A1A', text: '#FFFFFF', textMuted: '#999999',
+          base: '#FF2B2B', accent: '#FF2B2B', font: 'Archivo', fontPreview: 'Archivo',
+          radius: 0, shadow: 'none', harmony: 'complementary' },
+        { name: 'Плакат',
+          palette: ['#FFDE00', '#0B0B0B', '#FF3E00', '#FFFFFF', '#5F5F5F'],
+          previewBg: '#FFDE00', previewText: '#0B0B0B',
+          bg: '#FFDE00', surface: '#FFFFFF', text: '#0B0B0B', textMuted: '#333333',
+          base: '#FF3E00', accent: '#FF3E00', font: 'Archivo', fontPreview: 'Archivo',
+          radius: 0, shadow: 'none', harmony: 'analogous' },
+      ],
+    },
     glassmorphism: {
       name: 'Стеклянный', note: 'Полупрозрачные поверхности, blur',
-      palette: ['#EEF2FF', '#C7D2FE', '#818CF8', '#4F46E5', '#312E81'],
-      previewBg: 'rgba(238,242,255,0.5)', previewText: '#312E81',
-      bg: '#F7F8FF', surface: '#FFFFFF', text: '#1E1B4B', textMuted: '#6B7280',
-      accent: '#4F46E5', base: '#4441D8', harmony: 'analogous',
-      fontFamily: 'Inter', fontPreview: 'Inter', radius: 12, shadow: 'soft',
+      variants: [
+        { name: 'Индиго',
+          palette: ['#EEF2FF', '#C7D2FE', '#818CF8', '#4F46E5', '#312E81'],
+          previewBg: 'rgba(238,242,255,0.5)', previewText: '#312E81',
+          bg: '#F7F8FF', surface: '#FFFFFF', text: '#1E1B4B', textMuted: '#6B7280',
+          base: '#4441D8', accent: '#4F46E5', font: 'Inter', fontPreview: 'Inter',
+          radius: 12, shadow: 'soft', harmony: 'analogous' },
+        { name: 'Медовый',
+          palette: ['#FFF7ED', '#FED7AA', '#FB923C', '#EA580C', '#7C2D12'],
+          previewBg: 'rgba(255,237,213,0.6)', previewText: '#7C2D12',
+          bg: '#FFF9F2', surface: '#FFFFFF', text: '#431407', textMuted: '#9A6B4F',
+          base: '#EA580C', accent: '#EA580C', font: 'Inter', fontPreview: 'Inter',
+          radius: 14, shadow: 'soft', harmony: 'analogous' },
+        { name: 'Мята',
+          palette: ['#ECFDF5', '#BBF7D0', '#34D399', '#059669', '#064E3B'],
+          previewBg: 'rgba(236,253,245,0.6)', previewText: '#064E3B',
+          bg: '#F1FAF5', surface: '#FFFFFF', text: '#022C22', textMuted: '#5B7A6B',
+          base: '#059669', accent: '#059669', font: 'Inter', fontPreview: 'Inter',
+          radius: 12, shadow: 'soft', harmony: 'analogous' },
+      ],
     },
     cyberpunk: {
       name: 'Киберпанк', note: 'Тёмный фон, яркие акценты',
-      palette: ['#0F0E17', '#FFFFFE', '#FF8906', '#7A5AF0', '#E53170'],
-      previewBg: '#16141E', previewText: '#FFFFFE',
-      bg: '#0F0E17', surface: '#1A1A26', text: '#FFFFFE', textMuted: '#A6A6B4',
-      accent: '#FF8906', base: '#E53170', fontFamily: 'Space Grotesk', fontPreview: 'Space Grotesk',
-      radius: 8, shadow: 'none', harmony: 'triadic',
+      variants: [
+        { name: 'Неон',
+          palette: ['#0F0E17', '#FFFFFE', '#FF8906', '#7A5AF0', '#E53170'],
+          previewBg: '#16141E', previewText: '#FFFFFE',
+          bg: '#0F0E17', surface: '#1A1A26', text: '#FFFFFE', textMuted: '#A6A6B4',
+          base: '#E53170', accent: '#FF8906', font: 'Space Grotesk', fontPreview: 'Space Grotesk',
+          radius: 8, shadow: 'none', harmony: 'triadic' },
+        { name: 'Матрица',
+          palette: ['#010B07', '#E8FFE8', '#00FF7F', '#39FF14', '#0A2E1A'],
+          previewBg: '#02110B', previewText: '#E8FFE8',
+          bg: '#010B07', surface: '#04120A', text: '#E8FFE8', textMuted: '#5EA98A',
+          base: '#39FF14', accent: '#00C853', font: 'Space Grotesk', fontPreview: 'Space Grotesk',
+          radius: 6, shadow: 'none', harmony: 'analogous' },
+        { name: 'Фиолет',
+          palette: ['#0B0518', '#F5F0FF', '#7F3FF2', '#F875AA', '#2B0F66'],
+          previewBg: '#150B2E', previewText: '#F5F0FF',
+          bg: '#0B0518', surface: '#150B2E', text: '#F5F0FF', textMuted: '#8F7FB3',
+          base: '#7F3FF2', accent: '#7F3FF2', font: 'Space Grotesk', fontPreview: 'Space Grotesk',
+          radius: 10, shadow: 'none', harmony: 'analogous' },
+      ],
     },
     minimalism: {
       name: 'Минимализм', note: 'Тёплый минимализм, один акцент',
-      palette: ['#FFFFFF', '#FAFAF9', '#78716C', '#1C1917', '#A16207'],
-      previewBg: '#FAFAF9', previewText: '#1C1917',
-      bg: '#FFFFFF', surface: '#FAFAF9', text: '#1C1917', textMuted: '#78716C',
-      accent: '#A16207', base: '#A16207', fontFamily: 'Manrope', fontPreview: 'Manrope',
-      radius: 12, shadow: 'soft', harmony: 'monochromatic',
+      variants: [
+        { name: 'Тёплый',
+          palette: ['#FFFFFF', '#FAFAF9', '#78716C', '#1C1917', '#A16207'],
+          previewBg: '#FAFAF9', previewText: '#1C1917',
+          bg: '#FFFFFF', surface: '#FAFAF9', text: '#1C1917', textMuted: '#78716C',
+          base: '#A16207', accent: '#A16207', font: 'Manrope', fontPreview: 'Manrope',
+          radius: 12, shadow: 'soft', harmony: 'monochromatic' },
+        { name: 'Пепел',
+          palette: ['#FFFFFF', '#F8FAFC', '#64748B', '#0F172A', '#334155'],
+          previewBg: '#F8FAFC', previewText: '#0F172A',
+          bg: '#FFFFFF', surface: '#F8FAFC', text: '#0F172A', textMuted: '#64748B',
+          base: '#334155', accent: '#334155', font: 'Inter', fontPreview: 'Inter',
+          radius: 10, shadow: 'soft', harmony: 'monochromatic' },
+        { name: 'Песок',
+          palette: ['#FDFBF7', '#F5F0E8', '#A89F91', '#2B2B27', '#8B5E34'],
+          previewBg: '#F5F0E8', previewText: '#2B2B27',
+          bg: '#FDFBF7', surface: '#F5F0E8', text: '#2B2B27', textMuted: '#8A8178',
+          base: '#A16207', accent: '#8B5E34', font: 'Manrope', fontPreview: 'Manrope',
+          radius: 8, shadow: 'subtle', harmony: 'monochromatic' },
+      ],
     },
     neomorphism: {
       name: 'Неоморфизм', note: 'Мягкий объём без резких теней',
-      palette: ['#E0E5EC', '#FFFFFF', '#A3B1C6', '#5B7A9D', '#4B5666'],
-      previewBg: '#E0E5EC', previewText: '#4B5666',
-      bg: '#E0E5EC', surface: '#E0E5EC', text: '#4B5666', textMuted: '#8A94A6',
-      accent: '#5B7A9D', base: '#5B7A9D', fontFamily: 'Inter', fontPreview: 'Inter',
-      radius: 16, shadow: 'neomorph', harmony: 'analogous',
-    },
-    brutalism: {
-      name: 'Брутализм', note: 'Резкие границы, максимум контраста',
-      palette: ['#F4F1DE', '#E07A5F', '#3D405B', '#81B29A', '#1C110A'],
-      previewBg: '#F4F1DE', previewText: '#1C110A',
-      bg: '#F4F1DE', surface: '#FFFFFF', text: '#1C110A', textMuted: '#6B5B45',
-      accent: '#C05638', base: '#E07A5F', fontFamily: 'Archivo', fontPreview: 'Archivo',
-      radius: 2, shadow: 'none', harmony: 'complementary',
+      variants: [
+        { name: 'Облако',
+          palette: ['#E0E5EC', '#FFFFFF', '#A3B1C6', '#5B7A9D', '#4B5666'],
+          previewBg: '#E0E5EC', previewText: '#4B5666',
+          bg: '#E0E5EC', surface: '#E0E5EC', text: '#4B5666', textMuted: '#8A94A6',
+          base: '#5B7A9D', accent: '#5B7A9D', font: 'Inter', fontPreview: 'Inter',
+          radius: 16, shadow: 'neomorph', harmony: 'analogous' },
+        { name: 'Лепесток',
+          palette: ['#F3E7F0', '#FFFFFF', '#D9B8D1', '#A56FA0', '#6B4766'],
+          previewBg: '#F3E7F0', previewText: '#4A2E47',
+          bg: '#F3E7F0', surface: '#F3E7F0', text: '#4A2E47', textMuted: '#9B7E96',
+          base: '#A56FA0', accent: '#A56FA0', font: 'Inter', fontPreview: 'Inter',
+          radius: 16, shadow: 'neomorph', harmony: 'analogous' },
+        { name: 'Охра',
+          palette: ['#EDE7DA', '#FFFFFF', '#C9BCA5', '#8A7650', '#5C4E33'],
+          previewBg: '#EDE7DA', previewText: '#4A4030',
+          bg: '#EDE7DA', surface: '#EDE7DA', text: '#4A4030', textMuted: '#93836A',
+          base: '#8A7650', accent: '#8A7650', font: 'Inter', fontPreview: 'Inter',
+          radius: 14, shadow: 'neomorph', harmony: 'analogous' },
+      ],
     },
     flat: {
       name: 'Плоский', note: 'Без теней, чистые поверхности',
-      palette: ['#FFFFFF', '#F1F5F9', '#2563EB', '#0F172A', '#F59E0B'],
-      previewBg: '#FFFFFF', previewText: '#0F172A',
-      bg: '#FFFFFF', surface: '#F8FAFC', text: '#0F172A', textMuted: '#64748B',
-      accent: '#2563EB', base: '#2563EB', fontFamily: 'Inter', fontPreview: 'Inter',
-      radius: 8, shadow: 'none', harmony: 'complementary',
+      variants: [
+        { name: 'Синий',
+          palette: ['#FFFFFF', '#F1F5F9', '#2563EB', '#0F172A', '#F59E0B'],
+          previewBg: '#FFFFFF', previewText: '#0F172A',
+          bg: '#FFFFFF', surface: '#F8FAFC', text: '#0F172A', textMuted: '#64748B',
+          base: '#2563EB', accent: '#2563EB', font: 'Inter', fontPreview: 'Inter',
+          radius: 8, shadow: 'none', harmony: 'complementary' },
+        { name: 'Мята',
+          palette: ['#FFFFFF', '#F0FDF4', '#16A34A', '#14532D', '#22C55E'],
+          previewBg: '#FFFFFF', previewText: '#0F2A1B',
+          bg: '#FFFFFF', surface: '#F7FCF8', text: '#0F2A1B', textMuted: '#5A7D68',
+          base: '#16A34A', accent: '#16A34A', font: 'Inter', fontPreview: 'Inter',
+          radius: 6, shadow: 'none', harmony: 'complementary' },
+        { name: 'Тангерин',
+          palette: ['#FFF7ED', '#FFEDD5', '#EA580C', '#7C2D12', '#F97316'],
+          previewBg: '#FFF7ED', previewText: '#431407',
+          bg: '#FFFCF9', surface: '#FFF1E6', text: '#431407', textMuted: '#B07D63',
+          base: '#EA580C', accent: '#EA580C', font: 'Inter', fontPreview: 'Inter',
+          radius: 6, shadow: 'none', harmony: 'complementary' },
+      ],
     },
   };
+
+  function variantOf(styleKey, index) {
+    const style = STYLES[styleKey] || STYLES.minimalism;
+    return style.variants[index] || style.variants[0];
+  }
+  function variantName(styleKey, index) {
+    return variantOf(styleKey, index).name;
+  }
 
   const HARMONIES = {
     analogous: [{ d: 0 }, { d: -24 }, { d: 24 }, { d: -12, lo: 8 }, { d: 12, lo: 8 }],
@@ -193,7 +294,8 @@
   /* ---------- Состояние ---------- */
   const STORAGE = 'dsgen:saved';
   const state = {
-    presetKey: null,
+    styleKey: null,
+    variantIndex: 0,
     baseColor: '#A16207',
     harmony: 'monochromatic',
     palette: [],
@@ -375,57 +477,54 @@
   function buildPresetCards() {
     const grid = $('#preset-grid');
     grid.innerHTML = '';
-    Object.entries(PRESETS).forEach(([key, p]) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'preset-card';
-      btn.dataset.preset = key;
-      btn.setAttribute('aria-pressed', 'false');
-      btn.innerHTML =
-        '<span class="preset-card-check"><svg class="icon" aria-hidden="true"><use href="#tabler-check"></use></svg></span>' +
-        '<span class="preset-preview" style="background:' + p.previewBg + '">' +
-        '<span class="preset-palette">' + p.palette.map((c) => '<span style="background:' + c + '"></span>').join('') + '</span>' +
-        '<span class="preset-font" style="color:' + p.previewText + ';font-family:\'' + p.fontPreview + '\',sans-serif">Аа Bb</span>' +
-        '<span class="preset-mini-buttons">' +
-        '<span class="preset-mini-btn filled" style="background:' + p.accent + '"></span>' +
-        '<span class="preset-mini-btn" style="border-color:' + p.accent + '"></span>' +
-        '</span></span>' +
-        '<span class="preset-card-name">' + p.name + '</span>' +
-        '<span class="preset-card-note">' + p.note + '</span>';
-      btn.addEventListener('click', () => onPresetClick(btn, key, p));
-      grid.appendChild(btn);
+    Object.keys(STYLES).forEach((styleKey) => {
+      const style = STYLES[styleKey];
+      const card = document.createElement('div');
+      card.className = 'preset-card';
+      card.dataset.style = styleKey;
+      card.innerHTML =
+        '<span class="preset-card-name">' + style.name + '</span>' +
+        '<span class="preset-card-note">' + style.note + '</span>' +
+        '<span class="preset-variants"></span>';
+      const vars = card.querySelector('.preset-variants');
+      style.variants.forEach((v, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'preset-variant-btn';
+        btn.dataset.style = styleKey;
+        btn.dataset.variant = String(i);
+        btn.setAttribute('aria-pressed', 'false');
+        btn.innerHTML =
+          '<span class="preset-variant-preview" style="background:' + v.previewBg + '">' +
+          '<span class="preset-palette">' + v.palette.map((c) => '<span style="background:' + c + '"></span>').join('') + '</span>' +
+          '<span class="preset-font" style="color:' + v.previewText + ';font-family:\'' + v.fontPreview + '\',sans-serif">Аа Bb</span>' +
+          '</span>' +
+          '<span class="preset-variant-name">' + v.name + '</span>';
+        btn.addEventListener('click', () => openEditor(styleKey, i, false));
+        vars.appendChild(btn);
+      });
+      grid.appendChild(card);
     });
-  }
-  function clearSelection() {
-    $$('.preset-card').forEach((c) => { c.classList.remove('is-selected'); c.setAttribute('aria-pressed', 'false'); });
-  }
-  function onPresetClick(btn, key, p) {
-    const wasSelected = btn.classList.contains('is-selected');
-    clearSelection();
-    if (wasSelected) {
-      openEditor(key, false);
-    } else {
-      btn.classList.add('is-selected');
-      btn.setAttribute('aria-pressed', 'true');
-    }
   }
 
   /* ---------- Открытие редактора ---------- */
-  function configFromPreset(key, random) {
-    const p = PRESETS[key];
-    state.presetKey = key;
-    state.baseColor = random ? randomColor() : p.base;
-    state.harmony = random ? pickKey(HARMONIES) : (p.harmony || 'monochromatic');
+  function configFromVariant(styleKey, index, random) {
+    const style = STYLES[styleKey] || STYLES.minimalism;
+    const v = style.variants[index] || style.variants[0];
+    state.styleKey = styleKey;
+    state.variantIndex = index;
+    state.baseColor = random ? randomColor() : v.base;
+    state.harmony = random ? pickKey(HARMONIES) : (v.harmony || 'monochromatic');
     const t = state.tokens;
-    t.bg = p.bg; t.surface = p.surface; t.text = p.text; t.textMuted = p.textMuted;
-    t.fontFamily = p.fontFamily; t.headingWeight = 500; t.bodyWeight = 400; t.typeScale = 'standard';
-    t.spaceStep = 4; t.radiusSm = p.radius; t.radiusMd = p.radius + 2; t.radiusLg = p.radius + 4;
-    t.shadowLevel = p.shadow;
+    t.bg = v.bg; t.surface = v.surface; t.text = v.text; t.textMuted = v.textMuted;
+    t.fontFamily = v.font; t.headingWeight = 500; t.bodyWeight = 400; t.typeScale = 'standard';
+    t.spaceStep = 4; t.radiusSm = v.radius; t.radiusMd = v.radius + 2; t.radiusLg = v.radius + 4;
+    t.shadowLevel = v.shadow;
     regeneratePalette();
-    loadFont(p.fontFamily);
+    loadFont(v.font);
   }
-  function openEditor(key, random) {
-    configFromPreset(key, random);
+  function openEditor(styleKey, index, random) {
+    configFromVariant(styleKey, index, random);
     goto('screen-editor');
     syncFields();
     renderAnything();
@@ -515,7 +614,8 @@
   }
   function doSave() {
     const payload = {
-      presetKey: state.presetKey, base: state.baseColor, harmony: state.harmony,
+      styleKey: state.styleKey, variantIndex: state.variantIndex,
+      base: state.baseColor, harmony: state.harmony,
       tokens: state.tokens, savedAt: Date.now(),
     };
     try {
@@ -536,9 +636,12 @@
   function doRestore() {
     if (!state.savedData) return;
     const s = state.savedData;
-    const key = PRESETS[s.presetKey] ? s.presetKey : 'minimalism';
-    const p = PRESETS[key];
-    state.presetKey = key;
+    const styleKey = STYLES[s.styleKey] ? s.styleKey : 'minimalism';
+    const startingVariant = Number(s.variantIndex);
+    const variantIndex = STYLES[styleKey].variants[startingVariant] ? startingVariant : 0;
+    const p = STYLES[styleKey].variants[variantIndex];
+    state.styleKey = styleKey;
+    state.variantIndex = variantIndex;
     state.baseColor = s.base || p.base;
     state.harmony = s.harmony || 'monochromatic';
     Object.assign(state.tokens, s.tokens || {});
@@ -612,7 +715,7 @@
     const zip = new JSZip();
     const files = currentTokens();
     Object.keys(files).forEach((k) => zip.file('design-system/' + k, files[k]));
-    zip.file('design-system/docs/design-system.md', '# Дизайн-система\n\nПресет: ' + (PRESETS[state.presetKey]?.name || '—') + '\n');
+    zip.file('design-system/docs/design-system.md', '# Дизайн-система\n\nСтиль: ' + ((STYLES[state.styleKey] || STYLES.minimalism).name) + ' · Вариант: ' + (variantName(state.styleKey, state.variantIndex)) + '\n');
     zip.file('design-system/docs/AGENTS.md', '# Правила для ИИ-агента\n- Запрещены сырые HEX, только токены из tokens/.\n- Шрифт: ' + state.tokens.fontFamily + '.\n');
     zip.file('design-system/fonts/README.md', '# Шрифты\nСсылка на Google CDN:\n' + (fontCdn() || '—') + '\n');
     zip.file('design-system/components/button.md', '# Button\n<button class="btn btn-primary">Подробнее</button>\n');
@@ -694,7 +797,10 @@
       goto(el.dataset.goto);
     }));
 
-    $('#generate-random-btn').addEventListener('click', () => openEditor(pickKey(PRESETS), true));
+    $('#generate-random-btn').addEventListener('click', () => {
+      const styleKey = pickKey(STYLES);
+      openEditor(styleKey, Math.floor(Math.random() * STYLES[styleKey].variants.length), true);
+    });
     $('#restore-btn').addEventListener('click', doRestore);
     $('#restore-menu-btn').addEventListener('click', doRestore);
     $('#new-project-btn').addEventListener('click', doNew);
@@ -729,8 +835,7 @@
     });
 
     const resetToPreset = () => {
-      const key = PRESETS[state.presetKey] ? state.presetKey : 'minimalism';
-      configFromPreset(key, false);
+      configFromVariant(state.styleKey, state.variantIndex, false);
       syncFields();
       renderAnything();
       resetDirtyState();

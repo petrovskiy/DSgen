@@ -422,50 +422,48 @@ textarea:focus-visible {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-subtle);
-  cursor: pointer;
   text-align: left;
-  transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
+  transition: box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .preset-card:hover {
   box-shadow: var(--shadow-medium);
 }
 
-.preset-card.is-selected {
-  border-color: var(--accent);
-  box-shadow: var(--shadow-focus);
+.preset-variants {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
 }
 
-.preset-card.is-selected .preset-card-check {
-  opacity: 1;
-}
-
-.preset-card-check {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  opacity: 0;
-  transition: opacity 160ms ease;
-}
-
-.preset-card-check .icon {
-  width: 14px;
-  height: 14px;
-}
-
-.preset-preview {
+.preset-variant-btn {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-3);
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.preset-variant-btn:hover,
+.preset-variant-btn:focus-visible {
+  border-color: var(--border);
+  box-shadow: var(--shadow-subtle);
+}
+
+.preset-variant-btn:active {
+  transform: translateY(1px);
+}
+
+.preset-variant-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
   border-radius: var(--radius-sm);
 }
 
@@ -486,20 +484,10 @@ textarea:focus-visible {
   letter-spacing: -0.02em;
 }
 
-.preset-mini-buttons {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.preset-mini-btn {
-  width: 28px;
-  height: 20px;
-  border-radius: 4px;
-  border: 1px solid rgba(28, 25, 23, 0.2);
-}
-
-.preset-mini-btn.filled {
-  border: none;
+.preset-variant-name {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text);
 }
 
 .preset-card-name {
