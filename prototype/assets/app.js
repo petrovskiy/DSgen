@@ -453,7 +453,9 @@
     root.style.setProperty('--p-accent', t.accent);
     root.style.setProperty('--p-accent-hover', t.accentHover);
     root.style.setProperty('--p-accent-soft', t.accentSoft);
-    root.style.setProperty('--p-font', `'${t.fontFamily}', system-ui, sans-serif`);
+    root.style.setProperty('--p-font', `'${t.bodyFont || t.fontFamily}', system-ui, sans-serif`);
+    root.style.setProperty('--p-heading-font', `'${t.headingFont || t.fontFamily}', system-ui, sans-serif`);
+    root.style.setProperty('--p-body-font', `'${t.bodyFont || t.fontFamily}', system-ui, sans-serif`);
     root.style.setProperty('--p-heading-weight', t.headingWeight);
     root.style.setProperty('--p-body-weight', t.bodyWeight);
     root.style.setProperty('--p-title-size', scale.title + 'px');
@@ -516,14 +518,14 @@
     });
   }
 
-  function renderContrast() {
+  function renderContrast(wrapSel) {
     const t = state.tokens;
     const pairs = [
       { label: 'Текст на фоне', sample: t.bg, fg: t.text },
       { label: 'Акцент на фоне', sample: t.bg, fg: t.accent },
       { label: 'Белый на акценте', sample: t.accent, fg: '#ffffff' },
     ];
-    const wrap = $('#contrast-rows');
+    const wrap = $(wrapSel || '#contrast-rows');
     wrap.innerHTML = '';
     pairs.forEach((p) => {
       const ratio = contrast(p.sample, p.fg);
@@ -609,13 +611,6 @@
           '<span class="preset-ms-btn-ghost">Детали</span>' +
           '</span>' +
           '</span>' +
-          '<span class="preset-ms-phone">' +
-          '<span class="preset-ms-phone-status"></span>' +
-          '<span class="preset-ms-phone-title">Главная</span>' +
-          '<span class="preset-ms-phone-line"></span>' +
-          '<span class="preset-ms-phone-line short"></span>' +
-          '<span class="preset-ms-phone-btn">Купить</span>' +
-          '</span>' +
           '</span>' +
           '</span>' +
           '<span class="preset-variant-meta"></span>' +
@@ -638,7 +633,8 @@
     state.harmony = random ? pickKey(HARMONIES) : (v.harmony || 'monochromatic');
     const t = state.tokens;
     t.bg = v.bg; t.surface = v.surface; t.text = v.text; t.textMuted = v.textMuted;
-    t.fontFamily = v.font; t.headingWeight = 500; t.bodyWeight = 400; t.typeScale = 'standard';
+    t.fontFamily = v.font; t.headingFont = v.font; t.bodyFont = v.font;
+    t.headingWeight = 500; t.bodyWeight = 400; t.typeScale = 'standard';
     t.spaceStep = 4; t.radiusSm = v.radius; t.radiusMd = v.radius + 2; t.radiusLg = v.radius + 4;
     t.shadowLevel = v.shadow;
     regeneratePalette();

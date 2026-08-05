@@ -577,54 +577,6 @@ textarea:focus-visible {
   white-space: nowrap;
 }
 
-.preset-ms-phone {
-  width: 36%;
-  max-width: 76px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 6px 5px;
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--pv-text) 10%, var(--pv-bg));
-  border: 1px solid color-mix(in srgb, var(--pv-text) 18%, transparent);
-}
-
-.preset-ms-phone-status {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--pv-accent);
-}
-
-.preset-ms-phone-title {
-  font-size: 7px;
-  font-weight: 700;
-  color: var(--pv-text);
-}
-
-.preset-ms-phone-line {
-  height: 3px;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--pv-text) 30%, transparent);
-}
-
-.preset-ms-phone-line.short {
-  width: 62%;
-}
-
-.preset-ms-phone-btn {
-  margin-top: auto;
-  padding: 3px 4px;
-  border-radius: 3px;
-  background: var(--pv-accent);
-  color: #fff;
-  font-size: 6px;
-  font-weight: 600;
-  line-height: 1;
-  text-align: center;
-  white-space: nowrap;
-}
-
 .preset-variant-meta {
   padding: 0 var(--space-1);
   font-size: var(--text-caption);
