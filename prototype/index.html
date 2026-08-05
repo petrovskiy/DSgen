@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="DSgen — визуальный генератор дизайн-систем и токенов. Прототип интерфейса.">
+  <meta name="description" content="DSgen — генератор дизайн-систем. Выберите палитру, шрифты и стиль. Скачайте HTML.">
   <title>DSgen — генератор дизайн-систем</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,575 +12,136 @@
 </head>
 <body>
 
-  <!-- ============================ ЭКРАН 1. СТАРТ ============================ -->
-  <div class="screen is-active" id="screen-start" aria-label="Старт. Галерея пресетов">
-    <header class="app-header">
-      <a class="brand" href="#" data-goto="screen-start" aria-label="DSgen — на главную">
-        <svg class="icon" aria-hidden="true"><use href="#tabler-palette"></use></svg>
-        <span class="brand-name">DSgen</span>
-      </a>
-      <div class="app-header-actions">
-        <button type="button" class="btn btn-ghost btn-sm" id="restore-menu-btn" hidden>
-          <svg class="icon" aria-hidden="true"><use href="#tabler-history"></use></svg>
-          Восстановить проект
-        </button>
-        <button type="button" class="icon-btn" id="settings-btn" aria-label="Настройки">
-          <svg class="icon" aria-hidden="true"><use href="#tabler-settings"></use></svg>
-        </button>
-      </div>
-    </header>
+<div class="screen is-active" id="screen-wizard" aria-label="Генератор дизайн-систем">
+  <header class="wizard-header">
+    <span class="brand">
+      <svg class="icon" aria-hidden="true"><use href="#tabler-palette"></use></svg>
+      <span class="brand-name">DSgen</span>
+    </span>
+    <ol class="wizard-steps" aria-label="Прогресс шагов">
+      <li class="wizard-step is-active" data-step="1">Палитра</li>
+      <li class="wizard-step" data-step="2">Шрифты</li>
+      <li class="wizard-step" data-step="3">Концепция</li>
+      <li class="wizard-step" data-step="4">Превью</li>
+    </ol>
+  </header>
 
-    <main class="start-main">
-      <section class="start-hero" aria-label="О продукте">
-        <p class="start-eyebrow">Генератор дизайн-систем</p>
-        <h1 class="text-display">Создание дизайн-системы</h1>
-        <p class="start-subtitle">
-          Выберите стиль из галереи или запустите генерацию по правилам цветового круга.
-          Результат — архив с токенами под Web, Flutter и Swift и файлом правил для ИИ-агента.
+  <main class="wizard-body">
+
+    <!-- Шаг 1. Палитра -->
+    <section class="wizard-panel" id="wizard-step-1" aria-label="Шаг 1: выберите палитру">
+      <div class="wizard-panel-head">
+        <p class="start-eyebrow">Шаг 1 из 4</p>
+        <h2 class="wizard-panel-title">Выберите цветовую палитру</h2>
+        <p class="wizard-panel-desc">
+          Трендовые палитры из Coolors — выберите ту, что отражает характер вашего бренда.
         </p>
-      </section>
-
-      <section class="presets" aria-labelledby="presets-title">
-        <h2 class="section-title" id="presets-title">Галерея пресетов</h2>
-        <div class="preset-grid" id="preset-grid"><!-- карточки пресетов: рендер в app.js --></div>
-      </section>
-
-      <div class="start-cta">
-        <button type="button" class="btn btn-primary btn-lg" id="generate-random-btn">
-          <svg class="icon" aria-hidden="true"><use href="#tabler-arrows-shuffle"></use></svg>
-          Начать генерацию
-        </button>
       </div>
+      <div class="palette-grid" id="palette-grid"></div>
+    </section>
 
-      <div class="restore-banner" id="restore-banner" role="status" hidden>
-        <svg class="icon icon-accent" aria-hidden="true"><use href="#tabler-history"></use></svg>
-        <span class="restore-text">Обнаружен сохранённый проект</span>
-        <span class="restore-detail" id="restore-detail"></span>
-        <span class="restore-actions">
-          <button type="button" class="btn btn-secondary btn-sm" id="restore-btn">Продолжить</button>
-          <button type="button" class="btn btn-ghost btn-sm" id="new-project-btn">Начать новый</button>
-        </span>
-      </div>
-    </main>
-
-    <footer class="app-footer">
-      <p class="text-caption">DSgen · прототип · токены по правилам цветового круга и WCAG AA</p>
-    </footer>
-  </div>
-
-  <!-- ============================ ЭКРАН 2. РЕДАКТОР ============================ -->
-  <div class="screen" id="screen-editor" aria-label="Редактор токенов" hidden>
-    <header class="editor-topbar">
-      <button type="button" class="btn btn-ghost" data-goto="screen-start">
-        <svg class="icon" aria-hidden="true"><use href="#tabler-arrow-left"></use></svg>
-        Старт
-      </button>
-      <h1 class="editor-title">Редактор</h1>
-      <div class="editor-topbar-actions">
-        <button type="button" class="btn btn-ghost" id="gen-all-btn" title="Сгенерировать все токены по цветовому кругу">
-          <svg class="icon" aria-hidden="true"><use href="#tabler-refresh"></use></svg>
-          Генер. всё
-        </button>
-        <button type="button" class="btn btn-ghost" id="reset-btn">Сброс</button>
-        <div class="dropdown" id="presets-dropdown">
-          <button type="button" class="btn btn-secondary btn-sm" id="presets-btn" aria-haspopup="dialog" aria-expanded="false">
-            <svg class="icon" aria-hidden="true"><use href="#tabler-template"></use></svg>
-            Пресеты
-            <svg class="icon" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-          </button>
-          <div class="dropdown-panel dropdown-panel-wide" id="presets-panel" role="dialog" aria-label="Выбор готового пресета" hidden>
-            <div class="presets-panel-head">
-              <span class="presets-panel-title">Готовые пресеты</span>
-              <button type="button" class="icon-btn" id="presets-close-btn" aria-label="Закрыть">
-                <svg class="icon" aria-hidden="true"><use href="#tabler-x"></use></svg>
-              </button>
-            </div>
-            <div class="presets-list" id="presets-list"></div>
-          </div>
-        </div>
-        <div class="dropdown" id="fonts-dropdown">
-          <button type="button" class="btn btn-secondary btn-sm" id="fonts-btn" aria-haspopup="listbox" aria-expanded="false">
-            Google Fonts
-            <svg class="icon" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-          </button>
-          <div class="dropdown-panel" id="fonts-panel" role="listbox" aria-label="Библиотека Google Fonts" hidden>
-            <div class="search-field">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-search"></use></svg>
-              <label class="sr-only" for="fonts-search">Поиск шрифтов</label>
-              <input type="search" id="fonts-search" placeholder="Поиск семейства…" autocomplete="off">
-            </div>
-            <ul class="fonts-list" id="fonts-list"></ul>
-            <p class="fonts-hint text-caption">Подключение через Google CDN — ссылка попадёт в экспорт.</p>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="editor-body">
-      <aside class="editor-config" aria-label="Конфигурация токенов">
-
-        <!-- Группа: Цвета -->
-        <section class="group is-open" id="group-colors" aria-label="Цвета">
-          <h3 class="group-header">
-            <button type="button" class="group-toggle" aria-expanded="true" aria-controls="colors-body">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-palette"></use></svg>
-              <span class="group-title">Цвета</span>
-              <svg class="icon icon-chevron" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-            </button>
-          </h3>
-          <div class="group-body" id="colors-body">
-            <div class="field-row">
-              <div class="field">
-                <label class="field-label" for="base-color">Базовый цвет</label>
-                <div class="color-input">
-                  <input type="color" id="base-color" value="#A16207">
-                  <input type="text" id="base-color-hex" class="input input-mono" value="#A16207" maxlength="7" spellcheck="false" aria-label="HEX базового цвета">
-                </div>
-              </div>
-              <div class="field">
-                <label class="field-label" for="harmony">Гармония</label>
-                <div class="select-wrap">
-                  <select id="harmony" class="select">
-                    <option value="analogous">Аналоговая</option>
-                    <option value="complementary">Комплементарная</option>
-                    <option value="triadic">Триадная</option>
-                    <option value="tetradic">Тетрадная</option>
-                    <option value="monochromatic" selected>Монохромная</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="swatches" id="swatches" aria-label="Палитра"></div>
-            <div class="contrast-block" id="contrast-block">
-              <p class="field-label">Контраст WCAG</p>
-              <div class="contrast-rows" id="contrast-rows"><!-- строки пар: рендер в app.js --></div>
-              <button type="button" class="link-btn" id="regenerate-palette-btn">
-                <svg class="icon" aria-hidden="true"><use href="#tabler-refresh"></use></svg>
-                Перегенерировать палитру
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Группа: Типографика -->
-        <section class="group" id="group-typography" aria-label="Типографика">
-          <h3 class="group-header">
-            <button type="button" class="group-toggle" aria-expanded="false" aria-controls="typography-body">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-typography"></use></svg>
-              <span class="group-title">Типографика</span>
-              <svg class="icon icon-chevron" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-            </button>
-          </h3>
-          <div class="group-body" id="typography-body" hidden>
-            <div class="field">
-              <label class="field-label" for="font-family">Семейство</label>
-              <div class="select-wrap">
-                <select id="font-family" class="select">
-                  <option value="Manrope">Manrope</option>
-                  <option value="Inter">Inter</option>
-                  <option value="Space Grotesk">Space Grotesk</option>
-                  <option value="Playfair Display">Playfair Display</option>
-                  <option value="JetBrains Mono">JetBrains Mono</option>
-                </select>
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label class="field-label" for="heading-weight">Заголовки</label>
-                <div class="select-wrap">
-                  <select id="heading-weight" class="select">
-                    <option value="300">300</option>
-                    <option value="400">400</option>
-                    <option value="500" selected>500</option>
-                    <option value="600">600</option>
-                  </select>
-                </div>
-              </div>
-              <div class="field">
-                <label class="field-label" for="body-weight">Текст</label>
-                <div class="select-wrap">
-                  <select id="body-weight" class="select">
-                    <option value="300">300</option>
-                    <option value="400" selected>400</option>
-                    <option value="500">500</option>
-                    <option value="600">600</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="field">
-              <label class="field-label" for="type-scale">Масштаб</label>
-              <div class="select-wrap">
-                <select id="type-scale" class="select">
-                  <option value="compact">Компактный — 28 / 14</option>
-                  <option value="standard" selected>Стандартный — 32 / 15</option>
-                  <option value="large">Крупный — 40 / 17</option>
-                </select>
-              </div>
-            </div>
-            <div class="type-scale-preview" id="type-scale-preview">
-              <p class="type-sample title">Заголовок системы</p>
-              <p class="type-sample body">Текст примерной страницы, который показывает масштаб.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Группа: Отступы -->
-        <section class="group" id="group-spacing" aria-label="Отступы">
-          <h3 class="group-header">
-            <button type="button" class="group-toggle" aria-expanded="false" aria-controls="spacing-body">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-spacing-vertical"></use></svg>
-              <span class="group-title">Отступы</span>
-              <svg class="icon icon-chevron" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-            </button>
-          </h3>
-          <div class="group-body" id="spacing-body" hidden>
-            <div class="field">
-              <label class="field-label" for="space-step">Базовый шаг, px</label>
-              <input type="number" id="space-step" class="input" value="4" min="2" max="12" step="1">
-              <p class="hint text-caption">Шкала строится по сетке шага: 1, 2, 3, 4, 6, 8, 12, 16.</p>
-            </div>
-            <div class="chips" id="spacing-chips"></div>
-          </div>
-        </section>
-
-        <!-- Группа: Радиусы -->
-        <section class="group" id="group-radius" aria-label="Радиусы">
-          <h3 class="group-header">
-            <button type="button" class="group-toggle" aria-expanded="false" aria-controls="radius-body">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-border-corners"></use></svg>
-              <span class="group-title">Радиусы</span>
-              <svg class="icon icon-chevron" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-            </button>
-          </h3>
-          <div class="group-body" id="radius-body" hidden>
-            <div class="field-row">
-              <div class="field">
-                <label class="field-label" for="radius-sm">Малый</label>
-                <input type="number" id="radius-sm" class="input" value="8" min="0" max="32" step="1">
-              </div>
-              <div class="field">
-                <label class="field-label" for="radius-md">Средний</label>
-                <input type="number" id="radius-md" class="input" value="12" min="0" max="32" step="1">
-              </div>
-              <div class="field">
-                <label class="field-label" for="radius-lg">Крупный</label>
-                <input type="number" id="radius-lg" class="input" value="16" min="0" max="48" step="1">
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Группа: Тени -->
-        <section class="group" id="group-shadows" aria-label="Тени">
-          <h3 class="group-header">
-            <button type="button" class="group-toggle" aria-expanded="false" aria-controls="shadows-body">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-shadow"></use></svg>
-              <span class="group-title">Тени</span>
-              <svg class="icon icon-chevron" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-            </button>
-          </h3>
-          <div class="group-body" id="shadows-body" hidden>
-            <div class="field">
-              <label class="field-label" for="shadow-level">Интенсивность</label>
-              <div class="select-wrap">
-                <select id="shadow-level" class="select">
-                  <option value="soft" selected>Мягкая</option>
-                  <option value="medium">Средняя</option>
-                  <option value="strong">Выраженная</option>
-                  <option value="brutal">Брутальная</option>
-                  <option value="glow">Неоновая</option>
-                  <option value="neomorph">Неоморфная</option>
-                  <option value="none">Без теней</option>
-                </select>
-              </div>
-              <p class="hint text-caption">Карточки и модалки используют токены тени выбранного уровня.</p>
-            </div>
-            <div class="shadow-swatch" id="shadow-swatch" aria-label="Образец тени">
-              <span class="shadow-swatch-box"></span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Группа: Z-index -->
-        <section class="group" id="group-zindex" aria-label="Z-index">
-          <h3 class="group-header">
-            <button type="button" class="group-toggle" aria-expanded="false" aria-controls="zindex-body">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-stack-2"></use></svg>
-              <span class="group-title">Z-index</span>
-              <svg class="icon icon-chevron" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-            </button>
-          </h3>
-          <div class="group-body" id="zindex-body" hidden>
-            <ul class="zindex-list">
-              <li class="zindex-row"><span>Dropdown</span><code>100</code></li>
-              <li class="zindex-row"><span>Sticky</span><code>200</code></li>
-              <li class="zindex-row"><span>Modal</span><code>300</code></li>
-              <li class="zindex-row"><span>Tooltip</span><code>400</code></li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- Группа: Брейкпоинты -->
-        <section class="group" id="group-breakpoints" aria-label="Брейкпоинты">
-          <h3 class="group-header">
-            <button type="button" class="group-toggle" aria-expanded="false" aria-controls="breakpoints-body">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-layout-grid"></use></svg>
-              <span class="group-title">Брейкпоинты</span>
-              <svg class="icon icon-chevron" aria-hidden="true"><use href="#tabler-chevron-down"></use></svg>
-            </button>
-          </h3>
-          <div class="group-body" id="breakpoints-body" hidden>
-            <div class="field-row">
-              <div class="field"><label class="field-label" for="bp-sm">sm</label><input type="number" id="bp-sm" class="input" value="640" min="0" step="8"></div>
-              <div class="field"><label class="field-label" for="bp-md">md</label><input type="number" id="bp-md" class="input" value="768" min="0" step="8"></div>
-            </div>
-            <div class="field-row">
-              <div class="field"><label class="field-label" for="bp-lg">lg</label><input type="number" id="bp-lg" class="input" value="1024" min="0" step="8"></div>
-              <div class="field"><label class="field-label" for="bp-xl">xl</label><input type="number" id="bp-xl" class="input" value="1280" min="0" step="8"></div>
-            </div>
-          </div>
-        </section>
-
-        <button type="button" class="link-btn link-btn-block" id="reset-to-preset">
-          <svg class="icon" aria-hidden="true"><use href="#tabler-arrow-back-up"></use></svg>
-          Сброс к пресету
-        </button>
-      </aside>
-
-      <main class="editor-preview" aria-label="Живое предпросмотр">
-        <header class="preview-header">
-          <h2 class="preview-title">Живое превью</h2>
-          <div class="regen-control">
-            <label class="field-label sr-only" for="regen-element">Элемент для перегенерации</label>
-            <div class="select-wrap">
-              <select id="regen-element" class="select select-sm" aria-label="Элемент для перегенерации">
-                <option value="button">Кнопка</option>
-                <option value="card">Карточка</option>
-                <option value="input">Инпут</option>
-              </select>
-            </div>
-            <button type="button" class="btn btn-ghost btn-sm" id="regen-btn">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-wand"></use></svg>
-              Перегенерировать
-            </button>
-          </div>
-        </header>
-
-        <div class="preview-canvas" id="preview-canvas">
-          <div class="p-site">
-
-            <header class="p-header">
-              <span class="p-brand">DSgen</span>
-              <nav class="p-nav" aria-label="Навигация превью">
-                <a class="p-nav-link" href="#">Палитра</a>
-                <a class="p-nav-link" href="#">Типографика</a>
-                <a class="p-nav-link" href="#">Компоненты</a>
-                <button type="button" class="p-btn p-btn-secondary p-nav-cta">Войти</button>
-              </nav>
-            </header>
-
-            <div class="p-layout">
-              <aside class="p-aside" aria-label="Боковое меню">
-                <a class="p-aside-link is-active" href="#">Обзор</a>
-                <a class="p-aside-link" href="#">Цвета</a>
-                <a class="p-aside-link" href="#">Шрифты</a>
-                <a class="p-aside-link" href="#">Отступы</a>
-                <a class="p-aside-link" href="#">Экспорт</a>
-              </aside>
-
-              <main class="p-main">
-                <section class="p-hero">
-                  <span class="p-eyebrow">Дизайн-система</span>
-                  <h1 class="p-hero-title">Токены, которые читаются</h1>
-                  <p class="p-hero-subtitle">
-                    Палитра по цветовому кругу, типографика из Google Fonts, отступы и радиусы из токенов —
-                    всё это собирается в единый язык интерфейса.
-                  </p>
-                  <div class="p-hero-actions">
-                    <button type="button" class="p-btn p-btn-primary" data-element="button">Начать проект</button>
-                    <button type="button" class="p-btn p-btn-secondary" data-element="button">Смотреть токены</button>
-                  </div>
-                </section>
-
-                <div class="p-stats">
-                  <div class="p-stat"><span class="p-stat-value">8px</span><span class="p-stat-label">базовый шаг</span></div>
-                  <div class="p-stat"><span class="p-stat-value">6</span><span class="p-stat-label">семейств шрифтов</span></div>
-                  <div class="p-stat"><span class="p-stat-value">AA</span><span class="p-stat-label">контраст WCAG</span></div>
-                </div>
-
-                <blockquote class="p-quote">
-                  <p class="p-quote-text">«Хорошая дизайн-система — та, что задаёт правила, а не копирует детали.»</p>
-                  <cite class="p-quote-author">— из гайдлайна DSgen</cite>
-                </blockquote>
-
-                <div class="p-cards">
-                  <article class="p-card" data-element="card">
-                    <button type="button" class="regen-dot" data-regen="card" aria-label="Перегенерировать карточку">
-                      <svg class="icon" aria-hidden="true"><use href="#tabler-plus"></use></svg>
-                    </button>
-                    <h3 class="p-card-title">Цветовой круг</h3>
-                    <p class="p-card-text">
-                      Каждый оттенок формируется из базового цвета и гармонии — никаких случайных HEX.
-                    </p>
-                    <div class="p-card-actions">
-                      <button type="button" class="p-btn" data-element="button">Подробнее</button>
-                      <button type="button" class="p-btn p-btn-secondary" data-element="button">Документация</button>
-                    </div>
-                  </article>
-                  <article class="p-card">
-                    <h3 class="p-card-title">Типографика</h3>
-                    <p class="p-card-text">
-                      Шрифты подключаются из Google CDN и автоматически попадают в экспорт проекта.
-                    </p>
-                    <div class="p-card-actions">
-                      <button type="button" class="p-btn p-btn-secondary" data-element="button">Подробнее</button>
-                    </div>
-                  </article>
-                </div>
-
-                <ul class="p-list">
-                  <li class="p-list-item"><span class="p-list-marker">Палитра</span> — пять оттенков по цветовому кругу</li>
-                  <li class="p-list-item"><span class="p-list-marker">Типографика</span> — вес, кегль и масштаб из токенов</li>
-                  <li class="p-list-item"><span class="p-list-marker">Отступы</span> — единый шаг на базе 4·8 px</li>
-                </ul>
-
-                <form class="p-form" data-element="form" onsubmit="return false">
-                  <button type="button" class="regen-dot" data-regen="input" aria-label="Перегенерировать инпут">
-                    <svg class="icon" aria-hidden="true"><use href="#tabler-plus"></use></svg>
-                  </button>
-                  <label class="p-field-label" for="preview-input">Имя проекта</label>
-                  <input type="text" id="preview-input" class="p-input" placeholder="Моя дизайн-система">
-                  <div class="p-form-actions">
-                    <button type="submit" class="p-btn p-btn-primary" data-element="button">Создать проект</button>
-                  </div>
-                </form>
-              </main>
-            </div>
-
-            <footer class="p-footer">
-              <div class="p-icons" data-element="icons" aria-label="Набор иконок системы">
-                <span class="p-icon" title="Палитра"><svg class="icon" aria-hidden="true"><use href="#tabler-palette"></use></svg></span>
-                <span class="p-icon" title="Типографика"><svg class="icon" aria-hidden="true"><use href="#tabler-typography"></use></svg></span>
-                <span class="p-icon" title="Отступы"><svg class="icon" aria-hidden="true"><use href="#tabler-spacing-vertical"></use></svg></span>
-                <span class="p-icon" title="Радиусы"><svg class="icon" aria-hidden="true"><use href="#tabler-border-corners"></use></svg></span>
-                <span class="p-icon" title="Тени"><svg class="icon" aria-hidden="true"><use href="#tabler-shadow"></use></svg></span>
-                <span class="p-icon" title="Z-index"><svg class="icon" aria-hidden="true"><use href="#tabler-stack-2"></use></svg></span>
-              </div>
-              <p class="p-footer-text">© DSgen · токены по правилам цветового круга и WCAG AA.</p>
-            </footer>
-
-          </div>
-        </div>
-
-        <p class="preview-hint text-caption">
-          Наведите на элемент и нажмите «+», чтобы перегенерировать только его — остальная система не изменится.
+    <!-- Шаг 2. Шрифты -->
+    <section class="wizard-panel" id="wizard-step-2" aria-label="Шаг 2: выберите шрифты" hidden>
+      <div class="wizard-panel-head">
+        <p class="start-eyebrow">Шаг 2 из 4</p>
+        <h2 class="wizard-panel-title">Выберите шрифтовую пару</h2>
+        <p class="wizard-panel-desc">
+          Один шрифт для заголовков, другой — для основного текста. Или один универсальный.
         </p>
-      </main>
-    </div>
+      </div>
+      <div class="wizard-type-preview" id="wizard-type-preview" aria-label="Предпросмотр типографики">
+        <p class="type-sample title">Заголовок бренда</p>
+        <p class="type-sample body">Обычный текст: читаемый абзац, показывающий шрифт основного контента. Кириллица поддерживается.</p>
+      </div>
+      <div class="font-pair-grid" id="wizard-font-pairs"></div>
+    </section>
 
-    <footer class="editor-bottombar">
-      <button type="button" class="btn btn-ghost" data-goto="screen-start">
-        <svg class="icon" aria-hidden="true"><use href="#tabler-arrow-left"></use></svg>
-        Старт
-      </button>
-      <span class="saved-state" id="saved-state" role="status"></span>
-      <span class="editor-bottombar-actions">
-        <button type="button" class="btn btn-secondary" id="save-btn">
-          <svg class="icon" aria-hidden="true"><use href="#tabler-device-floppy"></use></svg>
-          Сохранить
-        </button>
-        <button type="button" class="btn btn-primary" id="export-open-btn">
-          Скачать архив
-          <svg class="icon" aria-hidden="true"><use href="#tabler-arrow-right"></use></svg>
-        </button>
-      </span>
-    </footer>
-  </div>
+    <!-- Шаг 3. Концепция -->
+    <section class="wizard-panel" id="wizard-step-3" aria-label="Шаг 3: выберите концепцию" hidden>
+      <div class="wizard-panel-head">
+        <p class="start-eyebrow">Шаг 3 из 4</p>
+        <h2 class="wizard-panel-title">Выберите дизайн-концепцию</h2>
+        <p class="wizard-panel-desc">
+          Характер интерфейса: скругления, тени, отступы — каждая концепция задаёт настроение.
+        </p>
+      </div>
+      <div class="concept-grid" id="concept-grid"></div>
+    </section>
 
-  <!-- ============================ МОДАЛКА ЭКСПОРТА ============================ -->
-  <div class="modal" id="export-modal" role="dialog" aria-modal="true" aria-labelledby="export-title" hidden>
-    <div class="modal-backdrop" data-close-modal></div>
-    <div class="modal-panel" role="document">
-      <header class="modal-header">
-        <h2 class="modal-title" id="export-title">Экспорт дизайн-системы</h2>
-        <button type="button" class="icon-btn" data-close-modal aria-label="Закрыть окно экспорта">
-          <svg class="icon" aria-hidden="true"><use href="#tabler-x"></use></svg>
-        </button>
-      </header>
+    <!-- Шаг 4. Превью -->
+    <section class="wizard-panel" id="wizard-step-4" aria-label="Шаг 4: предпросмотр" hidden>
+      <div class="wizard-panel-head">
+        <p class="start-eyebrow">Шаг 4 из 4</p>
+        <h2 class="wizard-panel-title">Предпросмотр сайта</h2>
+        <p class="wizard-panel-desc">
+          Ваша дизайн-система в действии. Все элементы используют выбранные цвета, шрифты и стиль.
+        </p>
+      </div>
 
-      <div class="modal-body">
-        <fieldset class="modal-section" id="platforms-section">
-          <legend class="section-label">Выберите платформы</legend>
-          <div class="platform-grid">
-            <label class="platform-option" for="platform-web">
-              <input type="checkbox" id="platform-web" class="checkbox" checked>
-              <svg class="icon" aria-hidden="true"><use href="#tabler-brand-html5"></use></svg>
-              <span class="platform-name">Web</span>
-              <span class="platform-desc">CSS + Tailwind</span>
-            </label>
-            <label class="platform-option" for="platform-flutter">
-              <input type="checkbox" id="platform-flutter" class="checkbox">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-brand-flutter"></use></svg>
-              <span class="platform-name">Flutter</span>
-              <span class="platform-desc">Dart: токены + ThemeData</span>
-            </label>
-            <label class="platform-option" for="platform-swift">
-              <input type="checkbox" id="platform-swift" class="checkbox">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-brand-swift"></use></svg>
-              <span class="platform-name">Swift</span>
-              <span class="platform-desc">SwiftUI: DesignSystem.swift</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <div class="modal-section always-include" aria-label="Постоянные файлы в архиве">
-          <p class="section-label">Всегда в архиве</p>
-          <ul class="always-list">
-            <li><svg class="icon" aria-hidden="true"><use href="#tabler-file-text"></use></svg>MD-спека <code>design-system.md</code></li>
-            <li><svg class="icon" aria-hidden="true"><use href="#tabler-robot"></use></svg>Правила для ИИ-агента <code>AGENTS.md</code></li>
-          </ul>
-        </div>
-
-        <fieldset class="modal-section">
-          <legend class="section-label">Шрифты</legend>
-          <div class="radio-stack">
-            <label class="radio-option">
-              <input type="radio" name="fonts" value="cdn" checked>
-              <svg class="icon" aria-hidden="true"><use href="#tabler-link"></use></svg>
-              Ссылка на Google CDN
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="fonts" value="woff2">
-              <svg class="icon" aria-hidden="true"><use href="#tabler-cloud-download"></use></svg>
-              Скачать woff2
-            </label>
-          </div>
-        </fieldset>
-
-        <div class="modal-section">
-          <p class="section-label">Структура архива</p>
-          <pre class="archive-tree" id="archive-tree" aria-live="polite"></pre>
+      <div class="preview-info" id="preview-info">
+        <div class="preview-info-badge" id="preview-info-badge"></div>
+        <div class="preview-actions">
+          <button type="button" class="btn btn-secondary" id="edit-toggle-btn">
+            <svg class="icon" aria-hidden="true"><use href="#tabler-edit"></use></svg>
+            Редактировать
+          </button>
+          <button type="button" class="btn btn-primary" id="download-zip-btn">
+            <svg class="icon" aria-hidden="true"><use href="#tabler-file-zip"></use></svg>
+            Скачать архив
+          </button>
         </div>
       </div>
 
-      <footer class="modal-footer">
-        <p class="modal-error" id="export-error" role="alert"></p>
-        <span class="modal-actions">
-          <button type="button" class="btn btn-ghost" data-close-modal>Отмена</button>
-          <button type="button" class="btn btn-primary" id="download-zip-btn" disabled>
-            <svg class="icon" aria-hidden="true"><use href="#tabler-download"></use></svg>
-            Скачать ZIP
-          </button>
-        </span>
-      </footer>
+      <div class="edit-panel" id="edit-panel" hidden>
+        <div class="edit-section">
+          <p class="edit-label">Шрифты</p>
+          <div class="edit-fonts">
+            <div class="edit-field">
+              <label class="edit-field-label" for="edit-heading-font">Заголовок</label>
+              <div class="select-wrap">
+                <select id="edit-heading-font" class="select"></select>
+              </div>
+            </div>
+            <div class="edit-field">
+              <label class="edit-field-label" for="edit-body-font">Текст</label>
+              <div class="select-wrap">
+                <select id="edit-body-font" class="select"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="edit-section">
+          <p class="edit-label">Палитра</p>
+          <div class="edit-palettes" id="edit-palettes"></div>
+        </div>
+      </div>
+
+      <div class="final-preview" id="final-preview"></div>
+    </section>
+
+  </main>
+
+  <footer class="wizard-footer">
+    <button type="button" class="btn btn-ghost" id="wizard-back-btn">
+      <svg class="icon" aria-hidden="true"><use href="#tabler-arrow-left"></use></svg>
+      Назад
+    </button>
+    <div class="wizard-selection" id="wizard-selection">
+      <div class="wiz-sel-palette" id="wiz-sel-palette"></div>
+      <div class="wiz-sel-fonts" id="wiz-sel-fonts"></div>
     </div>
-  </div>
+    <span class="wizard-footer-spacer"></span>
+    <button type="button" class="btn btn-primary" id="wizard-next-btn">
+      Далее
+      <svg class="icon" aria-hidden="true"><use href="#tabler-arrow-right"></use></svg>
+    </button>
+  </footer>
+</div>
 
-  <div class="toast" id="toast" role="status" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
 
-  <script src="icons/sprite.js"></script>
-  <script src="assets/vendor/jszip.min.js"></script>
-  <script src="assets/app.js"></script>
+<script src="icons/sprite.js"></script>
+<script src="assets/vendor/jszip.min.js"></script>
+<script src="assets/app.js"></script>
 </body>
 </html>
