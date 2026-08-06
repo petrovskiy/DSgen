@@ -1,8 +1,8 @@
-# DSgen — визуальный генератор дизайн-систем и токенов
+# MD Design Kit — визуальный генератор дизайн-систем и токенов
 
 > Контент — главный герой. UI не спорит с контентом.
 
-**DSgen** — веб-редактор, который за несколько минут генерирует дизайн-систему и дизайн-токены: цвета подбираются по правилам цветового круга, стиль — из готовых пресетов, шрифты — из Google Fonts. Результат — скачиваемый ZIP-архив с токенами, стилями, компонентами, шрифтами, MD-спекой и файлом правил для ИИ-агента, готовый к встраиванию в любой проект (Web / Flutter / Swift).
+**MD Design Kit** — веб-редактор, который за несколько минут генерирует дизайн-систему и дизайн-токены: цвета подбираются по правилам цветового круга, стиль — из готовых пресетов, шрифты — из Google Fonts. Результат — скачиваемый ZIP-архив с токенами, стилями, компонентами, шрифтами, MD-спекой и файлом правил для ИИ-агента, готовый к встраиванию в любой проект (Web / Flutter / Swift).
 
 Продукт заточен под работу с **ИИ-агентами**: при подключении архива агент «знает» дизайн-систему проекта, не сбивается с гайдлайна и не выдумывает посторонние стили.
 
@@ -15,15 +15,18 @@
 - **Визард из 4 шагов** — Концепция → Палитра → Шрифты → Превью. Интуитивный пошаговый флоу с живым предпросмотром на каждом шаге.
 - **Интеграция Google Fonts** — 32 шрифтовые пары, 40+ семейств, динамическая подгрузка и живой предпросмотр.
 - **Экспорт универсального ZIP** — `.design/design.md` (29 разделов MD-спеки) + `tokens.json` + `components.md` (CSS для светлой и тёмной темы). Включает правила для AI-агента.
+- **Тёмная тема оболочки** — переключатель в хедере, сохраняется в localStorage.
+- **Drawer редактирования** — смена шрифтов, палитры, концепции без возврата на предыдущие шаги.
+- **Вставка цветов из буфера** — формат CSS-переменных `--name: #HEX;`.
 
 ---
 
 ## Статус проекта
 
-Проект находится на этапе **перехода от прототипа к React-разработке**.
+Проект полностью **портирован на React** и готов к использованию.
 
-- **Прототип (HTML/CSS/JS):** полностью готов и протестирован. Реализует полный 4-шаговый визард: выбор концепции → палитры → шрифтов → превью с экспортом ZIP.
-- **React-приложение:** разработка начинается. Стек: Next.js (App Router) + React + TypeScript + Tailwind CSS + shadcn/ui.
+- **Прототип (HTML/CSS/JS):** источник логики и дизайна. Полностью готов.
+- **React-приложение:** Next.js (App Router) + React + TypeScript + Tailwind CSS. Все 4 шага визарда, экспорт ZIP, тёмная тема, drawer.
 
 Документация продукта:
 
@@ -32,15 +35,16 @@
 | Product Requirements Document (PRD) | [`docs/03-prd/PRD.md`](docs/03-prd/PRD.md) |
 | Discovery: интервью и выводы | [`docs/01-discovery/`](docs/01-discovery/) |
 | Варфреймы экранов | [`docs/02-design/screen-start.md`](docs/02-design/screen-start.md) · [`screen-editor.md`](docs/02-design/screen-editor.md) · [`screen-export.md`](docs/02-design/screen-export.md) |
-| Дизайн-система продукта (токены, компоненты, правила для агента) | [`docs/02-design/design-system.md`](docs/02-design/design-system.md) |
+| Дизайн-система продукта | [`docs/02-design/design-system.md`](docs/02-design/design-system.md) |
 | Прототип (HTML/CSS/JS) | [`prototype/`](prototype/) |
+| React-приложение | [`app/`](app/) |
 
 ---
 
 ## Структура репозитория
 
 ```
-DSgen/
+MD-design-kit/
 ├── docs/
 │   ├── 01-discovery/     Discovery: гайд интервью, ответы, findings
 │   ├── 02-design/        Варфреймы экранов, дизайн-система продукта
@@ -52,32 +56,41 @@ DSgen/
 │   │   ├── styles.css    Стили (~3300 строк)
 │   │   └── data/         concepts.json, palettes.json, fonts.json
 │   └── icons/            Tabler Icons (SVG-спрайт)
+├── app/                  React-приложение (Next.js + TypeScript)
+│   ├── src/
+│   │   ├── app/          Роутинг и лейаут
+│   │   ├── components/   Header, StepConcept, StepPalette, StepFonts, StepPreview, SettingsDrawer
+│   │   ├── lib/          color.ts, export.ts, shadows.ts, types.ts
+│   │   │   └── data/     concepts.ts, palettes.ts, fonts.ts
+│   │   └── store/        wizard-store.ts (zustand + persist)
+│   ├── public/           Статические ассеты
+│   └── package.json
 └── LICENSE               GPL-3.0
 ```
 
 ---
 
-## Технический стек (план)
+## Быстрый старт
 
-- **Frontend:** Next.js (App Router) + React + TypeScript (strict)
-- **UI:** Tailwind CSS + shadcn/ui, иконки — lucide-react
-- **Состояние:** zustand (persist в localStorage)
-- **Цвет:** culori (гармонии, контраст WCAG)
-- **Экспорт:** jszip + file-saver
+```bash
+cd app
+npm install
+npm run dev
+```
 
-> Только клиентское приложение, без бэкенда в MVP. Сохранение проектов — в localStorage.
+Открыть [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Дорожная карта
+## Технический стек
 
-| Фаза | Содержание | Статус |
-|------|-----------|--------|
-| Неделя 1–2 | Дизайн: экраны, концепции, токен-схема | Готово |
-| Прототип | HTML/CSS/JS визард, 4 шага, экспорт ZIP | Готово |
-| Неделя 3–4 | React-приложение: Next.js + Tailwind + shadcn/ui, портирование визарда | В работе |
-| Неделя 5–6 | Google Fonts API, экспорт под платформы, AGENTS.md | План |
-| Неделя 7 | Бета | План |
+- **Frontend:** Next.js (App Router) + React + TypeScript (strict)
+- **UI:** Tailwind CSS, иконки — lucide-react
+- **Состояние:** zustand (persist в localStorage)
+- **Цвет:** culori (контраст WCAG, HSL-конвертация)
+- **Экспорт:** jszip + file-saver
+
+> Только клиентское приложение, без бэкенда. Сохранение проектов — в localStorage.
 
 ---
 
